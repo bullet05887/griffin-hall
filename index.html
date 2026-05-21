@@ -160,6 +160,19 @@
   .sigil-md { width: 56px; height: 56px; }
   .sigil-lg { width: 120px; height: 120px; }
   @media (min-width: 768px) { .sigil-lg { width: 160px; height: 160px; } }
+
+  .griffin-emblem {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    display: block;
+    margin-inline: auto;
+    filter:
+      drop-shadow(0 8px 18px rgba(168, 133, 47, 0.35))
+      drop-shadow(0 24px 48px rgba(15, 26, 44, 0.45));
+  }
+  @media (min-width: 640px) { .griffin-emblem { max-width: 440px; } }
+  @media (min-width: 1024px) { .griffin-emblem { max-width: 520px; } }
 </style>
 </head>
 <body>
@@ -872,20 +885,20 @@ function Hub({ state, setState }) {
   }
   return (
     <div className="pb-safe">
-      <div className="wrap pt-10 sm:pt-12">
-        <div className="flex items-start gap-6 flex-wrap-reverse sm:flex-wrap">
-          <div className="flex-1 min-w-[260px]">
-            <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">
-              {new Date().toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric' })}
-            </div>
+      <div className="wrap pt-8 sm:pt-10">
+        <div className="fadeup">
+          <img src="/griffin-hall-emblem.png" alt="Griffin Hall" className="griffin-emblem"/>
+        </div>
+        <div className="mt-8 sm:mt-10 max-w-2xl mx-auto text-center">
+          <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">
+            {new Date().toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric' })}
+          </div>
+          <div className="mt-2 flex justify-center">
             <NameLine name={state.name} onChange={handleNameChange}/>
-            <p className="ink-soft mt-4 max-w-prose text-lg">
-              Welcome to the Hall. Pick a Quest. Get the answers right. Misses go to the Drilling Yard so you can pound them flat. Master a quest's lesson (80% on the first try) to unlock the next.
-            </p>
           </div>
-          <div className="shrink-0">
-            <Sigil cls="sigil-lg"/>
-          </div>
+          <p className="ink-soft mt-4 mx-auto max-w-prose text-lg">
+            Welcome to the Hall. Pick a Quest. Get the answers right. Misses go to the Drilling Yard so you can pound them flat. Master a quest's lesson (80% on the first try) to unlock the next.
+          </p>
         </div>
         <div className="mt-8 gold-line-strong"/>
         <StrategyCallout state={state}/>
