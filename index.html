@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#1a2942" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Griffin Hall" />
+<meta name="description" content="Griffin Hall — quests in War, Logic, Numbers, Wealth, and more. A learning hall for the curious." />
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='36' fill='%231a2942'/><circle cx='90' cy='90' r='62' fill='none' stroke='%23c9a44c' stroke-width='3'/><text x='50%25' y='62%25' text-anchor='middle' font-family='Georgia,serif' font-size='84' font-weight='700' fill='%23c9a44c'>G</text></svg>" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%231a2942'/><text x='50%25' y='62%25' text-anchor='middle' font-family='serif' font-size='34' font-weight='700' fill='%23c9a44c'>G</text></svg>" />
+<title>Griffin Hall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  :root {
+    --parchment: #f4ecd8;
+    --parchment-warm: #ece2c4;
+    --parchment-deep: #e0d4b1;
+    --navy: #1a2942;
+    --navy-deep: #0f1a2c;
+    --navy-soft: #2c3a55;
+    --gold: #c9a44c;
+    --gold-light: #e0bd6a;
+    --gold-deep: #a8852f;
+    --crimson: #9b2226;
+    --crimson-deep: #6f1518;
+    --ink: #1a2942;
+    --ink-soft: #4a5a72;
+    --ink-muted: #7a8aa0;
+  }
+  html, body { background: var(--parchment); color: var(--ink); }
+  body {
+    font-family:'Manrope', system-ui, sans-serif;
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(201,164,76,0.10) 0%, transparent 40%),
+      radial-gradient(circle at 85% 92%, rgba(155,34,38,0.06) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(26,41,66,0.04) 0%, transparent 70%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.13 0 0 0 0 0.08 0 0 0 0.08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    min-height: 100vh;
+  }
+  .heraldic { font-family:'Cinzel', Georgia, serif; letter-spacing: 0.12em; }
+  .font-display { font-family:'Instrument Serif', Georgia, serif; letter-spacing:-0.005em; }
+  .ink { color: var(--ink); }
+  .ink-soft { color: var(--ink-soft); }
+  .ink-muted { color: var(--ink-muted); }
+  .bg-parchment { background: var(--parchment); }
+  .bg-parchment-warm { background: var(--parchment-warm); }
+  .bg-parchment-deep { background: var(--parchment-deep); }
+  .bg-navy { background: var(--navy); }
+  .bg-navy-deep { background: var(--navy-deep); }
+  .bg-gold { background: var(--gold); }
+  .bg-gold-light { background: var(--gold-light); }
+  .bg-crimson { background: var(--crimson); }
+  .text-navy { color: var(--navy); }
+  .text-gold { color: var(--gold); }
+  .text-gold-deep { color: var(--gold-deep); }
+  .text-crimson { color: var(--crimson); }
+  .border-gold { border-color: var(--gold); }
+  .border-navy { border-color: var(--navy); }
+  .border-ink-soft { border-color: rgba(26,41,66,0.18); }
+  .border-gold-soft { border-color: rgba(201,164,76,0.5); }
+
+  .card {
+    background: var(--parchment-warm);
+    border: 1px solid rgba(26,41,66,0.16);
+    box-shadow:
+      0 1px 0 rgba(26,41,66,0.05),
+      0 6px 24px -16px rgba(26,41,66,0.35);
+    border-radius: 14px;
+  }
+  .card-hover:hover { border-color: rgba(201,164,76,0.7); box-shadow: 0 1px 0 rgba(26,41,66,0.05), 0 14px 36px -20px rgba(26,41,66,0.45); }
+
+  .gold-line {
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    height: 1px;
+  }
+  .gold-line-strong {
+    background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+    height: 2px;
+  }
+
+  .progress-bar { background: linear-gradient(90deg, var(--crimson) 0%, var(--gold) 100%); }
+
+  .hero-frame {
+    box-shadow:
+      0 0 0 1px rgba(26,41,66,0.25),
+      0 0 0 6px var(--parchment),
+      0 0 0 7px var(--gold),
+      0 0 0 11px var(--parchment),
+      0 25px 50px -25px rgba(15,26,44,0.5);
+  }
+
+  .principle-box {
+    background: linear-gradient(180deg, rgba(201,164,76,0.14) 0%, rgba(201,164,76,0.03) 100%);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 12px 12px 0;
+  }
+  .modern-box {
+    background: linear-gradient(180deg, rgba(155,34,38,0.10) 0%, rgba(155,34,38,0.02) 100%);
+    border-left: 4px solid var(--crimson);
+    border-radius: 0 12px 12px 0;
+  }
+
+  .quiz-correct { background: rgba(122,139,90,0.15); border-color: #6f8a4a; }
+  .quiz-wrong { background: rgba(155,34,38,0.10); border-color: var(--crimson); }
+  .quiz-disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .tile { transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease; position: relative; }
+  .tile.active:hover { transform: translateY(-2px); }
+  .tile.locked { opacity: 0.55; cursor: not-allowed; filter: saturate(0.55); }
+  .lock-shimmer::after {
+    content:''; position:absolute; inset:0;
+    background:repeating-linear-gradient(45deg, rgba(26,41,66,0.05) 0 10px, transparent 10px 20px);
+    pointer-events:none; border-radius: inherit;
+  }
+
+  .wrap { max-width: 1100px; margin-inline: auto; padding-inline: 1rem; }
+  .wrap-narrow { max-width: 780px; margin-inline: auto; padding-inline: 1rem; }
+  @media (min-width: 768px) {
+    .wrap { padding-inline: 2rem; }
+    .wrap-narrow { padding-inline: 2rem; }
+  }
+  .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem); }
+
+  @keyframes fadeup { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;}}
+  .fadeup { animation: fadeup .35s ease-out both; }
+  @keyframes pop { 0% { transform:scale(0.5); opacity:0;} 60%{transform:scale(1.15);opacity:1;} 100%{transform:scale(1);} }
+  .pop { animation:pop .4s ease-out; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0);}
+    20%,60%{transform:translateX(-4px);}
+    40%,80%{transform:translateX(4px);}
+  }
+  .shake { animation:shake .4s ease-out; }
+  @keyframes xpfly {
+    0% { opacity:0; transform: translateX(-50%) scale(.4); }
+    20% { opacity:1; transform: translateX(-50%) scale(1.1); }
+    60% { opacity:1; transform: translateX(-50%) translateY(-10px) scale(1); }
+    100% { opacity:0; transform: translateX(-50%) translateY(-80px) scale(.95); }
+  }
+  .xp-pop {
+    position: fixed; left: 50%; top: 25%; transform: translateX(-50%);
+    z-index: 50;
+    background: var(--gold); color: var(--navy-deep);
+    padding: .75rem 1.4rem; border-radius: 999px;
+    font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.05em;
+    box-shadow: 0 12px 30px -8px rgba(15,26,44,.5);
+    pointer-events: none; animation: xpfly 1.3s ease-out forwards;
+    border: 2px solid var(--navy);
+  }
+
+  .sigil-sm { width: 36px; height: 36px; }
+  .sigil-md { width: 56px; height: 56px; }
+  .sigil-lg { width: 120px; height: 120px; }
+  @media (min-width: 768px) { .sigil-lg { width: 160px; height: 160px; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Reusable Griffin sigil: heraldic profile of an eagle-headed, lion-bodied beast. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="griffin-sigil" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="#1a2942"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a44c" stroke-width="2"/>
+      <circle cx="50" cy="50" r="42" fill="none" stroke="#c9a44c" stroke-width="0.6" opacity="0.6"/>
+      <g fill="#c9a44c" opacity="0.55">
+        <circle cx="50" cy="9" r="1"/>
+        <circle cx="91" cy="50" r="1"/>
+        <circle cx="50" cy="91" r="1"/>
+        <circle cx="9" cy="50" r="1"/>
+      </g>
+      <g fill="#c9a44c" stroke="none">
+        <path d="M30 20 L32 14 L34 19 L37 13 L40 19 L43 14 L45 20 Z"/>
+        <path d="M28 22 C 28 19, 32 17, 38 17 C 46 17, 51 21, 51 25 L 56 23 L 59 26 L 56 28 L 51 28 L 51 31 C 51 35, 47 38, 41 38 L 36 38 C 32 38, 28 35, 28 30 Z"/>
+        <circle cx="36" cy="25" r="1.4" fill="#1a2942"/>
+        <path d="M41 38 L 45 42 L 52 44 L 52 50 L 45 49 L 41 46 Z"/>
+        <path d="M52 42 C 60 36, 68 36, 72 42 C 74 48, 72 56, 66 60 L 60 56 C 58 52, 56 48, 54 46 Z"/>
+        <path d="M58 42 L 64 46 M 60 44 L 66 50 M 62 48 L 68 54" stroke="#1a2942" strokeWidth="0.8" fill="none" opacity="0.7"/>
+        <path d="M45 49 L 52 52 C 58 56, 64 58, 68 62 L 70 70 C 70 74, 66 78, 60 78 L 50 78 C 46 78, 43 75, 43 70 L 43 60 C 43 55, 44 52, 45 49 Z"/>
+        <path d="M41 46 L 36 50 L 33 56 L 36 56 L 38 53 L 41 52 Z"/>
+        <path d="M58 78 L 60 86 L 64 88 L 70 86 L 66 80 Z"/>
+        <path d="M47 78 L 46 86 L 50 88 L 55 86 L 53 80 Z"/>
+        <path d="M68 64 C 76 62, 82 66, 84 72 C 82 70, 78 70, 75 72 L 78 76 L 73 75 L 75 79 L 70 76 C 70 72, 68 68, 68 64 Z"/>
+      </g>
+    </symbol>
+    <symbol id="griffin-mark" viewBox="0 0 64 64">
+      <rect width="64" height="64" rx="10" fill="#1a2942"/>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="none" stroke="#c9a44c" stroke-width="1.2"/>
+      <g transform="translate(32 34) scale(0.46) translate(-50 -50)" fill="#c9a44c">
+        <path d="M30 20 L32 14 L34 19 L37 13 L40 19 L43 14 L45 20 Z"/>
+        <path d="M28 22 C 28 19, 32 17, 38 17 C 46 17, 51 21, 51 25 L 56 23 L 59 26 L 56 28 L 51 28 L 51 31 C 51 35, 47 38, 41 38 L 36 38 C 32 38, 28 35, 28 30 Z"/>
+        <circle cx="36" cy="25" r="1.6" fill="#1a2942"/>
+        <path d="M52 42 C 60 36, 68 36, 72 42 C 74 48, 72 56, 66 60 L 60 56 C 58 52, 56 48, 54 46 Z"/>
+        <path d="M45 49 L 52 52 C 58 56, 64 58, 68 62 L 70 70 C 70 74, 66 78, 60 78 L 50 78 C 46 78, 43 75, 43 70 L 43 60 C 43 55, 44 52, 45 49 Z"/>
+        <path d="M41 46 L 36 50 L 33 56 L 36 56 L 38 53 L 41 52 Z"/>
+        <path d="M68 64 C 76 62, 82 66, 84 72 C 82 70, 78 70, 75 72 L 78 76 L 73 75 L 75 79 L 70 76 C 70 72, 68 68, 68 64 Z"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+
+const STRATEGY_LESSONS = [
+  {
+    id: 'delaware',
+    title: 'Washington Crosses the Delaware',
+    subtitle: 'Christmas Night, 1776',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Washington_Crossing_the_Delaware_by_Emanuel_Leutze,_MMA-NYC,_1851.jpg?width=1280',
+    imageCredit: 'Painting: Emanuel Leutze, 1851 — public domain, via Wikimedia Commons',
+    story: [
+      "It was Christmas night, 1776. The American Revolution was almost over — and the Americans were losing. Washington's army was tired, half-starved, and shrinking. Their enlistments ended in five days. After that, most soldiers would just go home, and the Revolution would die.",
+      "Washington had one move left. Across the icy Delaware River, in a town called Trenton, sat 1,500 Hessian soldiers — German troops fighting for the British. The Hessians thought no sane army would attack in a winter storm, on Christmas, across a frozen river. So they had spent the night drinking and sleeping.",
+      "Washington decided: that's exactly when we go. His men crossed the river in the dark through ice floes and a howling sleet storm. They marched nine miles in snow, surprised the Hessians at dawn, and won the battle in about 45 minutes. Almost no Americans died. The whole Revolution caught fire again.",
+    ],
+    principle: {
+      title: 'Surprise + Timing = Force Multipliers',
+      body: "A small force can beat a big force if it shows up where and when nobody expects. Washington didn't have more soldiers, better weapons, or rested troops. He had one thing: he was willing to go when nobody thought going was possible. That made his small army hit like a big one.",
+      quote: '"All warfare is based on deception." — Sun Tzu',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When you're behind in a game, a test, or a fight with your sister, don't fight the way everyone expects. Study the one chapter the teacher hinted at. Practice the trick shot nobody at your school does. Show up to drills on the Saturday everyone skips. Small moves nobody sees coming beat big effort everyone predicts.",
+    },
+    quiz: [
+      { q: 'Why did Washington choose Christmas night for the attack?', choices: ['It was the warmest night that week','The Hessians thought no one would attack in a storm on Christmas','The British army was on vacation','His soldiers wanted to celebrate after'], correct: 1, explain: 'Surprise. The Hessians were elite soldiers but they were drinking and sleeping because they could not imagine being attacked that night.' },
+      { q: 'How long did Washington have before his army would dissolve?', choices: ['5 days','5 months','A year','No time limit'], correct: 0, explain: "Most enlistments expired Dec. 31, 1776. Washington had to win something — anything — before his soldiers were legally free to go home." },
+      { q: 'A "force multiplier" makes a small force fight like a bigger one. Which one did Washington use?', choices: ['Brute force','Surprise','Patience','Defense in depth'], correct: 1, explain: 'Surprise is one of the strongest force multipliers ever. Same number of soldiers, but they land like ten times as many because nobody is ready.' },
+      { q: 'Roughly how long did the actual Battle of Trenton last once fighting started?', choices: ['Three weeks','Three days','About 45 minutes','A full day'], correct: 2, explain: 'About 45 minutes. The hard part was the river crossing and the freezing march, not the fight itself. Most battles are won before the first shot.' },
+      { q: "What was Washington's biggest advantage going into Trenton?", choices: ['A bigger army','Better weapons','Doing the one thing nobody expected','Help from France'], correct: 2, explain: 'He had fewer men, worse weapons, and no French help yet. He had ONE thing: he attacked when nobody believed an attack was possible.' },
+    ],
+  },
+  {
+    id: 'custer',
+    title: "Custer's Last Stand",
+    subtitle: 'Little Bighorn, June 1876',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Charles_Marion_Russell_-_The_Custer_Fight_(1903).jpg?width=1280',
+    imageCredit: 'Painting: Charles Marion Russell, 1903 — public domain, via Wikimedia Commons',
+    story: [
+      "George Armstrong Custer was a famous American cavalry officer. He had brave hair, a brave mustache, and he believed his luck never ran out. In June 1876 he led the 7th Cavalry toward a Native American village along the Little Bighorn River in Montana.",
+      "Custer made three mistakes. First, he refused the Gatling guns offered to him — early machine guns that could have changed the battle. He said they would slow him down. Second, he did not scout properly. He thought there were maybe 800 warriors in the village. There were closer to 2,000. Third, he split his men into three pieces instead of keeping them together.",
+      "He found the village. The village found him back. Lakota and Cheyenne warriors — led by Crazy Horse and inspired by Sitting Bull — surrounded Custer's group on a hill. Every soldier in Custer's column died that afternoon. The battle is remembered not because of who won, but because of how badly a confident commander can lose when he refuses help and underestimates the other side.",
+    ],
+    principle: {
+      title: 'Overconfidence Kills',
+      body: "Custer turned down the Gatling guns. He thought he didn't need them. He thought he was smarter than the warriors he was hunting. He thought past wins meant future wins. Confidence is good. Overconfidence — refusing tools and underestimating opponents — is how good people lose everything.",
+      quote: '"Know yourself, know your enemy, and you can fight a hundred battles without disaster." — Sun Tzu',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Take the help. Use the calculator on the math homework if it's allowed. Watch film of the team you're playing Friday. Ask your dad about the trick that worked for him in 7th grade. Never walk into anything thinking you're the smartest one in the room — that's the move that ends careers, ends fights, and ends battles.",
+    },
+    quiz: [
+      { q: 'What weapon did Custer refuse to bring?', choices: ['Cannons','Gatling guns','Repeating rifles','Cavalry sabers'], correct: 1, explain: "He turned down Gatling guns (early machine guns) because he thought they'd slow him down. They might have saved his life." },
+      { q: 'About how badly did Custer underestimate the village size?', choices: ['He was about right','He guessed half','He guessed about 800; there were ~2,000 warriors','He thought it was empty'], correct: 2, explain: 'He guessed roughly 800 warriors. There were closer to 2,000. Bad scouting = bad guesses = dead soldiers.' },
+      { q: 'What did Custer do with his cavalry when he found the village?', choices: ['Kept them together as one strong force','Split them into three smaller pieces','Waited for reinforcements','Retreated and reported back'], correct: 1, explain: 'He split his force into three. Splitting a smaller force in front of a larger one is one of the oldest mistakes in war.' },
+      { q: 'Which Native American leaders led the warriors at Little Bighorn?', choices: ['Geronimo and Cochise',"Crazy Horse, with Sitting Bull inspiring the village",'Tecumseh and Pontiac','Sequoyah and Red Cloud'], correct: 1, explain: "Crazy Horse led the fighters; Sitting Bull's vision inspired the whole village. Know who you're up against." },
+      { q: 'What is the main lesson of the Little Bighorn?', choices: ['Cavalry is useless','Past wins guarantee future wins','Overconfidence + refusing help + bad scouting = disaster','Always attack first'], correct: 2, explain: "Custer was brave. Bravery wasn't the problem. He was overconfident, refused better weapons, and didn't know who he was fighting. That mix kills." },
+    ],
+  },
+  {
+    id: 'suntzu',
+    title: 'Sun Tzu and the Art of War',
+    subtitle: 'China, around 500 BC',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/吴司马孙武.jpg?width=900',
+    imageCredit: 'Traditional portrait of Sun Tzu — public domain, via Wikimedia Commons',
+    story: [
+      "About 2,500 years ago in ancient China, a general named Sun Tzu wrote a short book called 'The Art of War'. It's thirteen short chapters. Generals, athletes, business owners, and even chess players still read it. Why? Because most of it isn't really about war at all. It's about thinking clearly when other people are panicking.",
+      "Sun Tzu's biggest idea is this: 'The greatest victory is the battle not fought.' If you can win without fighting — by being so well-prepared the other side gives up, or by getting what you wanted through trades and talking — that's the best win. Real warriors don't love fighting. They love winning, which is different.",
+      "He also taught that you must know yourself AND your opponent. Knowing only yourself, you'll win half. Knowing only your opponent, you'll win half. Know both, and you can fight a hundred battles without disaster. Know neither, and every fight is a coin flip.",
+    ],
+    principle: {
+      title: 'Know Yourself, Know Your Enemy',
+      body: "Before any contest — a game, a test, a tournament, an argument — write down two columns. Column one: what am I actually good at and bad at? Column two: what is the other side good at and bad at? Most people skip this. The ones who don't skip it almost always win.",
+      quote: '"Supreme excellence is to subdue the enemy without fighting." — Sun Tzu',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Before your next karate sparring match or chess game, name three things you do well and three things your opponent does well. Then plan around BOTH lists. If they have a long reach, control distance. If they get tired, make it long. The fight is mostly won before you bow in.",
+    },
+    quiz: [
+      { q: "What was Sun Tzu's book called?", choices: ['The Book of War','The Art of War','The Way of the Warrior','The Five Rings'], correct: 1, explain: "'The Art of War' — thirteen chapters, still read today by athletes, generals, and business owners." },
+      { q: 'According to Sun Tzu, the greatest victory is...', choices: ['The biggest battle','The longest siege','The battle that was not fought','The most expensive war'], correct: 2, explain: "Winning without fighting — by preparation, deception, or making the other side give up — is the best win." },
+      { q: 'If you know yourself but not your opponent, Sun Tzu says you will win...', choices: ['Every time','Half the time','Never','Only on Tuesdays'], correct: 1, explain: 'Half the time. You need both sides of the picture. Knowing only yourself is like running a play without watching film of the other team.' },
+      { q: 'What did Sun Tzu say about deception?', choices: ['"All warfare is based on deception."','"Honesty wins every war."','"Never trick your enemy."','"Trickery is dishonor."'], correct: 0, explain: '"All warfare is based on deception." Look weak when you are strong. Look near when you are far.' },
+      { q: 'Sun Tzu wrote about 2,500 years ago. Why do people still read him?', choices: ['Because the book has cool pictures',"Because clear thinking about conflict and competition doesn't change",'Because it predicts the future',"Because it's short"], correct: 1, explain: "Technology changes. Human nature — fear, ego, surprise, deception — doesn't. That's why 2,500-year-old advice still works." },
+    ],
+  },
+  {
+    id: 'cannae',
+    title: 'Hannibal at Cannae',
+    subtitle: 'Southern Italy, 216 BC',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/The_Death_of_Paulus_Aemilius_at_the_Battle_of_Cannae_(Yale_University_Art_Gallery_scan).jpg?width=1280',
+    imageCredit: 'Painting: John Trumbull, c. 1773 — public domain, via Wikimedia Commons',
+    story: [
+      "Hannibal Barca was a Carthaginian general. Carthage was a city in North Africa at war with Rome. To attack Rome, Hannibal famously marched an army — including 37 war elephants — across the snowy Alps mountains into Italy. Most generals would have called that impossible. Hannibal didn't.",
+      "In 216 BC he met a Roman army at a place called Cannae. The Romans had about 86,000 men. Hannibal had about 50,000. The Romans figured they would just smash forward with their bigger force and win the way they usually won.",
+      "Hannibal put his weakest troops in the center, in a curved line that bulged toward the Romans. He put his best troops on the wings — the sides. When the Romans pushed forward, the weak center slowly pulled back. The Roman army poured into the middle like water into a bowl. Then Hannibal's wings swung around behind them. The Romans were surrounded on all four sides. By sundown, the Romans had lost about 50,000 soldiers. Cannae is still studied as the perfect 'double envelopment.'",
+    ],
+    principle: {
+      title: "Use the Enemy's Strength Against Him",
+      body: "Hannibal didn't try to be stronger than Rome. He let Rome's biggest strength — pushing forward hard with a huge force — become the trap. The harder Rome pushed, the deeper into the encirclement they went. The judo move was 2,200 years old before judo existed.",
+      quote: "\"Many things are lost for want of asking.\" — the Romans never asked WHY the line was curved.",
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When a bigger kid bullies forward, step aside and let momentum carry him. When a teacher gives a complicated essay prompt, don't just write more — write smarter. When a video game boss charges, sidestep and hit the flank. Strong people who only know one move are easiest to beat once you see the move.",
+    },
+    quiz: [
+      { q: 'How did Hannibal get his army to Italy?', choices: ['By ship','Through Spain only','Marched across the Alps with elephants','Built a tunnel'], correct: 2, explain: 'Across the Alps in winter, with 37 war elephants. Roman scouts had never imagined that route.' },
+      { q: 'At Cannae, who had more soldiers?', choices: ['Hannibal','The Romans','They were equal','Neither — just the generals'], correct: 1, explain: "The Romans had ~86,000 to Hannibal's ~50,000. Hannibal won by shape, not by size." },
+      { q: "What is Hannibal's shape called?", choices: ['Square formation','Spearhead','Double envelopment','Defensive shell'], correct: 2, explain: 'Double envelopment — wrapping around the enemy from both sides. Still taught at West Point.' },
+      { q: 'Hannibal put his WEAKEST troops where?', choices: ['On the wings','In the front center, in a curved line','In reserve at the back','Guarding the camp'], correct: 1, explain: 'Weakest in the bulged center on purpose. They slowly fell back, pulling the Romans deeper into the trap.' },
+      { q: "What's the modern-life takeaway?", choices: ['Always bring elephants','A bigger force that only knows one move is beatable if you reshape the fight','Never attack uphill','Always attack the strongest part of the enemy'], correct: 1, explain: "Strength + one move = predictable. Predictable = beatable." },
+    ],
+  },
+  {
+    id: 'dday',
+    title: 'D-Day: Combined Arms',
+    subtitle: 'Normandy, France — June 6, 1944',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Into_the_Jaws_of_Death_23-0455M_edit.jpg?width=1280',
+    imageCredit: 'Photograph: Robert F. Sargent, US Coast Guard, June 6, 1944 — public domain (US federal work), via Wikimedia Commons',
+    story: [
+      "By 1944, Nazi Germany had taken over most of Europe. The free countries — America, Britain, Canada, and many others — had to invade France to push the Nazis back. The Germans had built giant concrete bunkers, machine-gun nests, and beach obstacles all along the French coast. They expected an invasion. They didn't know when or where.",
+      "General Dwight Eisenhower, the Allied commander, picked a 50-mile stretch of beach in Normandy, France. On June 6, 1944, before sunrise, paratroopers dropped behind German lines to cut off reinforcements. Then thousands of bombers hit the bunkers. Then warships blasted the beaches from the sea. THEN — and only then — 156,000 soldiers landed on the beaches.",
+      "It was the largest sea invasion in history. It worked because every piece — air, sea, paratroopers, infantry, fake radio messages saying the real attack was somewhere else — moved together at the right time. Eisenhower called this 'combined arms.' One arm alone fails. All of them together, in sync, opened a hole in Hitler's wall.",
+    ],
+    principle: {
+      title: 'Combined Arms: Many Tools, One Plan',
+      body: "Air alone can't take ground. Tanks alone get ambushed. Infantry alone gets shredded by machine guns. But planes + tanks + infantry + ships, all hitting at the same time, in the same place, with one plan — that's almost impossible to stop.",
+      quote: '"The greatest weapon is the unity of effort." — paraphrasing Eisenhower',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Don't study for a test only one way. Read the book, watch the video, do the practice quiz, AND explain it to your little sister. Don't train for sports only one way. Lift weights, run sprints, watch film, and stretch. The kid who only does one thing gets beat by the kid who stacks five things on top of each other.",
+    },
+    quiz: [
+      { q: 'Who was the Allied commander for D-Day?', choices: ['Patton','MacArthur','Eisenhower','Montgomery'], correct: 2, explain: 'General Dwight D. Eisenhower — later President Eisenhower.' },
+      { q: 'What landed FIRST, before the troops hit the beach?', choices: ['Tanks on the beach','Paratroopers behind enemy lines','Submarines','Marines'], correct: 1, explain: 'Paratroopers dropped behind German lines hours before dawn to cut off reinforcements and seize bridges.' },
+      { q: 'What does "combined arms" mean?', choices: ['Soldiers holding hands','Using many types of force together with one plan','A weapon that combines two guns','Two armies merging into one'], correct: 1, explain: 'Air + sea + airborne + infantry + deception, all in sync.' },
+      { q: 'About how many troops landed on the beaches on D-Day itself?', choices: ['15,000','50,000','156,000','1.5 million'], correct: 2, explain: 'About 156,000 troops on June 6, 1944. By the end of June, over 850,000 had crossed.' },
+      { q: 'What was the role of fake radio messages and decoys before D-Day?', choices: ['Decoration','Practice for the soldiers','Deception — making Germany guard the wrong beach','They were accidents'], correct: 2, explain: 'Operation Bodyguard fooled Germany into thinking the invasion would come at Pas-de-Calais.' },
+    ],
+  },
+  {
+    id: 'stalingrad',
+    title: 'Stalingrad: Holding the Line',
+    subtitle: 'Russia, August 1942 – February 1943',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Расчет_советской_76,2-мм_пушки_ЗиС-3_ведет_огонь_в_Сталинграде._Ноябрь_1942_г.jpg?width=1280',
+    imageCredit: 'Photograph: Soviet ZiS-3 gun crew firing in Stalingrad, November 1942 — public domain, via Wikimedia Commons',
+    story: [
+      "In 1942, Hitler sent his strongest army to capture a Soviet city called Stalingrad. Hitler wanted it for two reasons. One, it sat on the Volga River — the main supply route. Two, it was named after Stalin, the Soviet leader, and Hitler hated Stalin. The fight became personal for both men, which made it worse for everyone fighting.",
+      "The Germans bombed Stalingrad until it was rubble. Then they sent in their soldiers. But here's the strange thing: rubble fights back. Soviet soldiers hid in the broken buildings, the sewers, the wrecked factories. They fought house to house, room to room. The Germans called it 'Rattenkrieg' — 'rat war.' Snipers shot officers from across the street. Every block cost a hundred men.",
+      "While the Germans were stuck grinding through the city, the Soviets quietly built up huge armies on the flanks — outside Stalingrad. In November 1942 those armies swung in from north and south and surrounded the entire German Sixth Army INSIDE the city. The hunters became the hunted. By February 1943 the German army inside Stalingrad surrendered. It was the turning point of World War II in Europe.",
+    ],
+    principle: {
+      title: 'Embrace the Suck. Hold the Center.',
+      body: "Sometimes you can't win fast. You have to absorb hits, defend hard, make every step the other side takes cost them, and trust that while you hold the line, friends are building something bigger behind the scenes. Marines call this 'embrace the suck.' Hold the awful part. Help is coming.",
+      quote: '"Adapt. Improvise. Overcome." — US Marine Corps',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Some weeks just stink. The math is hard, the bullies are loud, the practice is brutal. You don't have to win fast. You have to hold the line. Show up. Don't quit. Take the hit. While you're holding, time is on your side — your skills grow, your training compounds, the other side gets tired. Most fights are won by the person who refused to fall down.",
+    },
+    quiz: [
+      { q: 'Why did Hitler want Stalingrad so badly?', choices: ['It had gold','It controlled the Volga River and was named after Stalin','It had the best food','It was the German capital'], correct: 1, explain: 'Strategic AND personal. Both reasons made him push too hard for too long.' },
+      { q: 'What did the Germans call the urban fighting in Stalingrad?', choices: ['Blitzkrieg','Rattenkrieg (rat war)','Sitzkrieg','Krieg im Schnee'], correct: 1, explain: "'Rat war' — house to house, sewer to sewer. The rubble itself fought back." },
+      { q: 'How did the Soviets actually win at Stalingrad?', choices: ['They won the city block by block','They surrounded the Germans by attacking the German flanks outside the city','They surrendered then took it back later','The weather alone won it'], correct: 1, explain: 'While Germany ground forward in the city, the Soviets quietly built two huge armies on the flanks and snapped the trap shut behind them.' },
+      { q: 'How long did the Battle of Stalingrad last?', choices: ['About one week','About a month','About six months','About two years'], correct: 2, explain: 'August 1942 to February 1943 — about six months of urban grinding.' },
+      { q: "What's the life lesson here?", choices: ['Always retreat','Pick fights you can win in one day','Hold the line. Help is coming. Time can be on your side.','Never defend, only attack'], correct: 2, explain: "Some fights are about endurance, not speed. Embrace the suck and hold." },
+    ],
+  },
+];
+
+const QUESTS = {
+  strategy: { id:'strategy', title:'War & Strategy', formalTitle:"Griffin's Quest: War & Strategy", motto:'Win before the first shot.', lessons: STRATEGY_LESSONS, active: true },
+};
+
+const ROWS = [
+  { id:'strategy-row', title:'Strategy', motto:'How smart people win.',
+    subjects:[
+      { id:'strategy', name:'War & Strategy', sub:'6 battles · 30 questions', active:true },
+      { id:'game-theory', name:'Game Theory', sub:'Coming soon' },
+    ],
+  },
+  { id:'mind', title:'Mind', motto:'Think clearly when it matters.',
+    subjects:[
+      { id:'logic', name:'Logic', sub:'Coming soon' },
+      { id:'rationality', name:'Rationality', sub:'Coming soon' },
+      { id:'philosophy', name:'Philosophy', sub:'Greek · Roman · Civil War' },
+    ],
+  },
+  { id:'skills', title:'Skills', motto:'Build the tools your brain needs.',
+    subjects:[
+      { id:'languages', name:'Languages', sub:'Spanish · Italian' },
+      { id:'grammar', name:'Grammar', sub:'Coming soon' },
+      { id:'cursive', name:'Cursive', sub:'Coming soon' },
+      { id:'roots', name:'Root Words', sub:'Coming soon' },
+      { id:'parts', name:'Parts of Speech', sub:'Coming soon' },
+      { id:'tenses', name:'Tenses', sub:'Coming soon' },
+      { id:'sentences', name:'Sentences', sub:'Coming soon' },
+      { id:'reading', name:'Reading', sub:'Coming soon' },
+    ],
+  },
+  { id:'wealth', title:'Wealth', motto:'Make it, keep it, grow it.',
+    subjects:[
+      { id:'operations', name:'Operations', sub:'Coming soon' },
+      { id:'founding', name:'Founding', sub:'Coming soon' },
+      { id:'investing', name:'Investing', sub:'Warren Buffett style' },
+      { id:'capital', name:'Capital', sub:'Coming soon' },
+      { id:'coin', name:'Personal Coin', sub:'Coming soon' },
+      { id:'metals', name:'Metals', sub:'Coming soon' },
+    ],
+  },
+  { id:'numbers', title:'Numbers', motto:'The language of the universe.',
+    subjects:[
+      { id:'arithmetic', name:'Arithmetic', sub:'Coming soon' },
+      { id:'geometry', name:'Geometry', sub:'Coming soon' },
+      { id:'statistics', name:'Statistics', sub:'Coming soon' },
+    ],
+  },
+  { id:'letters', title:'Letters', motto:'Read the world. Tell its story.',
+    subjects:[
+      { id:'verse', name:'Verse', sub:'Coming soon' },
+      { id:'realism', name:'Realism', sub:'Coming soon' },
+      { id:'tales', name:'Tales', sub:'Coming soon' },
+    ],
+  },
+];
+
+const MASTERY_THRESHOLD = 0.8;
+const REPLAY_DAYS = 7;
+const XP_CORRECT = 10;
+const XP_RETRY_CORRECT = 5;
+const XP_LESSON_BONUS = 50;
+const XP_MASTERY_BONUS = 50;
+const XP_DRILL_CORRECT = 5;
+
+const STATE_KEY = 'griffin-hall:state:v1';
+
+function defaultState() {
+  return {
+    name: 'E',
+    xp: 0,
+    streak: { last: null, count: 0 },
+    quests: { strategy: { lessons: {} } },
+    reviewQueue: [],
+  };
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) {
+      const old = localStorage.getItem('learning-hub:state:v2');
+      if (old) {
+        const o = JSON.parse(old);
+        return {
+          name: o.name || 'E',
+          xp: o.xp || 0,
+          streak: o.streak || { last:null, count:0 },
+          quests: { strategy: o.subjects?.strategy || { lessons: {} } },
+          reviewQueue: (o.reviewQueue || []).map(r => ({ ...r, quest: r.subject || 'strategy' })),
+        };
+      }
+      return defaultState();
+    }
+    const parsed = JSON.parse(raw);
+    return { ...defaultState(), ...parsed, quests: { ...defaultState().quests, ...(parsed.quests||{}) } };
+  } catch (e) { return defaultState(); }
+}
+function saveState(s) {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function yesterdayISO() { return new Date(Date.now() - 86400000).toISOString().slice(0,10); }
+function daysBetween(isoA, isoB) {
+  return Math.floor((new Date(isoB).getTime() - new Date(isoA).getTime()) / 86400000);
+}
+function tickStreak(s) {
+  const today = todayISO();
+  if (s.streak.last === today) return s;
+  const count = (s.streak.last === yesterdayISO()) ? (s.streak.count + 1) : 1;
+  return { ...s, streak: { last: today, count } };
+}
+function activeStreak(s) {
+  const today = todayISO(); const yest = yesterdayISO();
+  if (s.streak.last === today || s.streak.last === yest) return s.streak.count;
+  return 0;
+}
+function getLessonState(state, questId, lessonId) {
+  return state.quests?.[questId]?.lessons?.[lessonId] || { attempts:{}, firstTryCorrect:0, totalQ:0, completedAt:null, bestMastery:0, replays:0 };
+}
+function isLessonMastered(state, questId, lessonId) {
+  return getLessonState(state, questId, lessonId).bestMastery >= MASTERY_THRESHOLD;
+}
+function isLessonUnlocked(state, questId, lessonId) {
+  const quest = QUESTS[questId];
+  if (!quest) return false;
+  const idx = quest.lessons.findIndex(l => l.id === lessonId);
+  if (idx <= 0) return true;
+  return isLessonMastered(state, questId, quest.lessons[idx - 1].id);
+}
+function canReplayForBonus(state, questId, lessonId) {
+  const ls = getLessonState(state, questId, lessonId);
+  if (!ls.completedAt) return false;
+  return daysBetween(ls.completedAt.slice(0,10), todayISO()) >= REPLAY_DAYS;
+}
+function findQuestionById(questId, lessonId, qIdx) {
+  const quest = QUESTS[questId];
+  if (!quest) return null;
+  const lesson = quest.lessons.find(l => l.id === lessonId);
+  if (!lesson) return null;
+  return { lesson, q: lesson.quiz[qIdx], qIdx };
+}
+
+const Icon = {
+  Flame: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M12 2c1.5 4 5 5.5 5 10a5 5 0 1 1-10 0c0-2 1-3 1-5C8 4 10 3 12 2zM10 14a2 2 0 1 0 4 0c0-2-2-2-2-4-1 1-2 2-2 4z"/></svg>),
+  Coin: (p) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" {...p}><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="6"/><path d="M9 12h6M12 9v6"/></svg>),
+  Check: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>),
+  Back: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M15.4 7.4L14 6l-6 6 6 6 1.4-1.4L10.8 12l4.6-4.6z"/></svg>),
+  Sword: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M14.5 2L20 7.5l-9 9L8.5 14l-1 1L9 16.5 7.5 18 6 16.5 4.5 18 3 16.5l3-3-1.5-1.5L7 9.5 4.5 7 9 2.5 14.5 2z"/></svg>),
+  Lock: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M12 1a5 5 0 0 0-5 5v3H5v13h14V9h-2V6a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v3H9V6a3 3 0 0 1 3-3zm0 11a2 2 0 0 1 1 3.7V20h-2v-2.3A2 2 0 0 1 12 14z"/></svg>),
+  Refresh: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M12 4V1L8 5l4 4V6a6 6 0 0 1 6 6 6 6 0 0 1-6 6 6 6 0 0 1-6-6H4a8 8 0 0 0 8 8 8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/></svg>),
+  Edit: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>),
+  Drill: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M12 2L4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4zm-3 9h6v6H9v-6z"/></svg>),
+  Sparkle: (p) => (<svg viewBox="0 0 24 24" fill="currentColor" {...p}><path d="M12 2l1.5 5L19 8.5 14 11l-2 5-2-5L5 8.5 10.5 7 12 2zm7 11l.8 2.5L22 16l-2.2 1L19 19l-1-2-2-1 2-.5L19 13z"/></svg>),
+};
+
+const Sigil = ({ cls='sigil-md', use='griffin-sigil' }) => (
+  <svg className={cls} aria-label="Griffin sigil" role="img"><use href={"#" + use}/></svg>
+);
+
+let xpToastTimer = null;
+function showXpToast(amount) {
+  const el = document.createElement('div');
+  el.className = 'xp-pop';
+  el.textContent = '+' + amount + ' XP';
+  document.body.appendChild(el);
+  if (xpToastTimer) clearTimeout(xpToastTimer);
+  xpToastTimer = setTimeout(() => el.remove(), 1400);
+}
+
+function TopBar({ state, route, goHub }) {
+  const streak = activeStreak(state);
+  return (
+    <div className="sticky top-0 z-30 bg-navy text-parchment border-b" style={{ borderColor:'var(--gold)' }}>
+      <div className="wrap flex items-center justify-between py-3 gap-3">
+        <button onClick={goHub} className="flex items-center gap-3 min-w-0 group">
+          {route.name !== 'hub' && <Icon.Back className="w-5 h-5" style={{ color:'var(--gold)' }}/>}
+          <Sigil cls="sigil-sm" use="griffin-mark"/>
+          <div className="text-left leading-tight">
+            <div className="heraldic text-base sm:text-lg font-bold" style={{ color:'var(--gold)' }}>GRIFFIN HALL</div>
+            <div className="text-[10px] uppercase tracking-[0.25em] opacity-70">A Learning Hall</div>
+          </div>
+        </button>
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title="Day streak">
+            <Icon.Flame className="w-4 h-4"/>
+            <span className="font-bold heraldic">{streak}</span>
+          </div>
+          <div className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title="Total XP">
+            <Icon.Coin className="w-4 h-4"/>
+            <span className="font-bold heraldic">{state.xp}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NameLine({ name, onChange }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(name);
+  useEffect(() => setDraft(name), [name]);
+  return editing ? (
+    <form className="flex items-baseline gap-2" onSubmit={(e) => { e.preventDefault(); onChange((draft.trim() || 'E').slice(0,18)); setEditing(false); }}>
+      <input autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={18}
+        className="font-display text-5xl sm:text-6xl bg-transparent border-b-2 outline-none ink"
+        style={{ borderColor:'var(--gold)', width:'min(100%, 14ch)' }}/>
+      <button type="submit" className="text-xs uppercase tracking-widest heraldic text-crimson font-bold">Save</button>
+    </form>
+  ) : (
+    <h1 className="font-display text-5xl sm:text-6xl leading-[1.05] ink flex items-center gap-2 flex-wrap">
+      Hey <span className="text-crimson">{name}.</span>
+      <button onClick={() => setEditing(true)} className="ink-soft hover:text-crimson transition opacity-50 hover:opacity-100" aria-label="Change name">
+        <Icon.Edit className="w-4 h-4"/>
+      </button>
+    </h1>
+  );
+}
+
+function StrategyCallout({ state }) {
+  const lessons = STRATEGY_LESSONS;
+  const mastered = lessons.filter(l => isLessonMastered(state, 'strategy', l.id)).length;
+  const pct = (mastered / lessons.length) * 100;
+  return (
+    <button onClick={() => window.location.hash = '#quest/strategy'} className="block w-full text-left mt-8 card card-hover p-6 transition fadeup">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="heraldic text-xs font-bold text-gold-deep flex items-center gap-2">
+            <span className="inline-block w-6 h-px bg-gold"/>
+            GRIFFIN'S QUEST · ACTIVE
+            <span className="inline-block w-6 h-px bg-gold"/>
+          </div>
+          <div className="font-display text-3xl sm:text-4xl ink mt-2 leading-tight">War &amp; Strategy</div>
+          <div className="ink-soft mt-1 italic">"Win before the first shot."</div>
+          <div className="ink-soft text-sm mt-3 max-w-prose">Six battles. Each one unlocks the next when you master it (80% on the first try). Misses go to Drill.</div>
+        </div>
+        <div className="text-right">
+          <div className="heraldic text-xs uppercase text-gold-deep tracking-widest">Mastered</div>
+          <div className="font-display text-5xl ink">{mastered}<span className="ink-muted text-2xl">/{lessons.length}</span></div>
+        </div>
+      </div>
+      <div className="mt-5 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+      </div>
+    </button>
+  );
+}
+
+function DrillCallout({ state }) {
+  const count = state.reviewQueue?.length || 0;
+  const empty = count === 0;
+  return (
+    <button onClick={!empty ? () => window.location.hash = '#drill' : undefined} disabled={empty}
+      className={"block w-full text-left mt-4 rounded-2xl p-5 border transition " +
+        (empty ? "card opacity-60 cursor-default" : "bg-crimson text-parchment border-crimson hover:brightness-110 card-hover")}
+      style={empty ? {} : { boxShadow: '0 14px 36px -16px rgba(155,34,38,0.55)' }}>
+      <div className="flex items-center gap-4">
+        <div className={"w-12 h-12 rounded-xl flex items-center justify-center " + (empty ? "bg-parchment-deep text-crimson" : "bg-white/15")}>
+          <Icon.Drill className="w-6 h-6"/>
+        </div>
+        <div className="flex-1">
+          <div className={"heraldic text-[10px] font-bold uppercase tracking-[0.25em] " + (empty ? "text-crimson" : "opacity-90")}>The Drilling Yard</div>
+          <div className="font-display text-2xl mt-0.5">
+            {empty ? "Empty — no misses to drill" : `${count} question${count===1?'':'s'} await your second pass`}
+          </div>
+          <div className={"text-sm mt-0.5 " + (empty ? "ink-soft" : "opacity-90")}>
+            {empty ? "Every question you miss lands here automatically." : "Beat them on the first try and they leave the yard. +5 XP each."}
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function SubjectTile({ s, rowIdx, idx }) {
+  return (
+    <button onClick={s.active ? () => window.location.hash = '#quest/' + s.id : undefined} disabled={!s.active}
+      className={"tile relative text-left card p-4 sm:p-5 fadeup " + (s.active ? "active card-hover" : "locked lock-shimmer")}
+      style={{ animationDelay: ((rowIdx*5 + idx) * 25) + 'ms' }}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="heraldic text-[10px] font-bold uppercase tracking-[0.22em] text-gold-deep">Griffin's Quest</div>
+        {!s.active && <Icon.Lock className="w-4 h-4 ink-muted shrink-0"/>}
+      </div>
+      <h3 className="font-display text-2xl leading-tight ink mt-1">{s.name}</h3>
+      <div className={"text-xs mt-2 " + (s.active ? "text-crimson font-bold uppercase tracking-wider" : "ink-muted uppercase tracking-widest")}>
+        {s.sub}
+      </div>
+      {s.active && (
+        <div className="mt-3 flex items-center text-xs heraldic text-gold-deep uppercase tracking-widest">
+          <span>Enter</span>
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-1"><path d="M12 4l8 8-8 8-1.4-1.4L16.2 13H4v-2h12.2L10.6 5.4z"/></svg>
+        </div>
+      )}
+    </button>
+  );
+}
+
+function RowBlock({ row, idx }) {
+  return (
+    <section className="mt-12 fadeup" style={{ animationDelay:(idx*40)+'ms' }}>
+      <div className="flex items-baseline justify-between gap-3 mb-1 flex-wrap">
+        <div className="flex items-center gap-3">
+          <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">{row.title}</div>
+          <div className="h-px flex-1 min-w-[60px] bg-gold opacity-50" style={{ width:'60px' }}/>
+        </div>
+      </div>
+      <div className="font-display text-2xl ink mb-4 italic">{row.motto}</div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        {row.subjects.map((s, i) => <SubjectTile key={s.id} s={s} rowIdx={idx} idx={i}/>)}
+      </div>
+    </section>
+  );
+}
+
+function Hub({ state, setState }) {
+  const allSubjects = ROWS.flatMap(r => r.subjects);
+  const totalActive = allSubjects.filter(s=>s.active).length;
+  const totalAll = allSubjects.length;
+  function handleNameChange(n) {
+    setState(prev => { const ns = { ...prev, name: n }; saveState(ns); return ns; });
+  }
+  return (
+    <div className="pb-safe">
+      <div className="wrap pt-10 sm:pt-12">
+        <div className="flex items-start gap-6 flex-wrap-reverse sm:flex-wrap">
+          <div className="flex-1 min-w-[260px]">
+            <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">
+              {new Date().toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric' })}
+            </div>
+            <NameLine name={state.name} onChange={handleNameChange}/>
+            <p className="ink-soft mt-4 max-w-prose text-lg">
+              Welcome to the Hall. Pick a Quest. Get the answers right. Misses go to the Drilling Yard so you can pound them flat. Master a quest's lesson (80% on the first try) to unlock the next.
+            </p>
+          </div>
+          <div className="shrink-0">
+            <Sigil cls="sigil-lg"/>
+          </div>
+        </div>
+        <div className="mt-8 gold-line-strong"/>
+        <StrategyCallout state={state}/>
+        <DrillCallout state={state}/>
+      </div>
+      <div className="wrap">
+        {ROWS.map((r,i) => <RowBlock key={r.id} row={r} idx={i}/>)}
+      </div>
+      <div className="wrap text-center mt-14 ink-muted text-xs heraldic tracking-widest uppercase">
+        {totalActive} of {totalAll} quests open · Griffin Hall · vol. I
+      </div>
+    </div>
+  );
+}
+
+function QuestView({ questId, state }) {
+  const quest = QUESTS[questId];
+  if (!quest) {
+    return (
+      <div className="wrap pt-12">
+        <div className="card p-8 text-center">
+          <Sigil cls="sigil-md" use="griffin-mark"/>
+          <h1 className="font-display text-4xl ink mt-4">This Quest is Sealed</h1>
+          <p className="ink-soft mt-3">This Quest hasn't opened yet. War &amp; Strategy is live tonight — try it first.</p>
+          <a href="#" className="inline-block mt-6 bg-navy text-parchment heraldic px-5 py-2.5 rounded-lg tracking-widest">RETURN TO HALL</a>
+        </div>
+      </div>
+    );
+  }
+  const mastered = quest.lessons.filter(l => isLessonMastered(state, questId, l.id)).length;
+  const pct = (mastered/quest.lessons.length) * 100;
+  return (
+    <div className="pb-safe">
+      <div className="wrap pt-8 sm:pt-10">
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">Griffin's Quest</div>
+          <h1 className="font-display text-5xl sm:text-6xl ink mt-2 leading-[1.05]">{quest.title}</h1>
+          <div className="font-display italic ink-soft mt-2 text-xl">"{quest.motto}"</div>
+          <div className="mt-5 gold-line-strong"/>
+          <p className="ink-soft mt-5 text-lg">
+            Six lessons. Each lesson has the story, the principle behind it, how it fits your life, and a quiz.
+            Hit 80% on the first try to unlock the next battle. Miss a question and it goes to the Drilling Yard.
+          </p>
+        </div>
+        <div className="mt-6 max-w-md mx-auto">
+          <div className="h-2 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+            <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+          </div>
+          <div className="text-center text-xs ink-soft mt-2 heraldic uppercase tracking-widest">
+            {mastered} of {quest.lessons.length} mastered
+          </div>
+        </div>
+      </div>
+      <div className="wrap grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-10">
+        {quest.lessons.map((l, idx) => {
+          const unlocked = isLessonUnlocked(state, questId, l.id);
+          const ls = getLessonState(state, questId, l.id);
+          const masteredOK = isLessonMastered(state, questId, l.id);
+          const replayBonus = canReplayForBonus(state, questId, l.id);
+          return (
+            <button key={l.id} disabled={!unlocked}
+              onClick={() => window.location.hash = '#lesson/' + questId + '/' + l.id}
+              className={"tile relative text-left card overflow-hidden fadeup " + (unlocked ? "active card-hover" : "locked lock-shimmer")}
+              style={{ animationDelay:(idx*40)+'ms' }}>
+              <div className="aspect-[16/10] overflow-hidden bg-navy/10 relative">
+                <img src={l.image} alt={l.title} loading="lazy" className="w-full h-full object-cover"/>
+                {masteredOK && (
+                  <div className="absolute top-2 right-2 bg-gold text-navy-deep rounded-full p-1.5 pop border-2 border-navy">
+                    <Icon.Check className="w-4 h-4"/>
+                  </div>
+                )}
+                {!unlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ background:'rgba(15,26,44,0.6)' }}>
+                    <Icon.Lock className="w-10 h-10 text-gold"/>
+                  </div>
+                )}
+                {replayBonus && (
+                  <div className="absolute top-2 left-2 bg-crimson text-parchment text-[10px] heraldic uppercase tracking-widest font-bold px-2 py-1 rounded-full flex items-center gap-1 border border-gold">
+                    <Icon.Sparkle className="w-3 h-3"/> 2x XP
+                  </div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gold"/>
+              </div>
+              <div className="p-4">
+                <div className="flex items-baseline justify-between gap-2">
+                  <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em]">Lesson {idx+1}</div>
+                  <div className="text-[10px] ink-muted heraldic uppercase tracking-widest">{Math.round(ls.bestMastery*100)}% best</div>
+                </div>
+                <h3 className="font-display text-2xl leading-tight mt-1 ink">{l.title}</h3>
+                <div className="text-xs ink-soft mt-1">{l.subtitle}</div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function QuizQuestion({ q, qIdx, onCorrect, onWrong, onPicked }) {
+  const [picked, setPicked] = useState(null);
+  const [locked, setLocked] = useState(false);
+  const [resolved, setResolved] = useState(false);
+  const [tries, setTries] = useState(0);
+  const containerRef = useRef(null);
+  function reset() { setPicked(null); setLocked(false); }
+  function choose(i) {
+    if (locked || resolved) return;
+    setPicked(i); setLocked(true);
+    const wasCorrect = i === q.correct;
+    const newTries = tries + 1;
+    setTries(newTries);
+    if (onPicked) onPicked(i, wasCorrect, newTries);
+    if (wasCorrect) {
+      setResolved(true);
+      if (onCorrect) onCorrect(newTries);
+    } else {
+      if (onWrong) onWrong(newTries);
+      if (containerRef.current) {
+        containerRef.current.classList.remove('shake');
+        // eslint-disable-next-line no-unused-expressions
+        containerRef.current.offsetWidth;
+        containerRef.current.classList.add('shake');
+      }
+    }
+  }
+  return (
+    <div ref={containerRef} className="card p-5 fadeup">
+      <div className="flex items-baseline justify-between mb-1">
+        <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em]">Question {qIdx+1}</div>
+        {tries > 0 && (<div className="text-xs ink-muted">Attempt {tries}{resolved && tries === 1 ? ' · first try' : ''}</div>)}
+      </div>
+      <div className="font-display text-2xl leading-snug mb-4 ink">{q.q}</div>
+      <div className="grid gap-2">
+        {q.choices.map((c, i) => {
+          let cls = "text-left px-4 py-3 rounded-lg border bg-parchment transition flex items-start gap-3 border-ink-soft/30";
+          if (locked || resolved) {
+            if (resolved && i === q.correct) cls += " quiz-correct";
+            else if (i === picked && i !== q.correct) cls += " quiz-wrong";
+            else cls += " quiz-disabled";
+          } else { cls += " hover:border-navy"; }
+          return (
+            <button key={i} disabled={locked || resolved} onClick={() => choose(i)} className={cls}>
+              <span className="heraldic font-bold ink-soft w-6 shrink-0">{String.fromCharCode(65+i)}</span>
+              <span className="ink flex-1">{c}</span>
+              {(locked || resolved) && i === q.correct && <Icon.Check className="w-5 h-5 shrink-0" style={{ color:'#6f8a4a' }}/>}
+            </button>
+          );
+        })}
+      </div>
+      {locked && !resolved && (
+        <div className="mt-3 fadeup">
+          <div className="text-sm ink-soft border-l-2 border-crimson pl-3 italic">
+            Not yet — and that's fine. {q.explain}
+          </div>
+          <button onClick={reset} className="mt-3 inline-flex items-center gap-2 bg-crimson text-parchment heraldic font-bold px-4 py-2 rounded-lg uppercase tracking-widest text-sm hover:brightness-110">
+            <Icon.Refresh className="w-4 h-4"/> Try Again
+          </button>
+        </div>
+      )}
+      {resolved && (
+        <div className="mt-3 text-sm ink-soft border-l-2 pl-3 italic fadeup" style={{ borderColor:'#6f8a4a' }}>
+          {q.explain}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LessonView({ questId, lessonId, state, setState, goQuest }) {
+  const quest = QUESTS[questId];
+  const lesson = quest?.lessons.find(l => l.id === lessonId);
+  if (!quest || !lesson) {
+    return <div className="wrap pt-10"><div className="ink-soft">Lesson not found.</div></div>;
+  }
+  const [qStates, setQStates] = useState(() => lesson.quiz.map(() => ({ tries:0, firstTryCorrect:null, resolved:false })));
+  const completedAll = qStates.every(s => s.resolved);
+  const firstTryCount = qStates.filter(s => s.firstTryCorrect === true).length;
+  const mastery = firstTryCount / lesson.quiz.length;
+
+  function recordCorrect(qIdx, tries) {
+    setQStates(prev => prev.map((s, i) => i === qIdx ? { ...s, tries, resolved:true, firstTryCorrect: s.firstTryCorrect === null ? (tries === 1) : s.firstTryCorrect } : s));
+    const isReplayBonus = canReplayForBonus(state, questId, lessonId);
+    const baseXP = tries === 1 ? XP_CORRECT : XP_RETRY_CORRECT;
+    const award = isReplayBonus ? baseXP * 2 : baseXP;
+    setState(prev => { const ns = { ...prev, xp: prev.xp + award }; saveState(ns); return ns; });
+    showXpToast(award);
+  }
+  function recordWrong(qIdx, tries) {
+    setQStates(prev => prev.map((s, i) => i === qIdx ? { ...s, tries, firstTryCorrect: s.firstTryCorrect === null ? false : s.firstTryCorrect } : s));
+    setState(prev => {
+      const exists = (prev.reviewQueue || []).some(r => r.quest === questId && r.lessonId === lessonId && r.qIdx === qIdx);
+      if (exists) return prev;
+      const ns = { ...prev, reviewQueue: [ ...(prev.reviewQueue||[]), { quest: questId, lessonId, qIdx, addedAt: new Date().toISOString() }] };
+      saveState(ns); return ns;
+    });
+  }
+  function recordPicked(qIdx, choiceIdx, wasCorrect, tries) {
+    setState(prev => {
+      const quests = { ...prev.quests };
+      quests[questId] = quests[questId] || { lessons: {} };
+      quests[questId].lessons = { ...quests[questId].lessons };
+      const cur = quests[questId].lessons[lessonId] || { attempts:{}, firstTryCorrect:0, totalQ:lesson.quiz.length, completedAt:null, bestMastery:0, replays:0 };
+      const att = cur.attempts[qIdx] || { tries:0, firstTryCorrect:null, lastPicked:null };
+      const ftc = att.firstTryCorrect === null ? (wasCorrect && tries === 1) : att.firstTryCorrect;
+      cur.attempts[qIdx] = { tries, firstTryCorrect: ftc, lastPicked: choiceIdx };
+      quests[questId].lessons[lessonId] = cur;
+      const ns = { ...prev, quests };
+      saveState(ns); return ns;
+    });
+  }
+
+  useEffect(() => {
+    if (!completedAll) return;
+    setState(prev => {
+      const quests = { ...prev.quests };
+      quests[questId] = quests[questId] || { lessons: {} };
+      const cur = { ...(quests[questId].lessons[lessonId] || { attempts:{}, firstTryCorrect:0, totalQ:lesson.quiz.length, completedAt:null, bestMastery:0, replays:0 }) };
+      const prevBest = cur.bestMastery || 0;
+      cur.bestMastery = Math.max(prevBest, mastery);
+      cur.firstTryCorrect = firstTryCount;
+      cur.totalQ = lesson.quiz.length;
+      if (!cur.completedAt) cur.completedAt = new Date().toISOString();
+      else if (canReplayForBonus(prev, questId, lessonId)) {
+        cur.replays = (cur.replays || 0) + 1;
+        cur.completedAt = new Date().toISOString();
+      }
+      const nextReview = (prev.reviewQueue || []).filter(r => {
+        if (r.quest !== questId || r.lessonId !== lessonId) return true;
+        const localState = qStates[r.qIdx];
+        if (!localState) return true;
+        return localState.firstTryCorrect !== true;
+      });
+      quests[questId].lessons[lessonId] = cur;
+      let xpBonus = XP_LESSON_BONUS;
+      let masteryBonus = 0;
+      if (mastery >= MASTERY_THRESHOLD && prevBest < MASTERY_THRESHOLD) masteryBonus += XP_MASTERY_BONUS;
+      const isReplayBonus = canReplayForBonus(prev, questId, lessonId);
+      if (isReplayBonus) xpBonus *= 2;
+      const newXP = prev.xp + xpBonus + masteryBonus;
+      const tickedStreak = tickStreak(prev);
+      showXpToast(xpBonus + masteryBonus);
+      const ns = { ...prev, ...tickedStreak, quests, reviewQueue: nextReview, xp: newXP };
+      saveState(ns);
+      return ns;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completedAll]);
+
+  const masteredNow = isLessonMastered(state, questId, lessonId) || mastery >= MASTERY_THRESHOLD;
+  const idx = quest.lessons.findIndex(l => l.id === lessonId);
+  const next = quest.lessons[idx + 1];
+  const replayBonusBadge = canReplayForBonus(state, questId, lessonId);
+
+  return (
+    <article className="pb-safe">
+      <div className="wrap-narrow pt-6">
+        <button onClick={goQuest} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold">
+          <Icon.Back className="w-4 h-4"/> {quest.formalTitle.toUpperCase()}
+        </button>
+        <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.25em] mt-4">{lesson.subtitle}</div>
+        <h1 className="font-display text-4xl sm:text-5xl leading-[1.05] mt-1 ink">{lesson.title}</h1>
+        {replayBonusBadge && (
+          <div className="mt-3 inline-flex items-center gap-1 bg-crimson text-parchment text-xs heraldic uppercase tracking-widest font-bold px-3 py-1 rounded-full border border-gold">
+            <Icon.Sparkle className="w-3 h-3"/> Replay bonus · 2x XP this run
+          </div>
+        )}
+      </div>
+      <div className="wrap-narrow mt-5">
+        <div className="hero-frame rounded-md overflow-hidden">
+          <img src={lesson.image} alt={lesson.title} className="w-full aspect-[16/10] object-cover" loading="eager"/>
+        </div>
+        <div className="text-xs ink-muted mt-2 italic">{lesson.imageCredit}</div>
+      </div>
+      <div className="wrap-narrow mt-10 space-y-5">
+        {lesson.story.map((p, i) => (
+          <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>{p}</p>
+        ))}
+      </div>
+      <div className="wrap-narrow mt-10">
+        <div className="principle-box p-5 sm:p-6">
+          <div className="heraldic text-xs text-gold-deep font-bold uppercase tracking-[0.25em] flex items-center gap-2">
+            <Icon.Sword className="w-4 h-4"/> The Principle
+          </div>
+          <h2 className="font-display text-3xl mt-2 ink">{lesson.principle.title}</h2>
+          <p className="mt-3 ink leading-relaxed">{lesson.principle.body}</p>
+          {lesson.principle.quote && (<div className="mt-4 ink-soft italic text-sm">{lesson.principle.quote}</div>)}
+        </div>
+      </div>
+      <div className="wrap-narrow mt-6">
+        <div className="modern-box p-5 sm:p-6">
+          <div className="heraldic text-xs text-crimson font-bold uppercase tracking-[0.25em]">{lesson.modern.title}</div>
+          <p className="mt-2 ink leading-relaxed">{lesson.modern.body}</p>
+        </div>
+      </div>
+      <div className="wrap-narrow mt-12">
+        <div className="text-center">
+          <div className="heraldic text-xs text-gold-deep font-bold uppercase tracking-[0.3em]">The Trial</div>
+          <h2 className="font-display text-4xl ink mt-1">Prove It</h2>
+          <div className="gold-line my-4 max-w-xs mx-auto"/>
+          <div className="text-sm ink-soft">
+            First-try score: <span className="font-bold ink">{firstTryCount}/{lesson.quiz.length}</span> ({Math.round(mastery*100)}%) · Mastery at 80%
+          </div>
+        </div>
+        <div className="mt-6 grid gap-3">
+          {lesson.quiz.map((q, i) => (
+            <QuizQuestion key={lesson.id + '-' + i} q={q} qIdx={i}
+              onCorrect={(tries) => recordCorrect(i, tries)}
+              onWrong={(tries) => recordWrong(i, tries)}
+              onPicked={(choice, wasCorrect, tries) => recordPicked(i, choice, wasCorrect, tries)}/>
+          ))}
+        </div>
+      </div>
+      {completedAll && (
+        <div className="wrap-narrow mt-10 fadeup">
+          <div className={"rounded-2xl p-7 text-parchment " + (masteredNow ? "bg-navy" : "bg-crimson")}
+            style={{ boxShadow: '0 20px 50px -20px rgba(15,26,44,0.55)', borderTop: '2px solid var(--gold)' }}>
+            <div className="heraldic text-xs uppercase tracking-[0.3em] opacity-80">{masteredNow ? "Mastery Achieved" : "Continue the Drill"}</div>
+            <div className="font-display text-4xl mt-1">
+              {masteredNow ? "Mastered. Next lesson unlocked." : "Solid work — not quite mastery yet."}
+            </div>
+            <div className="mt-2 opacity-90">
+              {masteredNow
+                ? `You hit ${Math.round(mastery*100)}% on the first try. The next battle is open.`
+                : `You answered every question eventually, but mastery means 80% on the FIRST try. The misses are in the Drilling Yard. Pound them flat, then come back.`}
+            </div>
+            <div className="mt-5 flex gap-3 flex-wrap">
+              {masteredNow && next ? (
+                <button onClick={() => window.location.hash = '#lesson/' + questId + '/' + next.id} className="bg-gold text-navy-deep heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:brightness-110">
+                  Next: {next.title} →
+                </button>
+              ) : null}
+              <button onClick={goQuest} className="bg-parchment/15 text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:bg-parchment/25">All Lessons</button>
+              <button onClick={() => window.location.hash = '#drill'} className="bg-parchment/15 text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:bg-parchment/25">Drilling Yard</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function DrillView({ state, setState }) {
+  const queue = state.reviewQueue || [];
+  const [order] = useState(() => {
+    const q = [...queue];
+    for (let i = q.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [q[i], q[j]] = [q[j], q[i]];
+    }
+    return q;
+  });
+  const [pos, setPos] = useState(0);
+
+  if (order.length === 0) {
+    return (
+      <div className="wrap-narrow pt-10">
+        <div className="card p-8 text-center">
+          <Sigil cls="sigil-md" use="griffin-mark"/>
+          <h1 className="font-display text-4xl ink mt-4">The Yard is Empty</h1>
+          <p className="ink-soft mt-3">Nothing to drill. Go answer some lessons — every miss lands here.</p>
+          <a href="#" className="inline-block mt-6 bg-navy text-parchment heraldic px-5 py-2.5 rounded-lg tracking-widest text-sm uppercase">Return to Hall</a>
+        </div>
+      </div>
+    );
+  }
+
+  if (pos >= order.length) {
+    const stillLeft = (state.reviewQueue || []).length;
+    return (
+      <div className="wrap-narrow pt-10 fadeup">
+        <div className="card p-8 text-center">
+          <Sigil cls="sigil-md" use="griffin-mark"/>
+          <h1 className="font-display text-4xl ink mt-4">Drill Complete</h1>
+          <p className="ink-soft mt-3">
+            {stillLeft === 0
+              ? "Yard empty. You beat every miss on the first try this round. That's mastery."
+              : `${stillLeft} question${stillLeft===1?'':'s'} still in the yard — the ones you got eventually but not on the first try.`}
+          </p>
+          <div className="mt-6 flex gap-3 justify-center flex-wrap">
+            <a href="#" className="bg-navy text-parchment heraldic uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg">Return to Hall</a>
+            {stillLeft > 0 && <button onClick={() => setPos(0)} className="card heraldic uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg ink font-bold">Drill Again</button>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const item = order[pos];
+  const lookup = findQuestionById(item.quest, item.lessonId, item.qIdx);
+  if (!lookup) { setPos(p => p + 1); return null; }
+
+  function handleCorrect(tries) {
+    showXpToast(XP_DRILL_CORRECT);
+    setState(prev => {
+      let nextQueue = prev.reviewQueue || [];
+      if (tries === 1) {
+        nextQueue = nextQueue.filter(r => !(r.quest === item.quest && r.lessonId === item.lessonId && r.qIdx === item.qIdx));
+      }
+      const ns = { ...prev, xp: prev.xp + XP_DRILL_CORRECT, reviewQueue: nextQueue };
+      saveState(ns);
+      return ns;
+    });
+  }
+
+  return (
+    <div className="wrap-narrow pt-6 pb-safe">
+      <button onClick={() => window.location.hash = ''} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold">
+        <Icon.Back className="w-4 h-4"/> Return to Hall
+      </button>
+      <div className="mt-4 text-center">
+        <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">The Drilling Yard</div>
+        <h1 className="font-display text-4xl ink mt-1">Beat the Misses</h1>
+        <div className="gold-line my-3 max-w-xs mx-auto"/>
+        <div className="text-sm ink-soft">Question {pos+1} of {order.length} · First-try wins clear the yard</div>
+      </div>
+      <div className="mt-4 h-2 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-700" style={{ width: ((pos/order.length)*100)+'%' }}/>
+      </div>
+      <div className="mt-2 text-xs ink-soft text-center italic">
+        From: <span className="font-bold ink">{lookup.lesson.title}</span>
+      </div>
+      <div className="mt-5">
+        <QuizQuestion key={item.quest + '/' + item.lessonId + '/' + item.qIdx + '/' + pos}
+          q={lookup.q} qIdx={pos}
+          onCorrect={handleCorrect} onWrong={() => {}} onPicked={() => {}}/>
+      </div>
+      <div className="mt-5 flex justify-center">
+        <button onClick={() => setPos(p => p + 1)} className="bg-navy text-parchment heraldic uppercase tracking-widest text-sm font-bold px-6 py-2.5 rounded-lg hover:brightness-110">
+          Next Question →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function parseHash() {
+  const raw = (window.location.hash || '').replace(/^#/, '');
+  if (!raw) return { name: 'hub' };
+  const parts = raw.split('/');
+  if (parts[0] === 'drill') return { name:'drill' };
+  if (parts[0] === 'quest' && parts[1]) return { name:'quest', questId: parts[1] };
+  if (parts[0] === 'lesson' && parts[1] && parts[2]) return { name:'lesson', questId: parts[1], lessonId: parts[2] };
+  return { name:'hub' };
+}
+
+function App() {
+  const [state, setState] = useState(loadState);
+  const [route, setRoute] = useState(parseHash);
+  useEffect(() => {
+    const onHash = () => { setRoute(parseHash()); window.scrollTo({ top:0, behavior:'instant' }); };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+  function goHub() { window.location.hash = ''; }
+  let body = null;
+  if (route.name === 'hub') body = <Hub state={state} setState={setState}/>;
+  else if (route.name === 'quest') body = <QuestView questId={route.questId} state={state}/>;
+  else if (route.name === 'lesson') body = <LessonView questId={route.questId} lessonId={route.lessonId} state={state} setState={setState} goQuest={() => window.location.hash = '#quest/' + route.questId}/>;
+  else if (route.name === 'drill') body = <DrillView state={state} setState={setState}/>;
+  return (
+    <div>
+      <TopBar state={state} route={route} goHub={goHub}/>
+      {body}
+      <footer className="wrap py-12 text-center">
+        <div className="gold-line max-w-xs mx-auto mb-4"/>
+        <div className="heraldic text-xs ink-muted uppercase tracking-[0.3em]">Griffin Hall · vol. I · MMXXVI</div>
+        <div className="text-xs ink-muted mt-2 italic">Images public domain via Wikimedia Commons</div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
