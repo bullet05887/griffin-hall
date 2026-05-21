@@ -346,6 +346,260 @@
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
 
+/* ============================================================
+   AUDIO NARRATION — browser SpeechSynthesis API
+   Per-Master voice picks. No backend, no API keys.
+   iOS Safari requires user gesture before audio plays.
+============================================================ */
+const MASTER_VOICE_PREFS = {
+  cassian:  { label:'Marshal Cassian',   pitch:0.85, rate:0.92, langPrefs:['en-GB','en-AU'],      namePrefs:['Daniel','Oliver','George','Arthur','Microsoft George','Google UK English Male'], fallbackGenderHint:'male' },
+  mercator: { label:'Cartographer Mercator', pitch:0.78, rate:0.85, langPrefs:['en-GB','it-IT'], namePrefs:['Ralph','Luca','Stefan','Cosimo','Alessandro','Microsoft Stefan'],                fallbackGenderHint:'male' },
+  aurelian: { label:'Sage Aurelian',     pitch:0.80, rate:0.88, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Oliver','Reed','Microsoft David'],                                       fallbackGenderHint:'male' },
+  sokrates: { label:'Thinker Sokrates',  pitch:0.95, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Aaron','Microsoft Mark','Rishi'],                                                  fallbackGenderHint:'male' },
+  orin:     { label:'Bard Orin',         pitch:1.05, rate:1.00, langPrefs:['en-GB','en-IE'],      namePrefs:['Oliver','Arthur','Microsoft Ryan'],                                                fallbackGenderHint:'male' },
+  vellan:   { label:'Scribe Vellan',     pitch:0.88, rate:0.88, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Microsoft David'],                                                        fallbackGenderHint:'male' },
+  mira:     { label:'Linguist Mira',     pitch:1.05, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Samantha','Karen','Microsoft Zira','Google UK English Female'],                    fallbackGenderHint:'female' },
+  atlas:    { label:'Reckoner Atlas',    pitch:0.88, rate:0.90, langPrefs:['en-GB','en-US'],      namePrefs:['Microsoft Mark','Aaron','Daniel'],                                                 fallbackGenderHint:'male' },
+  octavian: { label:'Merchant Octavian', pitch:0.90, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Microsoft David','Oliver'],                                               fallbackGenderHint:'male' },
+};
+
+const FEMALE_NAME_HINTS = ['samantha','karen','zira','victoria','tessa','female','allison','susan','catherine','fiona','moira','serena'];
+
+const NARRATION_PREFS_KEY = 'griffin-hall:narration:v1';
+const HUB_WELCOME_KEY     = 'griffin-hall:hub-welcomed:v1';
+
+function loadNarrationPrefs() {
+  try {
+    const raw = localStorage.getItem(NARRATION_PREFS_KEY);
+    if (!raw) return { rate: 0.9, volume: 1.0 };
+    const p = JSON.parse(raw) || {};
+    return { rate: typeof p.rate === 'number' ? p.rate : 0.9, volume: typeof p.volume === 'number' ? p.volume : 1.0 };
+  } catch (e) { return { rate: 0.9, volume: 1.0 }; }
+}
+function saveNarrationPrefs(p) { try { localStorage.setItem(NARRATION_PREFS_KEY, JSON.stringify(p)); } catch (e) {} }
+
+function scoreVoice(voice, prefs) {
+  let score = 0;
+  const lang = (voice.lang || '').toLowerCase();
+  prefs.langPrefs.forEach((p, i) => {
+    const lp = p.toLowerCase();
+    if (lang === lp) score += 100 - i * 10;
+    else if (lang.split('-')[0] === lp.split('-')[0]) score += 30 - i * 5;
+  });
+  const name = (voice.name || '').toLowerCase();
+  prefs.namePrefs.forEach((n, i) => {
+    if (name.includes(n.toLowerCase())) score += 50 - i * 5;
+  });
+  const looksFemale = FEMALE_NAME_HINTS.some(h => name.includes(h));
+  if (prefs.fallbackGenderHint === 'male'   && !looksFemale) score += 5;
+  if (prefs.fallbackGenderHint === 'female' &&  looksFemale) score += 5;
+  if (voice.localService) score += 2;
+  return score;
+}
+function pickVoice(voices, prefs) {
+  if (!voices || !voices.length) return null;
+  let best = null, bestScore = -Infinity;
+  for (const v of voices) {
+    const s = scoreVoice(v, prefs);
+    if (s > bestScore) { bestScore = s; best = v; }
+  }
+  return best;
+}
+
+function useVoices() {
+  const hasSS = typeof window !== 'undefined' && !!window.speechSynthesis;
+  const [voices, setVoices] = useState(() => hasSS ? window.speechSynthesis.getVoices() : []);
+  useEffect(() => {
+    if (!hasSS) return;
+    function refresh() { setVoices(window.speechSynthesis.getVoices()); }
+    refresh();
+    try { window.speechSynthesis.addEventListener('voiceschanged', refresh); }
+    catch (e) { window.speechSynthesis.onvoiceschanged = refresh; }
+    return () => {
+      try { window.speechSynthesis.removeEventListener('voiceschanged', refresh); } catch (e) {}
+    };
+  }, []);
+  return voices;
+}
+
+function useNarration(text, masterKey) {
+  const voices = useVoices();
+  const prefs  = MASTER_VOICE_PREFS[masterKey] || MASTER_VOICE_PREFS.cassian;
+  const voice  = useMemo(() => pickVoice(voices, prefs), [voices, masterKey]);
+  const [playing, setPlaying] = useState(false);
+  const [paused,  setPaused]  = useState(false);
+  const [userPrefs, setUserPrefs] = useState(loadNarrationPrefs);
+  const supported = typeof window !== 'undefined' && !!window.speechSynthesis;
+
+  function setRate(r)   { const np = { ...userPrefs, rate: r };   setUserPrefs(np); saveNarrationPrefs(np); }
+  function setVolume(v) { const np = { ...userPrefs, volume: v }; setUserPrefs(np); saveNarrationPrefs(np); }
+
+  function stop() {
+    if (!supported) return;
+    window.speechSynthesis.cancel();
+    setPlaying(false); setPaused(false);
+  }
+  function play() {
+    if (!supported || !text) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (voice) u.voice = voice;
+    // Combine master's natural rate with user's speed multiplier (default 0.9× = 1× of master)
+    u.rate   = Math.max(0.5, Math.min(2.0, (prefs.rate ?? 0.9) * (userPrefs.rate / 0.9)));
+    u.pitch  = Math.max(0,   Math.min(2.0,  prefs.pitch ?? 1));
+    u.volume = Math.max(0,   Math.min(1.0,  userPrefs.volume));
+    u.onstart = () => { setPlaying(true); setPaused(false); };
+    u.onend   = () => { setPlaying(false); setPaused(false); };
+    u.onerror = () => { setPlaying(false); setPaused(false); };
+    window.speechSynthesis.speak(u);
+  }
+  function pauseResume() {
+    if (!supported) return;
+    if (paused) { window.speechSynthesis.resume(); setPaused(false); }
+    else        { window.speechSynthesis.pause();  setPaused(true); }
+  }
+
+  // Auto-stop when this component unmounts (e.g. navigating away from lesson)
+  useEffect(() => () => { if (supported) window.speechSynthesis.cancel(); }, []);
+
+  return { play, stop, pauseResume, playing, paused, voice, voices, prefs: userPrefs, setRate, setVolume, supported };
+}
+
+function buildLessonNarration(lesson, masterKey) {
+  const m = MASTERS[masterKey];
+  const out = [];
+  out.push(lesson.title + '.');
+  if (lesson.subtitle) out.push(lesson.subtitle + '.');
+  if (lesson.cassianIntro) out.push(`${m ? m.name : 'The Master'} says: ${lesson.cassianIntro}`);
+  if (lesson.story) lesson.story.forEach(p => out.push(p));
+  if (lesson.principle) {
+    out.push('The principle. ' + lesson.principle.title + '.');
+    out.push(lesson.principle.body);
+    if (lesson.principle.quote) out.push(lesson.principle.quote);
+  }
+  if (lesson.modern) {
+    out.push(lesson.modern.title);
+    out.push(lesson.modern.body);
+  }
+  return out.join(' ');
+}
+
+function NarrationPanel({ text, masterKey, label }) {
+  const n = useNarration(text, masterKey);
+  if (!n.supported) return null;
+  const voiceName = n.voice ? (n.voice.name + (n.voice.lang ? ' · ' + n.voice.lang : '')) : 'default voice';
+  return (
+    <div className="card p-4 sm:p-5" style={{ borderLeft:'3px solid var(--crimson)' }}>
+      <div className="flex flex-wrap items-center gap-3">
+        {!n.playing ? (
+          <button onClick={n.play}
+            className="bg-crimson text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:brightness-110">
+            🔊 Listen
+          </button>
+        ) : (
+          <>
+            <button onClick={n.pauseResume}
+              className="bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-sm px-4 py-2.5 rounded-lg hover:brightness-110">
+              {n.paused ? '▶ Resume' : '⏸ Pause'}
+            </button>
+            <button onClick={n.stop}
+              className="bg-parchment-deep ink heraldic font-bold uppercase tracking-widest text-sm px-4 py-2.5 rounded-lg border border-ink-soft/40">
+              ■ Stop
+            </button>
+          </>
+        )}
+        {n.playing && !n.paused && (
+          <div className="heraldic text-[10px] text-gold-deep uppercase tracking-[0.25em] font-bold animate-pulse">
+            {(label || 'Master')} is speaking…
+          </div>
+        )}
+      </div>
+      <div className="mt-3 grid sm:grid-cols-2 gap-2">
+        <label className="text-xs ink-soft flex items-center gap-2">
+          <span className="heraldic uppercase tracking-widest font-bold w-12">Speed</span>
+          <select value={n.prefs.rate}
+            onChange={e => n.setRate(parseFloat(e.target.value))}
+            className="bg-parchment border border-ink-soft/40 rounded px-2 py-1 text-sm flex-1">
+            <option value="0.7">0.7×</option>
+            <option value="0.85">0.85×</option>
+            <option value="0.9">0.9× (default)</option>
+            <option value="1">1.0×</option>
+            <option value="1.15">1.15×</option>
+          </select>
+        </label>
+        <label className="text-xs ink-soft flex items-center gap-2">
+          <span className="heraldic uppercase tracking-widest font-bold w-12">Vol</span>
+          <select value={n.prefs.volume}
+            onChange={e => n.setVolume(parseFloat(e.target.value))}
+            className="bg-parchment border border-ink-soft/40 rounded px-2 py-1 text-sm flex-1">
+            <option value="0.25">25%</option>
+            <option value="0.5">50%</option>
+            <option value="0.75">75%</option>
+            <option value="1">100%</option>
+          </select>
+        </label>
+      </div>
+      <div className="text-[10px] ink-muted mt-2 italic">Voice: {voiceName}</div>
+    </div>
+  );
+}
+
+function HallDoorAutoplay({ masterKey, text }) {
+  const n = useNarration(text, masterKey);
+  const triedRef = useRef(false);
+  useEffect(() => {
+    if (!n.supported || triedRef.current) return;
+    triedRef.current = true;
+    // The click that hash-routed into the Quest counts as the user gesture on iOS.
+    const t = setTimeout(() => { n.play(); }, 400);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [masterKey]);
+  if (!n.supported) return null;
+  return (
+    <div className="flex justify-center mt-4">
+      {!n.playing ? (
+        <button onClick={n.play}
+          className="bg-crimson text-parchment heraldic font-bold uppercase tracking-widest text-xs px-4 py-2 rounded-lg hover:brightness-110">
+          🔊 Hear the Master
+        </button>
+      ) : (
+        <button onClick={n.stop}
+          className="bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-xs px-4 py-2 rounded-lg hover:brightness-110">
+          ■ Silence the Master
+        </button>
+      )}
+    </div>
+  );
+}
+
+function HubWelcomeOnce() {
+  const text = "Welcome to Griffin Hall. Many doors await. Some are open. Some are sealed. Choose wisely.";
+  const n = useNarration(text, 'cassian');
+  useEffect(() => {
+    if (!n.supported) return;
+    try {
+      if (localStorage.getItem(HUB_WELCOME_KEY)) return;
+    } catch (e) { return; }
+    function onFirstInteract() {
+      try { localStorage.setItem(HUB_WELCOME_KEY, '1'); } catch (e) {}
+      n.play();
+      cleanup();
+    }
+    function cleanup() {
+      window.removeEventListener('click',    onFirstInteract);
+      window.removeEventListener('touchend', onFirstInteract);
+      window.removeEventListener('keydown',  onFirstInteract);
+    }
+    window.addEventListener('click',    onFirstInteract, { once: true });
+    window.addEventListener('touchend', onFirstInteract, { once: true });
+    window.addEventListener('keydown',  onFirstInteract, { once: true });
+    return cleanup;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
+}
+
 const STRATEGY_LESSONS = [
   {
     id: 'delaware',
@@ -904,6 +1158,7 @@ function Hub({ state, setState }) {
         <StrategyCallout state={state}/>
         <DrillCallout state={state}/>
       </div>
+      <HubWelcomeOnce/>
       <div className="wrap">
         {ROWS.map((r,i) => <RowBlock key={r.id} row={r} idx={i}/>)}
       </div>
@@ -967,7 +1222,13 @@ function QuestView({ questId, state }) {
           </p>
         </div>
 
-        {quest.master && <MasterIntroCard masterKey={quest.master} openingLine={masterOpening}/>}
+        {quest.master && (
+          <>
+            <MasterIntroCard masterKey={quest.master} openingLine={masterOpening}/>
+            <HallDoorAutoplay masterKey={quest.master}
+              text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}/>
+          </>
+        )}
 
         <div className="mt-6 max-w-md mx-auto">
           <div className="h-2 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
@@ -1204,6 +1465,14 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {quest.master && (
+        <div className="wrap-narrow mt-4 fadeup">
+          <NarrationPanel
+            text={buildLessonNarration(lesson, quest.master)}
+            masterKey={quest.master}
+            label={MASTERS[quest.master]?.name}/>
         </div>
       )}
 
