@@ -228,6 +228,40 @@
 
   @keyframes fadeup { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;}}
   .fadeup { animation: fadeup .35s ease-out both; }
+
+  .map-btn-mini {
+    font-family:'Cinzel', Georgia, serif;
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    padding: 4px 10px;
+    border:1px solid var(--gold);
+    border-radius: 6px;
+    background: var(--parchment-warm);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .map-btn-mini:hover { background: var(--gold-light); }
+  .map-btn-mini:active { transform: translateY(1px); }
+  .map-btn-quest {
+    font-family:'Cinzel', Georgia, serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    padding: 7px 14px;
+    border:1px solid var(--crimson-deep);
+    border-radius: 6px;
+    background: var(--crimson);
+    color: var(--parchment);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .map-btn-quest:hover { background: var(--crimson-deep); }
+  .map-btn-quest:active { transform: translateY(1px); }
+  .touch-none { touch-action: none; }
   @keyframes pop { 0% { transform:scale(0.5); opacity:0;} 60%{transform:scale(1.15);opacity:1;} 100%{transform:scale(1);} }
   .pop { animation:pop .4s ease-out; }
   @keyframes shake {
@@ -1000,6 +1034,7 @@ const CARTOGRAPHY_LESSONS = [
     id: 'world',
     title: 'The World — Continents & Oceans',
     subtitle: 'The whole map, one glance',
+    interactiveMap: 'world',
     image: 'https://en.wikipedia.org/wiki/Special:FilePath/Equirectangular_projection_SW.jpg?width=1280',
     imageCredit: 'Equirectangular projection world map — public domain, via Wikimedia Commons',
     cassianIntro: "Every traveler begins at the boundary between sea and land. Today you learn the seven continents and the five oceans — spell them, place them, carry them in your head. Once you can picture the world, the news stops sounding like noise.",
@@ -1049,6 +1084,7 @@ const CARTOGRAPHY_LESSONS = [
     id: 'usa',
     title: 'United States — 50 States & Capitals',
     subtitle: 'The four regions of America',
+    interactiveMap: 'usa',
     image: 'https://en.wikipedia.org/wiki/Special:FilePath/Map_of_USA_with_state_names.svg?width=1280',
     imageCredit: 'Blank US map with state names — public domain, via Wikimedia Commons',
     cassianIntro: "America is fifty states, but they don't act like fifty. They act like five regions — each with its own personality, its own industry, its own way of talking. Learn the names, the capitals, and the regions, and you'll start to hear what an adult really means when they say 'the South' or 'the Midwest.'",
@@ -2894,6 +2930,610 @@ function CardsBlock({ cards }) {
   );
 }
 
+/* ============================================================
+   INTERACTIVE MAP DATA + COMPONENT (Cartographer's Hall)
+   - World map: equirectangular projection
+   - US map: tile-grid layout (visually approximate, fully clickable)
+   ============================================================ */
+
+const WORLD_MAP_DATA = {
+  imageWidth: 2058,
+  imageHeight: 1024,
+  imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Equirectangular_projection_SW.jpg/2058px-Equirectangular_projection_SW.jpg',
+  continents: [
+    { id:'asia', name:'Asia', kind:'continent', lat:45, lng:90, r:160,
+      desc:'The largest continent — about a third of all the land on Earth.',
+      facts:'Population ~4.7 billion (over half of humanity). Largest country: Russia. Most populous: China & India.' },
+    { id:'africa', name:'Africa', kind:'continent', lat:5, lng:20, r:130,
+      desc:'Second-largest continent. The youngest population on Earth — median age under 19.',
+      facts:'54 countries. Largest by area: Algeria. Most populous: Nigeria. Longest river: the Nile.' },
+    { id:'northamerica', name:'North America', kind:'continent', lat:50, lng:-100, r:140,
+      desc:'Includes the USA, Canada, Mexico, and the Caribbean nations.',
+      facts:'23 countries. Largest by area: Canada. Most populous: United States. Highest peak: Denali (Alaska).' },
+    { id:'southamerica', name:'South America', kind:'continent', lat:-15, lng:-60, r:110,
+      desc:'Home to the Amazon rainforest and the Andes mountains.',
+      facts:'12 countries. Largest: Brazil. Highest peak: Aconcagua, Argentina. Driest desert: Atacama, Chile.' },
+    { id:'antarctica', name:'Antarctica', kind:'continent', lat:-82, lng:0, r:120,
+      desc:'Ice-covered. No countries. Only scientists in research stations.',
+      facts:"Coldest place on Earth (-89°C recorded). Holds about 70% of the planet's fresh water — frozen." },
+    { id:'europe', name:'Europe', kind:'continent', lat:54, lng:15, r:80,
+      desc:'A small continent that built the modern world through trade, conquest, and ideas.',
+      facts:'About 50 countries. Largest: Russia (also part of Asia). Most populous: Germany. Smallest country in the world: Vatican City.' },
+    { id:'australia', name:'Australia / Oceania', kind:'continent', lat:-25, lng:135, r:100,
+      desc:'The only continent that is also a single country, plus thousands of Pacific islands.',
+      facts:'Capital: Canberra. Largest cities: Sydney, Melbourne. Famous for kangaroos, the outback, and the Great Barrier Reef.' },
+  ],
+  oceans: [
+    { id:'pacific', name:'Pacific Ocean', kind:'ocean', lat:0, lng:-150, r:120,
+      desc:'The biggest ocean — bigger than every continent combined.',
+      facts:"Covers about 30% of Earth's surface. Deepest point: Mariana Trench (~11 km deep)." },
+    { id:'atlantic', name:'Atlantic Ocean', kind:'ocean', lat:0, lng:-30, r:110,
+      desc:'Between the Americas and Europe / Africa. The highway of trade and migration.',
+      facts:'Second-largest ocean. Home of the Gulf Stream, which keeps Europe warm.' },
+    { id:'indian', name:'Indian Ocean', kind:'ocean', lat:-20, lng:80, r:100,
+      desc:'South of Asia, east of Africa, west of Australia.',
+      facts:'Third-largest ocean. Vital shipping route for oil from the Persian Gulf.' },
+    { id:'arctic', name:'Arctic Ocean', kind:'ocean', lat:85, lng:0, r:80,
+      desc:'Around the North Pole. Mostly frozen — though shrinking each year.',
+      facts:'Smallest and shallowest ocean. Polar bears, narwhals, the Northwest Passage.' },
+    { id:'southern', name:'Southern Ocean', kind:'ocean', lat:-65, lng:90, r:90,
+      desc:'Ringing Antarctica. Wild storms and the strongest current on Earth.',
+      facts:'Officially recognized in 2000. Home of the Antarctic Circumpolar Current — moves more water than every river combined.' },
+  ],
+  countries: [
+    { id:'china', name:'China', cont:'asia', lat:35, lng:105, capital:'Beijing', pop:'~1.41 billion', econ:"The world's factory. Electronics, steel, EVs, solar panels." },
+    { id:'india', name:'India', cont:'asia', lat:22, lng:78, capital:'New Delhi', pop:'~1.43 billion', econ:'Software services, generic medicine, growing manufacturing.' },
+    { id:'japan', name:'Japan', cont:'asia', lat:36, lng:138, capital:'Tokyo', pop:'~125 million', econ:'Cars (Toyota, Honda), robotics, precision machinery, anime.' },
+    { id:'southkorea', name:'South Korea', cont:'asia', lat:37, lng:127, capital:'Seoul', pop:'~52 million', econ:'Samsung, Hyundai, K-pop, shipbuilding, semiconductors.' },
+    { id:'indonesia', name:'Indonesia', cont:'asia', lat:-2, lng:118, capital:'Jakarta', pop:'~278 million', econ:'Palm oil, nickel, coal, textiles. 17,000+ islands.' },
+    { id:'pakistan', name:'Pakistan', cont:'asia', lat:30, lng:70, capital:'Islamabad', pop:'~241 million', econ:'Textiles, cotton, rice. Nuclear-armed neighbor of India.' },
+    { id:'bangladesh', name:'Bangladesh', cont:'asia', lat:24, lng:90, capital:'Dhaka', pop:'~173 million', econ:'Garments — clothes for the whole world.' },
+    { id:'vietnam', name:'Vietnam', cont:'asia', lat:16, lng:108, capital:'Hanoi', pop:'~100 million', econ:'Electronics assembly, clothing, coffee, rice. Fast-growing.' },
+    { id:'thailand', name:'Thailand', cont:'asia', lat:15, lng:101, capital:'Bangkok', pop:'~71 million', econ:'Tourism, rice, cars, rubber, electronics.' },
+    { id:'philippines', name:'Philippines', cont:'asia', lat:13, lng:122, capital:'Manila', pop:'~117 million', econ:'Call centers, nurses, electronics. 7,000+ islands.' },
+    { id:'iran', name:'Iran', cont:'asia', lat:32, lng:53, capital:'Tehran', pop:'~88 million', econ:'Oil, gas, pistachios, carpets. Ancient Persia.' },
+    { id:'iraq', name:'Iraq', cont:'asia', lat:33, lng:44, capital:'Baghdad', pop:'~44 million', econ:'Oil. Ancient Mesopotamia — birthplace of writing.' },
+    { id:'saudi', name:'Saudi Arabia', cont:'asia', lat:24, lng:45, capital:'Riyadh', pop:'~36 million', econ:"Oil — the world's largest exporter. Mecca, the holiest city in Islam." },
+    { id:'israel', name:'Israel', cont:'asia', lat:31, lng:35, capital:'Jerusalem', pop:'~9.7 million', econ:'Tech, defense, agriculture in the desert.' },
+    { id:'turkey', name:'Turkey', cont:'asia', lat:39, lng:35, capital:'Ankara', pop:'~85 million', econ:'Textiles, cars, tourism. Bridge between Europe and Asia.' },
+    { id:'russia', name:'Russia', cont:'asia', lat:60, lng:90, capital:'Moscow', pop:'~144 million', econ:'Oil, natural gas, weapons, wheat. The largest country on Earth.' },
+    { id:'uk', name:'United Kingdom', cont:'europe', lat:54, lng:-2, capital:'London', pop:'~67 million', econ:'Finance (the City of London), pharma, aerospace.' },
+    { id:'germany', name:'Germany', cont:'europe', lat:51, lng:10, capital:'Berlin', pop:'~84 million', econ:"Cars (BMW, Mercedes, VW), machinery, chemicals. Europe's industrial powerhouse." },
+    { id:'france', name:'France', cont:'europe', lat:47, lng:2, capital:'Paris', pop:'~65 million', econ:'Luxury goods, wine, aerospace (Airbus), tourism.' },
+    { id:'italy', name:'Italy', cont:'europe', lat:42, lng:12, capital:'Rome', pop:'~59 million', econ:'Fashion (Gucci, Prada), Ferrari, pasta, tourism. Ancient Rome.' },
+    { id:'spain', name:'Spain', cont:'europe', lat:40, lng:-4, capital:'Madrid', pop:'~48 million', econ:'Tourism, olive oil, wine, fashion (Zara).' },
+    { id:'portugal', name:'Portugal', cont:'europe', lat:39, lng:-8, capital:'Lisbon', pop:'~10 million', econ:'Wine (port), cork, tourism, fishing.' },
+    { id:'poland', name:'Poland', cont:'europe', lat:52, lng:19, capital:'Warsaw', pop:'~38 million', econ:'Manufacturing, food, IT. Fast-growing EU economy.' },
+    { id:'ukraine', name:'Ukraine', cont:'europe', lat:49, lng:32, capital:'Kyiv', pop:'~37 million', econ:'Wheat, sunflower oil, steel. At war with Russia since 2022.' },
+    { id:'greece', name:'Greece', cont:'europe', lat:39, lng:22, capital:'Athens', pop:'~10 million', econ:'Tourism, shipping, olive oil. Birthplace of democracy.' },
+    { id:'sweden', name:'Sweden', cont:'europe', lat:62, lng:15, capital:'Stockholm', pop:'~10 million', econ:'IKEA, Volvo, Spotify, Ericsson. Generous welfare state.' },
+    { id:'norway', name:'Norway', cont:'europe', lat:61, lng:9, capital:'Oslo', pop:'~5.5 million', econ:'North Sea oil & gas, fish, shipping. Fjords.' },
+    { id:'netherlands', name:'Netherlands', cont:'europe', lat:52, lng:5, capital:'Amsterdam', pop:'~18 million', econ:'Shell, Heineken, ASML (chip lithography), flowers, cheese.' },
+    { id:'switzerland', name:'Switzerland', cont:'europe', lat:47, lng:8, capital:'Bern', pop:'~9 million', econ:'Banking, watches, chocolate, pharma (Novartis, Roche).' },
+    { id:'egypt', name:'Egypt', cont:'africa', lat:27, lng:30, capital:'Cairo', pop:'~111 million', econ:'Suez Canal tolls, tourism (pyramids), cotton, gas.' },
+    { id:'nigeria', name:'Nigeria', cont:'africa', lat:10, lng:8, capital:'Abuja', pop:'~224 million', econ:"Oil, Nollywood (movies), Afrobeats music. Africa's biggest population." },
+    { id:'southafrica', name:'South Africa', cont:'africa', lat:-30, lng:24, capital:'Pretoria', pop:'~60 million', econ:'Gold, platinum, diamonds, wine, autos. Most industrialized African economy.' },
+    { id:'kenya', name:'Kenya', cont:'africa', lat:-1, lng:38, capital:'Nairobi', pop:'~55 million', econ:'Tea, coffee, flowers, safari tourism, mobile-money (M-Pesa).' },
+    { id:'ethiopia', name:'Ethiopia', cont:'africa', lat:9, lng:38, capital:'Addis Ababa', pop:'~127 million', econ:'Coffee (birthplace of), flowers, leather. Never colonized.' },
+    { id:'morocco', name:'Morocco', cont:'africa', lat:32, lng:-6, capital:'Rabat', pop:'~38 million', econ:'Phosphates (fertilizer), tourism, cars, textiles.' },
+    { id:'algeria', name:'Algeria', cont:'africa', lat:28, lng:3, capital:'Algiers', pop:'~46 million', econ:'Natural gas, oil. Largest country in Africa.' },
+    { id:'ghana', name:'Ghana', cont:'africa', lat:8, lng:-1, capital:'Accra', pop:'~34 million', econ:'Gold, cocoa (chocolate!), oil.' },
+    { id:'usa', name:'United States', cont:'northamerica', lat:38, lng:-97, capital:'Washington, D.C.', pop:'~335 million', econ:"Tech (Apple, Google), finance, entertainment, agriculture, weapons. World's largest economy." },
+    { id:'canada', name:'Canada', cont:'northamerica', lat:56, lng:-106, capital:'Ottawa', pop:'~40 million', econ:'Oil sands, timber, wheat, mining, maple syrup.' },
+    { id:'mexico', name:'Mexico', cont:'northamerica', lat:23, lng:-102, capital:'Mexico City', pop:'~128 million', econ:'Cars, electronics assembly (for USA), oil, tequila, tourism.' },
+    { id:'cuba', name:'Cuba', cont:'northamerica', lat:22, lng:-78, capital:'Havana', pop:'~11 million', econ:'Tobacco (cigars), sugar, nickel, tourism. Communist.' },
+    { id:'brazil', name:'Brazil', cont:'southamerica', lat:-10, lng:-55, capital:'Brasília', pop:'~216 million', econ:'Soy, beef, iron ore, coffee, oil. The Amazon rainforest.' },
+    { id:'argentina', name:'Argentina', cont:'southamerica', lat:-38, lng:-64, capital:'Buenos Aires', pop:'~46 million', econ:'Beef, soy, wheat, wine (Malbec). Football-obsessed.' },
+    { id:'colombia', name:'Colombia', cont:'southamerica', lat:4, lng:-73, capital:'Bogotá', pop:'~52 million', econ:'Coffee, oil, flowers, emeralds.' },
+    { id:'peru', name:'Peru', cont:'southamerica', lat:-10, lng:-76, capital:'Lima', pop:'~34 million', econ:'Copper, gold, fishmeal, tourism (Machu Picchu).' },
+    { id:'chile', name:'Chile', cont:'southamerica', lat:-30, lng:-71, capital:'Santiago', pop:'~19 million', econ:'Copper (largest producer in the world), wine, salmon, lithium.' },
+    { id:'venezuela', name:'Venezuela', cont:'southamerica', lat:8, lng:-66, capital:'Caracas', pop:'~28 million', econ:"World's largest oil reserves — but a broken economy." },
+    { id:'australia_c', name:'Australia (country)', cont:'australia', lat:-25, lng:135, capital:'Canberra', pop:'~26 million', econ:'Iron ore, coal, gold, wheat, wine, beef.' },
+    { id:'newzealand', name:'New Zealand', cont:'australia', lat:-41, lng:174, capital:'Wellington', pop:'~5 million', econ:'Dairy (Fonterra), lamb, kiwifruit, wine, tourism. Lord of the Rings.' },
+    { id:'romania', name:'Romania', cont:'europe', lat:46, lng:25, capital:'Bucharest', pop:'~19 million', econ:'Cars (Dacia), software, oil, wine.' },
+  ],
+};
+
+const US_STATES_DATA = [
+  { id:'AK', name:'Alaska',         capital:'Juneau',        region:'West',      col:0,  row:0, econ:'Oil from Prudhoe Bay, fishing, the wild bush.' },
+  { id:'ME', name:'Maine',          capital:'Augusta',       region:'Northeast', col:12, row:0, econ:'Lobster, lumber, blueberries.' },
+  { id:'WA', name:'Washington',     capital:'Olympia',       region:'West',      col:1,  row:1, econ:'Boeing, Microsoft, Amazon, Starbucks, apples.' },
+  { id:'ID', name:'Idaho',          capital:'Boise',         region:'West',      col:2,  row:1, econ:'Potatoes. Also lumber and tech.' },
+  { id:'MT', name:'Montana',        capital:'Helena',        region:'West',      col:3,  row:1, econ:'Ranching, mining, big-sky tourism.' },
+  { id:'ND', name:'North Dakota',   capital:'Bismarck',      region:'Midwest',   col:4,  row:1, econ:'Bakken oil shale, wheat, soybeans.' },
+  { id:'MN', name:'Minnesota',      capital:'Saint Paul',    region:'Midwest',   col:5,  row:1, econ:'Target, 3M, Mayo Clinic, iron ore, dairy.' },
+  { id:'WI', name:'Wisconsin',      capital:'Madison',       region:'Midwest',   col:6,  row:1, econ:'Dairy (cheese!), Harley-Davidson, paper.' },
+  { id:'MI', name:'Michigan',       capital:'Lansing',       region:'Midwest',   col:8,  row:1, econ:'Detroit cars (Ford, GM, Chrysler), the Great Lakes.' },
+  { id:'VT', name:'Vermont',        capital:'Montpelier',    region:'Northeast', col:10, row:1, econ:"Maple syrup, dairy (Ben & Jerry's), tourism." },
+  { id:'NH', name:'New Hampshire',  capital:'Concord',       region:'Northeast', col:11, row:1, econ:'No income tax, no sales tax. Granite, tourism.' },
+  { id:'OR', name:'Oregon',         capital:'Salem',         region:'West',      col:1,  row:2, econ:'Nike, Intel, timber, wine, Portland weirdness.' },
+  { id:'NV', name:'Nevada',         capital:'Carson City',   region:'West',      col:2,  row:2, econ:'Las Vegas casinos, gold mining, Tesla gigafactory.' },
+  { id:'WY', name:'Wyoming',        capital:'Cheyenne',      region:'West',      col:3,  row:2, econ:'Coal, oil, gas, ranching. Yellowstone.' },
+  { id:'SD', name:'South Dakota',   capital:'Pierre',        region:'Midwest',   col:4,  row:2, econ:'Cattle, corn, Mount Rushmore.' },
+  { id:'IA', name:'Iowa',           capital:'Des Moines',    region:'Midwest',   col:5,  row:2, econ:'Corn, pork, ethanol, insurance.' },
+  { id:'IL', name:'Illinois',       capital:'Springfield',   region:'Midwest',   col:6,  row:2, econ:'Chicago — finance, manufacturing, agriculture trading.' },
+  { id:'IN', name:'Indiana',        capital:'Indianapolis',  region:'Midwest',   col:7,  row:2, econ:'Steel, auto parts, the Indy 500.' },
+  { id:'OH', name:'Ohio',           capital:'Columbus',      region:'Midwest',   col:8,  row:2, econ:'Cars, steel, rubber, soybeans. Swing-state politics.' },
+  { id:'PA', name:'Pennsylvania',   capital:'Harrisburg',    region:'Northeast', col:9,  row:2, econ:'Steel (historic), pharma, gas, Philly cheesesteaks.' },
+  { id:'NY', name:'New York',       capital:'Albany',        region:'Northeast', col:10, row:2, econ:'NYC: finance (Wall Street), media, fashion.' },
+  { id:'MA', name:'Massachusetts',  capital:'Boston',        region:'Northeast', col:11, row:2, econ:'Harvard, MIT, biotech, finance, fishing.' },
+  { id:'RI', name:'Rhode Island',   capital:'Providence',    region:'Northeast', col:12, row:2, econ:'Smallest state. Jewelry, fishing, tourism.' },
+  { id:'CA', name:'California',     capital:'Sacramento',    region:'West',      col:1,  row:3, econ:'Silicon Valley tech, Hollywood, wine, almonds, the 5th-largest economy on Earth.' },
+  { id:'UT', name:'Utah',           capital:'Salt Lake City',region:'West',      col:2,  row:3, econ:'Tech, finance, copper, skiing.' },
+  { id:'CO', name:'Colorado',       capital:'Denver',        region:'West',      col:3,  row:3, econ:'Aerospace, tech, beer (Coors), skiing, marijuana.' },
+  { id:'NE', name:'Nebraska',       capital:'Lincoln',       region:'Midwest',   col:4,  row:3, econ:'Corn, beef, Berkshire Hathaway (Buffett).' },
+  { id:'MO', name:'Missouri',       capital:'Jefferson City',region:'Midwest',   col:5,  row:3, econ:'Boeing, beer (Anheuser-Busch), soybeans, cars.' },
+  { id:'KY', name:'Kentucky',       capital:'Frankfort',     region:'South',     col:6,  row:3, econ:'Bourbon, horses (Kentucky Derby), coal, Toyota.' },
+  { id:'WV', name:'West Virginia',  capital:'Charleston',    region:'South',     col:7,  row:3, econ:'Coal, chemicals, natural gas.' },
+  { id:'VA', name:'Virginia',       capital:'Richmond',      region:'South',     col:8,  row:3, econ:'Federal government (DC suburbs), data centers, defense.' },
+  { id:'MD', name:'Maryland',       capital:'Annapolis',     region:'South',     col:9,  row:3, econ:'Federal jobs (DC suburbs), biotech, crab.' },
+  { id:'DE', name:'Delaware',       capital:'Dover',         region:'South',     col:10, row:3, econ:'Most US corporations legally based here — friendly business laws.' },
+  { id:'NJ', name:'New Jersey',     capital:'Trenton',       region:'Northeast', col:11, row:3, econ:'Pharma (J&J, Merck), finance, ports for NYC.' },
+  { id:'CT', name:'Connecticut',    capital:'Hartford',      region:'Northeast', col:12, row:3, econ:'Insurance, hedge funds, defense (subs at Groton).' },
+  { id:'HI', name:'Hawaii',         capital:'Honolulu',      region:'West',      col:0,  row:7, econ:'Tourism, military (Pearl Harbor), pineapples, sugar.' },
+  { id:'AZ', name:'Arizona',        capital:'Phoenix',       region:'West',      col:2,  row:4, econ:'Tech (Intel chips), aerospace, Grand Canyon tourism, retirees.' },
+  { id:'NM', name:'New Mexico',     capital:'Santa Fe',      region:'West',      col:3,  row:4, econ:'Oil & gas, Los Alamos nuclear lab, tourism.' },
+  { id:'KS', name:'Kansas',         capital:'Topeka',        region:'Midwest',   col:4,  row:4, econ:'Wheat (the breadbasket), beef, aircraft (Wichita).' },
+  { id:'AR', name:'Arkansas',       capital:'Little Rock',   region:'South',     col:5,  row:4, econ:'Walmart, Tyson (chicken), rice.' },
+  { id:'TN', name:'Tennessee',      capital:'Nashville',     region:'South',     col:6,  row:4, econ:'Country music (Nashville), FedEx (Memphis), whiskey.' },
+  { id:'NC', name:'North Carolina', capital:'Raleigh',       region:'South',     col:7,  row:4, econ:'Banking (Charlotte), Research Triangle tech, tobacco, furniture.' },
+  { id:'DC', name:'D.C.',           capital:'(itself)',      region:'South',     col:8,  row:4, econ:"The federal government. Not a state — the nation's capital district." },
+  { id:'TX', name:'Texas',          capital:'Austin',        region:'South',     col:3,  row:5, econ:'Oil, cattle, NASA (Houston), tech (Austin), bigger than France.' },
+  { id:'OK', name:'Oklahoma',       capital:'Oklahoma City', region:'South',     col:4,  row:5, econ:'Oil & gas, wheat, beef, aerospace.' },
+  { id:'LA', name:'Louisiana',      capital:'Baton Rouge',   region:'South',     col:5,  row:5, econ:'Oil, gas, port of New Orleans, sugarcane, jazz.' },
+  { id:'MS', name:'Mississippi',    capital:'Jackson',       region:'South',     col:6,  row:5, econ:'Cotton, soybeans, catfish, the blues.' },
+  { id:'AL', name:'Alabama',        capital:'Montgomery',    region:'South',     col:7,  row:5, econ:'Auto manufacturing (Mercedes, Honda), aerospace (NASA Marshall).' },
+  { id:'GA', name:'Georgia',        capital:'Atlanta',       region:'South',     col:8,  row:5, econ:'Coca-Cola, Delta, CNN, peaches, ports (Savannah).' },
+  { id:'SC', name:'South Carolina', capital:'Columbia',      region:'South',     col:8,  row:6, econ:'BMW plant, Boeing, ports, tourism.' },
+  { id:'FL', name:'Florida',        capital:'Tallahassee',   region:'South',     col:9,  row:7, econ:'Tourism (Disney), citrus, real estate, NASA Kennedy. Retirement.' },
+];
+
+const US_MAP_DATA = {
+  gridCols: 13,
+  gridRows: 8,
+  cellSize: 60,
+  states: US_STATES_DATA,
+};
+
+function projectLatLng(lat, lng, imgW, imgH) {
+  const x = ((lng + 180) / 360) * imgW;
+  const y = ((90 - lat) / 180) * imgH;
+  return { x, y };
+}
+function projectStateCell(s, cellSize) {
+  return { x: s.col * cellSize, y: s.row * cellSize };
+}
+
+const CONT_COLORS = {
+  asia:'#d4a657', africa:'#c97a47', northamerica:'#7a9ac9', southamerica:'#9bc97a',
+  antarctica:'#b8c6d6', europe:'#c97a91', australia:'#a47ac9',
+  pacific:'#3a6ea5', atlantic:'#3a6ea5', indian:'#3a6ea5', arctic:'#3a6ea5', southern:'#3a6ea5',
+};
+const REGION_COLORS = {
+  Northeast:'#7a9ac9', South:'#c97a47', Midwest:'#d4a657', West:'#9bc97a',
+};
+
+function InteractiveMap({ type, masterKey }) {
+  const data = type === 'world' ? WORLD_MAP_DATA : US_MAP_DATA;
+  const isWorld = type === 'world';
+
+  const wrapRef = useRef(null);
+  const innerRef = useRef(null);
+  const [view, setView] = useState({ tx:0, ty:0, scale:1 });
+  const viewRef = useRef(view);
+  useEffect(() => { viewRef.current = view; }, [view]);
+
+  const [selected, setSelected] = useState(null);
+  const [query, setQuery] = useState('');
+  const [highlightId, setHighlightId] = useState(null);
+  const [quest, setQuest] = useState(null);
+  const [capitalInput, setCapitalInput] = useState('');
+  const [capitalFeedback, setCapitalFeedback] = useState(null);
+  const [diff, setDiff] = useState('continents');
+
+  const mapW = isWorld ? data.imageWidth : data.gridCols * data.cellSize;
+  const mapH = isWorld ? data.imageHeight : data.gridRows * data.cellSize;
+
+  const allFeatures = useMemo(() => {
+    if (isWorld) return [...data.continents, ...data.oceans, ...data.countries];
+    return data.states.map(s => ({ ...s, kind:'state' }));
+  }, [isWorld, data]);
+
+  const dragRef = useRef(null);
+  const pinchRef = useRef(null);
+
+  function clampView(v) {
+    const wrap = wrapRef.current;
+    if (!wrap) return v;
+    const ww = wrap.clientWidth;
+    const wh = wrap.clientHeight;
+    const scale = Math.max(1, Math.min(8, v.scale));
+    const sw = ww * scale;
+    const sh = wh * scale;
+    let tx = v.tx, ty = v.ty;
+    const minTx = ww - sw;
+    const minTy = wh - sh;
+    if (sw <= ww) tx = (ww - sw) / 2;
+    else { if (tx > 0) tx = 0; if (tx < minTx) tx = minTx; }
+    if (sh <= wh) ty = (wh - sh) / 2;
+    else { if (ty > 0) ty = 0; if (ty < minTy) ty = minTy; }
+    return { tx, ty, scale };
+  }
+
+  function onWheel(e) {
+    e.preventDefault();
+    const wrap = wrapRef.current; if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const v = viewRef.current;
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const newScale = Math.max(1, Math.min(8, v.scale * delta));
+    const ratio = newScale / v.scale;
+    const tx = px - (px - v.tx) * ratio;
+    const ty = py - (py - v.ty) * ratio;
+    setView(clampView({ tx, ty, scale: newScale }));
+  }
+
+  function onPointerDown(e) {
+    if (e.target.closest('.map-hit')) return;
+    const wrap = wrapRef.current; if (!wrap) return;
+    try { wrap.setPointerCapture && wrap.setPointerCapture(e.pointerId); } catch(_) {}
+    dragRef.current = { startX:e.clientX, startY:e.clientY, startTx:viewRef.current.tx, startTy:viewRef.current.ty, moved:false };
+  }
+  function onPointerMove(e) {
+    if (!dragRef.current) return;
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+    if (Math.abs(dx) + Math.abs(dy) > 5) dragRef.current.moved = true;
+    setView(clampView({ tx: dragRef.current.startTx + dx, ty: dragRef.current.startTy + dy, scale: viewRef.current.scale }));
+  }
+  function onPointerUp(e) {
+    const wrap = wrapRef.current;
+    if (wrap && wrap.releasePointerCapture) try { wrap.releasePointerCapture(e.pointerId); } catch (_){}
+    dragRef.current = null;
+  }
+
+  function onTouchStart(e) {
+    if (e.touches.length === 2) {
+      const a = e.touches[0], b = e.touches[1];
+      const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      const wrap = wrapRef.current; const rect = wrap.getBoundingClientRect();
+      const cx = (a.clientX + b.clientX)/2 - rect.left;
+      const cy = (a.clientY + b.clientY)/2 - rect.top;
+      pinchRef.current = { dist, scale: viewRef.current.scale, tx:viewRef.current.tx, ty:viewRef.current.ty, cx, cy };
+      dragRef.current = null;
+    }
+  }
+  function onTouchMove(e) {
+    if (e.touches.length === 2 && pinchRef.current) {
+      e.preventDefault();
+      const a = e.touches[0], b = e.touches[1];
+      const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      const p = pinchRef.current;
+      const ratio = dist / p.dist;
+      const newScale = Math.max(1, Math.min(8, p.scale * ratio));
+      const r = newScale / p.scale;
+      const tx = p.cx - (p.cx - p.tx) * r;
+      const ty = p.cy - (p.cy - p.ty) * r;
+      setView(clampView({ tx, ty, scale:newScale }));
+    }
+  }
+  function onTouchEnd(e) {
+    if (e.touches.length < 2) pinchRef.current = null;
+  }
+
+  function zoomBy(factor) {
+    const wrap = wrapRef.current; if (!wrap) return;
+    const cx = wrap.clientWidth/2, cy = wrap.clientHeight/2;
+    const v = viewRef.current;
+    const newScale = Math.max(1, Math.min(8, v.scale * factor));
+    const r = newScale / v.scale;
+    const tx = cx - (cx - v.tx) * r;
+    const ty = cy - (cy - v.ty) * r;
+    setView(clampView({ tx, ty, scale:newScale }));
+  }
+  function resetView() {
+    setView({ tx:0, ty:0, scale:1 });
+    setSelected(null);
+    setHighlightId(null);
+  }
+
+  function centerOn(feature, targetScale) {
+    const wrap = wrapRef.current; if (!wrap) return;
+    const ww = wrap.clientWidth, wh = wrap.clientHeight;
+    let imgX, imgY;
+    if (isWorld) {
+      const p = projectLatLng(feature.lat, feature.lng, mapW, mapH);
+      imgX = p.x; imgY = p.y;
+    } else {
+      const p = projectStateCell(feature, data.cellSize);
+      imgX = p.x + data.cellSize/2; imgY = p.y + data.cellSize/2;
+    }
+    const scale = targetScale || Math.max(viewRef.current.scale, isWorld ? 3 : 2);
+    const sx = (imgX / mapW) * ww * scale;
+    const sy = (imgY / mapH) * wh * scale;
+    const tx = ww/2 - sx;
+    const ty = wh/2 - sy;
+    setView(clampView({ tx, ty, scale }));
+    setHighlightId(feature.id);
+  }
+
+  function doSearch(q) {
+    setQuery(q);
+    const norm = q.trim().toLowerCase();
+    if (!norm) { setHighlightId(null); return; }
+    if (isWorld && diff === 'continents') {
+      const hit = [...data.continents, ...data.oceans, ...data.countries].find(x => x.name.toLowerCase().includes(norm));
+      if (hit && hit.cont) setDiff('countries');
+    }
+    const f = allFeatures.find(x =>
+      x.name.toLowerCase() === norm ||
+      x.name.toLowerCase().startsWith(norm) ||
+      x.name.toLowerCase().includes(norm) ||
+      (x.id && x.id.toLowerCase() === norm) ||
+      (x.capital && x.capital.toLowerCase().includes(norm))
+    );
+    if (f) { centerOn(f); setSelected(f); }
+  }
+
+  function handleFeatureClick(f) {
+    setSelected(f);
+    if (quest && quest.kind === 'find') {
+      const correct = f.id === quest.targetId || f.name.toLowerCase() === quest.targetName.toLowerCase();
+      setQuest(prev => prev ? ({ ...prev, result: correct ? 'right' : 'wrong' }) : prev);
+    }
+  }
+
+  function speak(text) {
+    try {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        const profile = MASTER_VOICE_PREFS[masterKey];
+        if (profile) { u.rate = profile.rate || 0.9; u.pitch = profile.pitch || 1; }
+        window.speechSynthesis.speak(u);
+      }
+    } catch(_) {}
+  }
+
+  function startQuestFind() {
+    const pool = isWorld
+      ? [...data.continents, ...data.oceans, ...data.countries.filter(c=>['italy','japan','brazil','egypt','australia_c','china','india','romania','germany','france','russia','mexico','canada','iran','turkey','indonesia','uk','spain','vietnam'].includes(c.id))]
+      : data.states.filter(s => s.id !== 'DC');
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    const masterName = MASTERS[masterKey]?.name || 'Mercator';
+    const prompt = "Find " + pick.name;
+    setQuest({ kind:'find', targetId:pick.id, targetName:pick.name, prompt, result:null });
+    setSelected(null);
+    setHighlightId(null);
+    if (isWorld && pick.cont) setDiff('countries');
+    speak(masterName + " says: " + prompt);
+  }
+  function startQuestCapital() {
+    if (isWorld) return;
+    const pool = data.states.filter(s=>s.id!=='DC');
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    setQuest({ kind:'capital', targetId:pick.id, targetName:pick.name, prompt:"What is the capital of " + pick.name + "?", expected:pick.capital, result:null });
+    setSelected(null);
+    setCapitalInput('');
+    setCapitalFeedback(null);
+    centerOn(pick);
+    const masterName = MASTERS[masterKey]?.name || 'Mercator';
+    speak(masterName + " asks: What is the capital of " + pick.name + "?");
+  }
+  function submitCapital(e) {
+    e.preventDefault();
+    if (!quest || quest.kind !== 'capital') return;
+    const guess = capitalInput.trim().toLowerCase();
+    const expected = quest.expected.toLowerCase();
+    const aliases = [expected, expected.replace(/^saint /, 'st '), expected.replace(/^saint /, 'st. ')];
+    if (aliases.includes(guess) || (expected.startsWith(guess) && guess.length >= 4)) {
+      setCapitalFeedback({ ok:true, msg:'Correct. ' + quest.targetName + ' — ' + quest.expected + '.' });
+      setQuest(prev => prev ? ({ ...prev, result:'right' }) : prev);
+    } else {
+      const hint = quest.expected[0] + quest.expected.slice(1).replace(/[a-z]/g, '_');
+      setCapitalFeedback({ ok:false, msg:'Not quite. Hint: ' + hint });
+    }
+  }
+  function revealCapital() {
+    if (!quest || quest.kind !== 'capital') return;
+    setCapitalFeedback({ ok:false, msg:'It was ' + quest.expected + '. Try another.' });
+  }
+
+  return (
+    <div className="card p-3 sm:p-4" style={{ borderLeft:'3px solid var(--gold)' }}>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em]">
+          {isWorld ? "Mercator's World" : "Mercator's America"}
+        </div>
+        <div className="flex items-center gap-1">
+          <button onClick={()=>zoomBy(1.35)} className="map-btn-mini" aria-label="Zoom in">+</button>
+          <button onClick={()=>zoomBy(0.75)} className="map-btn-mini" aria-label="Zoom out">−</button>
+          <button onClick={resetView} className="map-btn-mini">Reset</button>
+        </div>
+      </div>
+
+      <div className="mt-2 flex flex-wrap gap-2 items-center">
+        <input
+          type="text"
+          value={query}
+          onChange={(e)=>doSearch(e.target.value)}
+          placeholder={isWorld ? 'Search countries, continents, oceans…' : 'Search states or capitals…'}
+          className="flex-1 min-w-[200px] px-3 py-2 rounded-md border border-gold/40 bg-parchment-warm text-ink placeholder-ink-muted text-sm focus:outline-none focus:border-gold"
+        />
+        {isWorld && (
+          <select value={diff} onChange={(e)=>setDiff(e.target.value)} className="px-2 py-2 rounded-md border border-gold/40 bg-parchment-warm text-ink text-sm">
+            <option value="continents">Continents + Oceans</option>
+            <option value="countries">+ Major Countries</option>
+          </select>
+        )}
+      </div>
+
+      <div className="mt-2 flex flex-wrap gap-2">
+        <button onClick={startQuestFind} className="map-btn-quest">
+          {isWorld ? "Quest: Find a place" : "Quest: Find a state"}
+        </button>
+        {!isWorld && (
+          <button onClick={startQuestCapital} className="map-btn-quest">Quest: Name the capital</button>
+        )}
+        {quest && (
+          <button onClick={()=>{ setQuest(null); setCapitalFeedback(null); setHighlightId(null); }} className="map-btn-mini">Exit quest</button>
+        )}
+      </div>
+
+      {quest && (
+        <div className={"mt-2 p-3 rounded-md border " + (quest.result==='right' ? "bg-emerald-50 border-emerald-400" : quest.result==='wrong' ? "bg-rose-50 border-rose-400" : "bg-parchment-warm border-gold/40")}>
+          <div className="heraldic text-[10px] font-bold uppercase tracking-[0.2em] text-gold-deep">
+            {MASTERS[masterKey]?.name || 'Mercator'} says
+          </div>
+          <div className="ink italic mt-0.5">"{quest.prompt}"</div>
+          {quest.kind === 'capital' && (
+            <form onSubmit={submitCapital} className="mt-2 flex gap-2 items-center flex-wrap">
+              <input
+                type="text"
+                value={capitalInput}
+                onChange={(e)=>setCapitalInput(e.target.value)}
+                placeholder="Type the capital…"
+                className="flex-1 min-w-[180px] px-3 py-2 rounded-md border border-gold/40 bg-white text-ink text-sm"
+                autoFocus
+              />
+              <button type="submit" className="map-btn-quest">Check</button>
+              <button type="button" onClick={revealCapital} className="map-btn-mini">Reveal</button>
+            </form>
+          )}
+          {capitalFeedback && (
+            <div className={"mt-2 text-sm " + (capitalFeedback.ok ? "text-emerald-700 font-semibold" : "text-rose-700")}>
+              {capitalFeedback.msg}
+            </div>
+          )}
+          {quest.kind === 'find' && quest.result === 'right' && (
+            <div className="mt-2 text-emerald-700 font-semibold text-sm">Right. That's {quest.targetName}.</div>
+          )}
+          {quest.kind === 'find' && quest.result === 'wrong' && (
+            <div className="mt-2 text-rose-700 text-sm">Not quite. Try again — or zoom in and look for {quest.targetName}.</div>
+          )}
+        </div>
+      )}
+
+      <div
+        ref={wrapRef}
+        className="mt-3 relative overflow-hidden rounded-md border border-gold/40 select-none touch-none"
+        style={{ aspectRatio: isWorld ? '2058 / 1024' : '780 / 480', background: isWorld ? '#cfe3f3' : '#f4ecd8', cursor: 'grab' }}
+        onWheel={onWheel}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <div
+          ref={innerRef}
+          style={{
+            position:'absolute', left:0, top:0, width:'100%', height:'100%',
+            transformOrigin:'0 0',
+            transform: 'translate(' + view.tx + 'px, ' + view.ty + 'px) scale(' + view.scale + ')',
+            willChange:'transform',
+          }}
+        >
+          {isWorld ? (
+            <svg viewBox={"0 0 " + mapW + " " + mapH} width="100%" height="100%" style={{ display:'block' }}>
+              <image href={data.imageUrl} x="0" y="0" width={mapW} height={mapH} preserveAspectRatio="none" />
+              {[...data.continents, ...data.oceans].map(c => {
+                const p = projectLatLng(c.lat, c.lng, mapW, mapH);
+                const isH = highlightId === c.id;
+                const isQuest = quest && quest.targetId === c.id;
+                return (
+                  <g key={c.id} className="map-hit" style={{ cursor:'pointer' }} onClick={(e)=>{ e.stopPropagation(); handleFeatureClick(c); }}>
+                    <circle cx={p.x} cy={p.y} r={c.r}
+                      fill={CONT_COLORS[c.id] || '#888'}
+                      fillOpacity={isH ? 0.55 : 0.18}
+                      stroke={isH ? '#c9a44c' : (isQuest ? '#9b2226' : 'rgba(26,41,66,0.6)')}
+                      strokeWidth={isH ? 6 : 2}
+                    />
+                    <text x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle"
+                      style={{ fontFamily:'Cinzel, Georgia, serif', fontWeight:700, fontSize: c.kind==='continent' ? 38 : 26, fill:'#0f1a2c', letterSpacing:'0.05em', pointerEvents:'none', paintOrder:'stroke', stroke:'#f4ecd8', strokeWidth:4 }}
+                    >{c.name.toUpperCase()}</text>
+                  </g>
+                );
+              })}
+              {diff === 'countries' && data.countries.map(c => {
+                const p = projectLatLng(c.lat, c.lng, mapW, mapH);
+                const isH = highlightId === c.id;
+                const isQuest = quest && quest.targetId === c.id;
+                return (
+                  <g key={c.id} className="map-hit" style={{ cursor:'pointer' }} onClick={(e)=>{ e.stopPropagation(); handleFeatureClick(c); }}>
+                    <circle cx={p.x} cy={p.y} r={isH || isQuest ? 16 : 10} fill={isH ? '#c9a44c' : '#9b2226'} stroke="#f4ecd8" strokeWidth="2" />
+                    {(isH || isQuest) && (
+                      <text x={p.x} y={p.y - 22} textAnchor="middle"
+                        style={{ fontFamily:'Cinzel, Georgia, serif', fontWeight:700, fontSize:22, fill:'#0f1a2c', paintOrder:'stroke', stroke:'#f4ecd8', strokeWidth:5 }}>
+                        {c.name}
+                      </text>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+          ) : (
+            <svg viewBox={"0 0 " + mapW + " " + mapH} width="100%" height="100%" style={{ display:'block' }}>
+              <rect x="0" y="0" width={mapW} height={mapH} fill="#f4ecd8" />
+              {data.states.map(s => {
+                const x = s.col * data.cellSize;
+                const y = s.row * data.cellSize;
+                const isH = highlightId === s.id;
+                const isQuest = quest && quest.kind==='capital' && quest.targetId === s.id;
+                return (
+                  <g key={s.id} className="map-hit" style={{ cursor:'pointer' }} onClick={(e)=>{ e.stopPropagation(); handleFeatureClick(s); }}>
+                    <rect x={x+2} y={y+2} width={data.cellSize-4} height={data.cellSize-4} rx="6"
+                      fill={REGION_COLORS[s.region] || '#ccc'}
+                      fillOpacity={isH || isQuest ? 0.9 : 0.55}
+                      stroke={isH ? '#c9a44c' : (isQuest ? '#9b2226' : 'rgba(26,41,66,0.65)')}
+                      strokeWidth={isH || isQuest ? 4 : 1.5}
+                    />
+                    <text x={x + data.cellSize/2} y={y + data.cellSize/2}
+                      textAnchor="middle" dominantBaseline="middle"
+                      style={{ fontFamily:'Cinzel, Georgia, serif', fontWeight:700, fontSize:18, fill:'#0f1a2c', pointerEvents:'none' }}>
+                      {s.id}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+          )}
+        </div>
+        {!isWorld && (
+          <div className="absolute bottom-1 right-1 bg-parchment-warm border border-gold/40 rounded px-2 py-1 text-[10px] heraldic uppercase tracking-widest flex gap-2">
+            <span><span className="inline-block w-3 h-3 align-middle mr-1" style={{background:'#7a9ac9'}}/>NE</span>
+            <span><span className="inline-block w-3 h-3 align-middle mr-1" style={{background:'#c97a47'}}/>S</span>
+            <span><span className="inline-block w-3 h-3 align-middle mr-1" style={{background:'#d4a657'}}/>MW</span>
+            <span><span className="inline-block w-3 h-3 align-middle mr-1" style={{background:'#9bc97a'}}/>W</span>
+          </div>
+        )}
+      </div>
+
+      {selected && (
+        <div className="mt-3 p-3 rounded-md border border-gold/50 bg-parchment-warm">
+          <div className="heraldic text-[10px] font-bold uppercase tracking-[0.2em] text-gold-deep">
+            {selected.kind === 'continent' ? 'Continent' : selected.kind === 'ocean' ? 'Ocean' : selected.kind === 'state' ? (selected.region + ' state') : 'Country'}
+          </div>
+          <div className="font-display text-2xl ink leading-tight">{selected.name}</div>
+          {selected.capital && <div className="text-sm ink-soft mt-0.5"><b>Capital:</b> {selected.capital}{selected.pop ? ' · ' : ''}{selected.pop && <span><b>Pop:</b> {selected.pop}</span>}</div>}
+          {selected.desc && <p className="text-sm ink mt-1.5 leading-snug">{selected.desc}</p>}
+          {selected.facts && <p className="text-xs ink-muted mt-1.5 italic">{selected.facts}</p>}
+          {selected.econ && <p className="text-sm ink mt-1.5"><b>What they make:</b> {selected.econ}</p>}
+        </div>
+      )}
+      {!selected && (
+        <div className="mt-2 text-xs ink-muted italic">
+          Drag to pan. Pinch / scroll to zoom. {isWorld ? 'Tap a continent, ocean, or country.' : 'Tap any state to learn what they make.'}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LessonView({ questId, lessonId, state, setState, goQuest }) {
   const quest = QUESTS[questId];
   const lesson = quest?.lessons.find(l => l.id === lessonId);
@@ -3022,6 +3662,11 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
         </div>
         <div className="text-xs ink-muted mt-2 italic">{lesson.imageCredit}</div>
       </div>
+      {lesson.interactiveMap && (
+        <div className="wrap-narrow mt-6 fadeup">
+          <InteractiveMap type={lesson.interactiveMap} masterKey={quest.master} />
+        </div>
+      )}
       <div className="wrap-narrow mt-10 space-y-5">
         {lesson.story.map((p, i) => (
           <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>{p}</p>
