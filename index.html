@@ -341,6 +341,20 @@
       </g>
     </symbol>
 
+    <symbol id="emblem-mercurius" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="#1a2942"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a44c" stroke-width="1.5"/>
+      <g fill="#c9a44c">
+        <circle cx="50" cy="36" r="11" fill="none" stroke="#c9a44c" strokeWidth="1.6"/>
+        <text x="50" y="40" textAnchor="middle" fontFamily="Cinzel, serif" fontSize="10" fontWeight="700" fill="#c9a44c">$</text>
+        <circle cx="38" cy="58" r="9" fill="none" stroke="#c9a44c" strokeWidth="1.4"/>
+        <circle cx="62" cy="58" r="9" fill="none" stroke="#c9a44c" strokeWidth="1.4"/>
+        <path d="M30 76 L 70 76 L 66 82 L 34 82 Z"/>
+        <path d="M28 72 L 72 72" stroke="#c9a44c" strokeWidth="1.4" fill="none"/>
+        <ellipse cx="50" cy="20" rx="14" ry="3" fill="#c9a44c" opacity="0.7"/>
+      </g>
+    </symbol>
+
     <symbol id="emblem-mercator" viewBox="0 0 100 100">
       <circle cx="50" cy="50" r="46" fill="#1a2942"/>
       <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a44c" stroke-width="1.5"/>
@@ -388,7 +402,8 @@ const MASTER_VOICE_PREFS = {
   vellan:   { label:'Scribe Vellan',     pitch:0.88, rate:0.88, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Microsoft David'],                                                        fallbackGenderHint:'male' },
   mira:     { label:'Linguist Mira',     pitch:1.05, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Samantha','Karen','Microsoft Zira','Google UK English Female'],                    fallbackGenderHint:'female' },
   atlas:    { label:'Reckoner Atlas',    pitch:0.88, rate:0.90, langPrefs:['en-GB','en-US'],      namePrefs:['Microsoft Mark','Aaron','Daniel'],                                                 fallbackGenderHint:'male' },
-  octavian: { label:'Merchant Octavian', pitch:0.90, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Microsoft David','Oliver'],                                               fallbackGenderHint:'male' },
+  octavian: { label:'Statesman Octavian', pitch:0.90, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Microsoft David','Oliver'],                                               fallbackGenderHint:'male' },
+  mercurius:{ label:'Merchant Mercurius',pitch:0.95, rate:0.95, langPrefs:['en-GB','en-US'],      namePrefs:['Daniel','Oliver','Microsoft David'],                                               fallbackGenderHint:'male' },
 };
 
 const FEMALE_NAME_HINTS = ['samantha','karen','zira','victoria','tessa','female','allison','susan','catherine','fiona','moira','serena'];
@@ -1293,18 +1308,566 @@ const CARTOGRAPHY_LESSONS = [
 ];
 
 /* ============================================================
+   SAGE'S HALL — Philosophy & Theory.
+   Aurelian's six quests. Same lesson shape as the others.
+============================================================ */
+const PHILOSOPHY_LESSONS = [
+  {
+    id: 'individualism',
+    title: 'Individualism vs Collectivism',
+    subtitle: 'The fight under every political fight',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Godfrey_Kneller_-_Portrait_of_John_Locke_(Hermitage).jpg?width=1100',
+    imageCredit: 'Portrait of John Locke by Godfrey Kneller, 1697 — public domain, via Wikimedia Commons',
+    cassianIntro: "Almost every political fight you will ever see traces back to one ancient quarrel: does the individual come first, or the group? Today you learn both sides — honestly. Then you decide what to believe.",
+    story: [
+      "There are two great ways to organize a society. INDIVIDUALISM says the single person — you — is the basic unit. Your rights to life, liberty, and property come first. Government exists to protect those rights, not to direct your life. This is the American founding. Thomas Jefferson and John Locke believed each person owns their own mind, their own labor, and the fruits of that labor. Government is the servant; the citizen is the boss.",
+      "COLLECTIVISM says the group — the family, the tribe, the nation, the people — is the basic unit. Your duties to the group come before your own wants. Government's job is to keep the group strong, fed, and united, even if that means telling individuals what to do. Most of European history, most of Asian history, and almost every traditional culture on Earth has leaned this way. Modern Europe, China, and most welfare-state democracies are softer collectivist by American standards.",
+      "Both have tradeoffs. Individualism gives you innovation, freedom, weirdness, breakthroughs — and loneliness, inequality, social breakdown. Collectivism gives you cohesion, safety, belonging, low crime — and conformity, slower change, less freedom to think differently. No country is 100% one or the other. The fight on the news every night — taxes, healthcare, free speech, immigration, gun rights — is almost always a fight over where to set the dial.",
+    ],
+    principle: {
+      title: 'Liberty and Belonging Are in Tension',
+      body: "You cannot have maximum freedom AND maximum belonging at the same time. Every healthy society picks a point on the dial and lives with what it gives up. America picked liberty, knowing it would cost cohesion. China picked cohesion, knowing it would cost liberty. Neither is 'right'; both are choices. Knowing which choice a country made is the key to understanding why it argues about what it argues about.",
+      quote: '"Life, Liberty, and the pursuit of Happiness." — Thomas Jefferson, Declaration of Independence, 1776',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When you hear a political argument — about masks, taxes, schools, free speech, anything — ask: is this person leaning individualist (my rights come first) or collectivist (the group's needs come first)? Most people don't realize they're picking sides in a 400-year-old debate. Naming the side lets you think instead of just feeling.",
+    },
+    quiz: [
+      { q: 'Which philosopher most shaped the American founding belief in individual rights?', choices: ['Karl Marx','John Locke','Plato','Mao Zedong'], correct: 1, explain: "John Locke (1632–1704). His ideas of life, liberty, and property went almost word-for-word into Jefferson's Declaration of Independence." },
+      { q: 'A collectivist society prioritizes...', choices: ['The individual over the group','The group over the individual','Money over both','Neither — they are the same'], correct: 1, explain: 'The group first. Duties to family, tribe, or nation come before personal wants.' },
+      { q: 'Which is a typical strength of individualist societies?', choices: ['Cohesion and low crime','Innovation and breakthroughs','Total equality of outcome','Mandatory uniforms'], correct: 1, explain: 'Innovation. When individuals are free to think weird thoughts and keep what they create, breakthroughs come faster.' },
+      { q: 'Which is a typical strength of collectivist societies?', choices: ['Maximum personal freedom','Cohesion, belonging, low crime','Highest tech innovation','Loud political arguments'], correct: 1, explain: 'Cohesion. People feel they belong. Crime is often lower. The cost is less personal freedom.' },
+      { q: 'A country can be 100% individualist OR 100% collectivist. True or false?', choices: ['True','False — every country picks a point on the dial and lives with the tradeoffs'], correct: 1, explain: 'False. No country runs on one pure flavor. America leans individualist, China leans collectivist, but both contain plenty of the other.' },
+    ],
+  },
+  {
+    id: 'stoicism',
+    title: 'Stoicism: Marcus Aurelius',
+    subtitle: 'The emperor who taught self-mastery',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Marcus_Aurelius_Glyptothek_Munich.jpg?width=900',
+    imageCredit: 'Marcus Aurelius bust, Glyptothek Munich — public domain, via Wikimedia Commons',
+    cassianIntro: "Marcus Aurelius ruled the entire Roman Empire and still found time to write a diary about how not to lose his temper. That diary became one of the greatest books ever written. Listen.",
+    story: [
+      "Marcus Aurelius was Roman Emperor from 161 to 180 AD — the most powerful man on Earth. While leading wars on the German frontier in cold tents he wrote private notes to himself, reminders on how to live well. Those notes were never meant to be published. They survived. We call them the Meditations.",
+      "Marcus belonged to a school of philosophy called Stoicism, founded in Athens around 300 BC. The Stoics taught three big ideas. ONE — the discipline of perception: what hurts you is rarely the thing itself but your judgment about it. TWO — the discipline of action: focus only on what's actually in your control, ignore the rest. THREE — the discipline of will: accept what you cannot change without complaining.",
+      "The most famous Stoic line — 'You have power over your mind, not outside events. Realize this, and you will find strength' — is one of the most useful sentences ever written. Marcus reminded himself of it almost every morning. He still got angry, still got tired, still wanted to quit. The point of Stoicism is not to never feel those things. The point is to handle them on purpose instead of being handled by them.",
+    ],
+    principle: {
+      title: 'Control What You Control. Let Go of the Rest.',
+      body: "You cannot control the weather, the teacher, the bully, the score of the game, or what other people think of you. You CAN control: how hard you train, what you study, how you respond when something goes wrong, and whether you keep your word. Stoics spend their energy on column two. People who spend their energy on column one are miserable for life.",
+      quote: '"You have power over your mind — not outside events. Realize this, and you will find strength." — Marcus Aurelius, Meditations',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Bad day at school? You can't control the test, but you can control how you study tomorrow. Parents said no? You can't control their answer, but you can control how you ask next time. Friend let you down? You can't control them — but you can decide what kind of friend YOU will be. Stop fighting things you can't move. Move the things you can.",
+    },
+    quiz: [
+      { q: 'What was Marcus Aurelius?', choices: ['A Greek slave','A Roman gladiator','A Roman Emperor and Stoic philosopher','A Christian saint'], correct: 2, explain: 'Emperor from 161–180 AD AND a serious philosopher. His Meditations were private notes he wrote to himself in army camps.' },
+      { q: 'What is the name of the book of his private notes?', choices: ['The Republic','Meditations','Confessions','The Prince'], correct: 1, explain: 'The Meditations — never meant to be published, which is part of why it feels so honest.' },
+      { q: 'The Stoics taught you should focus your energy on...', choices: ['What everyone else is doing','Things you cannot control','Things you can actually control','Revenge'], correct: 2, explain: 'The things you actually control: your effort, your responses, your word. Wasting energy on things you cannot move is the path to misery.' },
+      { q: 'Stoicism does NOT teach you to...', choices: ['Train your perception','Train your responses','Train your will','Pretend you feel nothing'], correct: 3, explain: 'Stoicism is NOT about pretending feelings away. It is about feeling them and choosing your response on purpose.' },
+      { q: 'A friend lets you down. A Stoic response is...', choices: ['Ghost them forever','Blow up at them','Notice the feeling, decide what kind of friend YOU will be, act on that','Pretend it never happened'], correct: 2, explain: 'You cannot control them. You CAN control the kind of person you want to be. Choose that on purpose.' },
+    ],
+  },
+  {
+    id: 'socrates',
+    title: 'Socrates and the Examined Life',
+    subtitle: 'Athens, 5th century BC',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/David_-_The_Death_of_Socrates.jpg?width=1280',
+    imageCredit: 'The Death of Socrates by Jacques-Louis David, 1787 — public domain, via Wikimedia Commons',
+    cassianIntro: "Socrates wrote nothing. He just asked questions. He asked so many questions, so well, that Athens killed him for it — and Western thought has been answering him for 2,400 years. Pay attention.",
+    story: [
+      "Socrates lived in Athens around 470 to 399 BC. He never wrote a book. He walked the marketplace asking people — politicians, generals, poets, craftsmen — what they really meant when they used big words like 'justice', 'courage', 'piety', 'goodness'. Almost nobody could answer cleanly. The questions exposed how shaky most beliefs really are when you push on them.",
+      "His method — now called the Socratic method — was simple: ask a question, listen, ask a better question based on the answer, repeat. He believed wisdom started with admitting what you do not know. His most famous line is 'I know that I know nothing,' which sounds humble but is actually a power move — he had figured out that most of the confident people around him knew less than they thought.",
+      "Athens convicted him of 'corrupting the youth' and 'impiety' (not respecting the city's gods) and sentenced him to death. He had a chance to escape. He refused. He drank the poison hemlock and died calmly, talking with his students about the soul. He died proving the point he had taught his whole life: live by your principles, even when it costs you.",
+    ],
+    principle: {
+      title: 'Ask Better Questions. Do Not Accept the First Answer.',
+      body: "Most people stop thinking when they hear an answer that sounds right. Socrates kept going. 'What do you mean by that? Could it ever NOT be true? What's an example? What's a counter-example? Who benefits if I believe this?' Five honest follow-ups will turn most confident statements into rubble — and what survives is real knowledge.",
+      quote: '"The unexamined life is not worth living." — Socrates, at his trial, 399 BC',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick something someone told you confidently — a teacher, a coach, a YouTuber, a friend. Ask yourself five honest follow-ups. Is it actually true? How would you know? What's the counter-example? Who benefits if you believe it? You'll come out smarter than 90% of the room without having read a single new book.",
+    },
+    quiz: [
+      { q: 'How many books did Socrates write?', choices: ['Zero','Three','Twelve','Hundreds'], correct: 0, explain: 'Zero. He never wrote anything down. We only know him through his students, mainly Plato.' },
+      { q: 'What is the Socratic method?', choices: ['Memorizing answers','Asking better and better questions','Shouting your point louder','Quoting old books'], correct: 1, explain: 'Question, listen, ask a sharper question, repeat. The goal is not to win but to find out what is actually true.' },
+      { q: 'What does "I know that I know nothing" really mean?', choices: ['He was stupid','He was being humble for show','He had realized most confident people knew less than they thought','He had never gone to school'], correct: 2, explain: "It's a power move. He was telling Athens: most of you talk like experts but cannot even define your own words." },
+      { q: 'How did Socrates die?', choices: ['In battle','He drank hemlock poison after being convicted by Athens','Old age, peacefully','In prison, of starvation'], correct: 1, explain: 'Sentenced to death by Athens, refused to escape, drank hemlock in 399 BC, kept talking philosophy until he died.' },
+      { q: 'What is the life lesson?', choices: ['Confidence wins arguments','Ask five honest follow-ups before you accept anything','Avoid difficult questions','Memorize famous quotes'], correct: 1, explain: 'Most people stop after the first answer. Five real follow-ups will sort the truth from the noise.' },
+    ],
+  },
+  {
+    id: 'aristotle',
+    title: 'Aristotle and Virtue',
+    subtitle: 'The Golden Mean and the habit of becoming good',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Aristotle_Altemps_Inv8575.jpg?width=900',
+    imageCredit: 'Bust of Aristotle, Roman copy of a Greek bronze by Lysippos, ca. 330 BC — public domain, via Wikimedia Commons',
+    cassianIntro: "Aristotle taught Alexander the Great. Think about that. The teacher of the man who conquered the world. His lesson was almost the opposite of conquest: you become great by repeating small good actions until they are no longer effort, but habit.",
+    story: [
+      "Aristotle (384–322 BC) was Plato's best student and Alexander the Great's private tutor. He wrote about almost everything: biology, physics, politics, drama, ethics, the soul. The ethics is what we want today. He asked the most important question a person can ask: what is a good human life, and how do you get one?",
+      "His answer is in a book called the Nicomachean Ethics. He said the goal of human life is 'eudaimonia' — a Greek word that means 'flourishing' or 'a life going well over the long run.' Not pleasure, not money, not even happiness in the modern sense. Flourishing. You flourish by living according to virtue — courage, honesty, generosity, self-control, justice.",
+      "His most powerful idea is the Golden Mean. Every virtue sits between two opposite faults. Courage is between cowardice (too little) and recklessness (too much). Generosity is between stinginess and wastefulness. Honesty is between secretive and oversharing. And — most important of all — Aristotle said you become virtuous the same way you learn to play piano or shoot a basketball: by doing the action over and over, until it becomes WHO YOU ARE. 'We are what we repeatedly do. Excellence, then, is not an act, but a habit.'",
+    ],
+    principle: {
+      title: 'Character Is Built One Small Choice at a Time',
+      body: "You do not become courageous in one heroic moment. You become courageous by choosing the slightly harder path on Tuesday, and again on Wednesday, and again the Wednesday after that. The hundredth time you say 'I'll do the right thing even though no one is watching,' it stops being effort and starts being WHO YOU ARE. That is how character is built. Always. No shortcuts.",
+      quote: '"We are what we repeatedly do. Excellence, then, is not an act, but a habit." — paraphrased from Aristotle, by Will Durant',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick ONE small good action and do it every day this week. Make your bed. Say thank you to one person. Practice piano for ten minutes. Train at OsteoStrong once. The action does not matter; the repetition does. Aristotle would tell you that the boy you become at 18 is just the sum of the small choices you made every day from now until then. Make them on purpose.",
+    },
+    quiz: [
+      { q: 'Whom did Aristotle famously tutor?', choices: ['Julius Caesar','Alexander the Great','Marcus Aurelius','Confucius'], correct: 1, explain: 'Alexander the Great. The teacher of the man who conquered the known world.' },
+      { q: 'What Greek word did Aristotle use for the goal of a human life?', choices: ['Pathos','Eudaimonia','Kairos','Nirvana'], correct: 1, explain: 'Eudaimonia — flourishing. A life going well over the long run. NOT just pleasure or short-term happiness.' },
+      { q: 'According to Aristotle, courage sits between which two faults?', choices: ['Anger and fear','Cowardice and recklessness','Strength and weakness','Knowledge and ignorance'], correct: 1, explain: 'Cowardice (too little) and recklessness (too much). Every virtue is the middle path between two opposite errors. That is the Golden Mean.' },
+      { q: 'How do you become virtuous, according to Aristotle?', choices: ['You are born that way','By reading enough books','By repeating the action until it is habit','By praying about it'], correct: 2, explain: 'Repeat the action until it is no longer effort. We are what we repeatedly do.' },
+      { q: 'What is the life takeaway?', choices: ['Big heroic moments matter most','Character is built by small daily choices, stacked','Talent matters more than effort','Good people are just lucky'], correct: 1, explain: 'Small daily choices, stacked over years, become character. There is no shortcut.' },
+    ],
+  },
+  {
+    id: 'eastwest',
+    title: 'Eastern vs Western Thought',
+    subtitle: 'Confucius, Lao Tzu, and the West they balance',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Confucius_Tang_Dynasty.jpg?width=900',
+    imageCredit: 'Portrait of Confucius, Tang Dynasty — public domain, via Wikimedia Commons',
+    cassianIntro: "The West looks at the world and asks 'how do I change it?' The East looks at the world and asks 'how do I fit it?' Both are right. Both are incomplete. A wise person learns to do both.",
+    story: [
+      "Western thought — Greek, Roman, European, American — starts with the individual and asks how that individual can think clearly, act freely, and improve the world. Aristotle, Locke, Jefferson. Reason, rights, progress, conquest, change. The West built modern science, industrial democracies, and most of the technology you use every day.",
+      "Eastern thought is older and runs on different tracks. CONFUCIUS (551–479 BC), in China, taught that a good society runs on duty, hierarchy, family, and ritual. Honor your parents. Respect your elders. Know your role and play it well. The emperor is like a father; the citizen is like a son. Order comes from each person doing their part. This is why so many East Asian cultures still treat family loyalty and respect for elders as sacred.",
+      "LAO TZU (legendary Chinese sage, around the 6th century BC) wrote the Tao Te Ching, the founding book of Taoism. He taught the opposite: stop pushing so hard. The 'Tao' is the natural way things move. Wise people practice 'wu wei' — effortless action, working WITH the current of life instead of against it. Water shapes stone not by force but by patience. Sometimes the strongest move is no move at all.",
+      "The smart adult learns to use BOTH. Be Western when you need to build something, take a stand, make change. Be Eastern when you need to fit into a family, accept what cannot be changed, or let an answer come to you instead of forcing it. Both/and, not either/or.",
+    ],
+    principle: {
+      title: 'Push When Pushing Works. Yield When It Does Not.',
+      body: "Western culture defaults to pushing harder. Eastern culture defaults to yielding. Real wisdom is knowing which one this moment calls for. Sometimes you fight; sometimes you flow. Sometimes you change the rules; sometimes you honor them. The person who can only push, or only yield, has half a toolkit. The person who can do both — and knows when to switch — is unstoppable.",
+      quote: '"The journey of a thousand miles begins with a single step." — Lao Tzu, Tao Te Ching',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Notice when you are pushing too hard against something that will not move — a sister who is in a bad mood, a math problem that is fighting back, a feeling that will not leave. Try the Taoist move: stop pushing for one minute. Breathe. Watch. The answer often comes the moment you stop demanding it.",
+    },
+    quiz: [
+      { q: 'Confucius (551–479 BC) taught that society runs on...', choices: ['Free markets','Duty, hierarchy, family, ritual','Total individual freedom','Random chance'], correct: 1, explain: 'Duty, hierarchy, family, ritual. Order comes from each person knowing their role and playing it well.' },
+      { q: 'Lao Tzu wrote which founding book?', choices: ['The Analects','The Tao Te Ching','The Bible','The Republic'], correct: 1, explain: 'The Tao Te Ching, the founding book of Taoism.' },
+      { q: 'What does "wu wei" mean?', choices: ['Total laziness','Effortless action — working with the current, not against it','Constant battle','Sleeping all day'], correct: 1, explain: 'Effortless action. NOT laziness. It means doing the right thing in the right moment without force.' },
+      { q: 'Western thought tends to default to...', choices: ['Pushing, changing, building','Yielding, accepting, flowing','Doing nothing','Praying'], correct: 0, explain: 'The West defaults to PUSH — change the world, build the new thing, take the stand. Eastern thought defaults to YIELD.' },
+      { q: 'The wise person uses...', choices: ['Only Western pushing','Only Eastern yielding','Both, knowing when to switch','Neither'], correct: 2, explain: 'Both. Push when pushing works. Yield when it does not. The skill is knowing which moment is which.' },
+    ],
+  },
+  {
+    id: 'romans',
+    title: 'Roman Wisdom — Cicero, Seneca, Aurelius',
+    subtitle: 'Three voices on duty, friendship, and the shortness of life',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/M-T-Cicero.jpg?width=900',
+    imageCredit: 'Bust of Cicero, Capitoline Museums — public domain, via Wikimedia Commons',
+    cassianIntro: "The Romans were practical philosophers. They wanted ideas that worked in the senate, in the army camp, at the family dinner. Three voices stand out: a statesman, a senator-tutor, and an emperor. Listen to each.",
+    story: [
+      "CICERO (106–43 BC) was a Roman senator, lawyer, and the greatest speaker of his age. He believed life was about DUTY — to family, to friends, to the Republic. His book 'On Friendship' (De Amicitia) still defines what a real friend is: someone whose well-being matters to you for its own sake, not for what they can do for you. He was murdered by political enemies after Caesar's death; his head and hands were nailed to the speaker's platform in Rome. He died a Roman, doing his duty.",
+      "SENECA (4 BC – 65 AD) was a Stoic philosopher, senator, playwright, and tutor to the young emperor Nero. His most famous work is a short book of letters called 'On the Shortness of Life.' His point: life is not too short. We waste it. We trade hours for nothing — gossip, anxiety, status games, scrolling — and then complain we have no time. Forced to commit suicide by Nero when the emperor turned cruel, Seneca took his own life calmly, in keeping with Stoic teaching.",
+      "MARCUS AURELIUS (121–180 AD) closes the loop. Emperor and Stoic. His Meditations are the most personal and the most useful of all three. Where Cicero gave us friendship and duty, and Seneca gave us time, Marcus gave us the inner discipline to do both well. The three together are a curriculum: live by duty (Cicero), respect your time (Seneca), master your mind (Marcus).",
+    ],
+    principle: {
+      title: 'The Roman Stack: Duty, Time, Self-Mastery',
+      body: "Cicero says: who you owe matters — family, friends, country. Show up for them. Seneca says: time is the only thing you cannot replace — spend it on what matters. Marcus says: your mind is the one thing you actually control — train it. Stack the three and you have most of a good life figured out.",
+      quote: '"It is not that we have a short time to live, but that we waste much of it." — Seneca, On the Shortness of Life',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "One Cicero move: do something kind for a friend or family member that costs you something — time, energy, an apology — with nothing expected back. One Seneca move: notice one hour today you wasted, and decide what you will do with that hour tomorrow instead. One Marcus move: when you feel anger or boredom rising, name it out loud — 'this is just a feeling' — and choose your next action on purpose.",
+    },
+    quiz: [
+      { q: 'Cicero is most famous for defining what?', choices: ['Justice','True friendship','The atom','Logic'], correct: 1, explain: "His book 'On Friendship' is one of the clearest definitions ever written: a real friend cares about your well-being for its own sake." },
+      { q: 'Seneca\'s most famous short book is...', choices: ['On War','On the Shortness of Life','On Money','On the Soul'], correct: 1, explain: "On the Shortness of Life. The point: life is not too short — we waste it." },
+      { q: 'Who tutored a young emperor and was later ordered by him to commit suicide?', choices: ['Cicero','Seneca','Marcus Aurelius','Aristotle'], correct: 1, explain: 'Seneca — tutor to Nero. When Nero turned paranoid, Seneca was forced to take his own life. He did so calmly.' },
+      { q: 'Which Roman was both Stoic philosopher AND Emperor?', choices: ['Cicero','Seneca','Marcus Aurelius','Caesar'], correct: 2, explain: 'Marcus Aurelius (ruled 161–180 AD). His private notes became the Meditations.' },
+      { q: 'The "Roman Stack" from this lesson is...', choices: ['Duty, Time, Self-Mastery','Money, Power, Fame','War, Peace, Love','Eat, Drink, Sleep'], correct: 0, explain: 'Cicero on duty, Seneca on time, Marcus on self-mastery. Stack the three and you have most of a good life worked out.' },
+    ],
+  },
+];
+
+/* ============================================================
+   STATESMAN'S HALL — Politics & Leadership.
+   Octavian's six quests.
+============================================================ */
+const STATECRAFT_LESSONS = [
+  {
+    id: 'machiavelli',
+    title: "Machiavelli's Prince",
+    subtitle: 'Florence, 1513 — realism over wishful thinking',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Portrait_of_Niccolò_Machiavelli_by_Santi_di_Tito.jpg?width=900',
+    imageCredit: 'Portrait of Niccolò Machiavelli by Santi di Tito, late 16th century — public domain, via Wikimedia Commons',
+    cassianIntro: "Most political books tell you how the world SHOULD work. Machiavelli told you how it ACTUALLY works. People hated him for it. They still read him 500 years later because he was right.",
+    story: [
+      "Niccolò Machiavelli (1469–1527) was a Florentine diplomat who watched, up close, how power actually worked in Renaissance Italy — assassinations, broken alliances, princes rising and falling. When the Medici family came back to power in Florence in 1512, they fired him, tortured him, and exiled him. He sat on a farm and wrote a short book called 'The Prince' (Il Principe) to teach future rulers what he had learned.",
+      "His most famous line is often misquoted. He did NOT say 'better to be feared than loved' as a general rule. He said: it is ideal to be BOTH feared and loved. But since being both is hard, and since you must choose, it is safer to be feared — because love depends on the other person, and fear depends on you. Love can vanish when times get hard. Fear of consequences does not.",
+      "Machiavelli's deeper point was about REALISM. Most leaders ruin themselves by acting how they think they SHOULD act — virtuous, gentle, generous — instead of how the situation actually requires. A good leader must be willing to be kind when kindness works and ruthless when ruthlessness works. Pretending the world is nicer than it is gets your people killed. Pretending it is meaner than it is makes you a monster. The skill is reading what the moment actually requires.",
+    ],
+    principle: {
+      title: 'See the World as It Is, Not as You Wish It Were',
+      body: "Most failures of leadership come from wishful thinking. The boss who keeps a bad employee 'because he might turn it around.' The coach who plays favorites and pretends they don't. The parent who refuses to see what is right in front of them. Machiavelli's gift was the willingness to look hard at unpleasant truth — and act on it. Hope is not a strategy.",
+      quote: '"The end justifies the means" — popular paraphrase of Machiavelli. (He actually wrote more carefully: leaders are judged by results, even when their methods are ugly.)',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "On the playground, the sports team, in group projects, and one day at work — people will TELL you they are your friend while acting like they are not. Watch their actions, not their words. The kid who praises you to your face and gossips behind your back is not your friend, no matter how nice the words sound. Machiavelli's whole book is: WATCH WHAT THEY DO.",
+    },
+    quiz: [
+      { q: "What was Machiavelli's short, famous book called?", choices: ['The Republic','The Prince','Meditations','On War'], correct: 1, explain: "The Prince (Il Principe), written in 1513 while he was exiled on a farm outside Florence." },
+      { q: 'Machiavelli\'s most famous line is best understood as...', choices: ['Always be loved','Always be feared','Be both if you can; if you must choose, fear is safer because it does not depend on the other person','Be neither'], correct: 2, explain: "He said the IDEAL is both. But if forced to pick, fear is more reliable, because love can vanish when times get hard." },
+      { q: 'What is Machiavelli\'s deepest teaching?', choices: ['Be cruel','See the world as it really is and act accordingly','Trust everyone','Lie always'], correct: 1, explain: 'REALISM over wishful thinking. The leader who refuses to see hard truths gets people hurt.' },
+      { q: 'A modern Machiavellian move on the playground would be...', choices: ['Believing every nice word someone says about you','Watching what people DO, not just what they say','Trusting whoever yells loudest','Punching first'], correct: 1, explain: 'Actions over words. Always. Machiavelli\'s whole book reduces to this.' },
+      { q: 'Why did Machiavelli write The Prince?', choices: ['To get rich','To impress a girl','He had been fired, tortured, and exiled — he wanted to share what he\'d learned about power','To start a war'], correct: 2, explain: "Fired, tortured, exiled in 1512. He sat on a farm and wrote the truth as he had seen it work." },
+    ],
+  },
+  {
+    id: 'alexander',
+    title: 'Alexander the Great',
+    subtitle: 'Conqueror at 20. King of the world at 32. Dead at 32.',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Alexander_the_Great_mosaic.jpg?width=1280',
+    imageCredit: 'Alexander the Great Mosaic, from Pompeii, ca. 100 BC — public domain, via Wikimedia Commons',
+    cassianIntro: "Alexander did in twelve years what most empires never do in centuries. Then he kept going, when wisdom said stop, and he died of it. Genius and overreach in the same boy. Pay attention to both.",
+    story: [
+      "Alexander III of Macedon (356–323 BC) inherited a small Greek kingdom at age 20 when his father Philip II was assassinated. By 32 he had conquered the entire Persian Empire — the largest empire the world had ever seen — from Greece across Egypt, all the way to the Indus River in modern Pakistan. He never lost a single major battle.",
+      "His most famous moment: the Gordian Knot. An ancient prophecy said whoever untied a hopelessly tangled knot in the city of Gordium would rule all of Asia. Wise men had tried for centuries. Alexander looked at it, drew his sword, and cut the knot in half. The lesson: when the old rules of a problem will not let you win, change the rules.",
+      "His tragedy: he could not stop. His soldiers, after eight years of marching, finally refused to go any further at the Hyphasis River in India. He had to turn back. He died in Babylon in 323 BC, age 32, of a sudden illness, exhausted from a decade of nonstop war. His empire fell apart within decades because he had never built the institutions to hold it together — he had only conquered. Vision without continuation dies with the visionary.",
+    ],
+    principle: {
+      title: 'Vision + Ambition Wins. Knowing When to Stop Keeps It.',
+      body: "Alexander shows you both ends. The vision and ambition that take you further than anyone thinks possible — and the overreach that kills you and dissolves everything you built. The hardest skill in leadership is not pushing forward; it is knowing when one more push would cost you everything.",
+      quote: '"There are no more worlds to conquer." — popular legend; Alexander supposedly wept because he believed it.',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When you win — a game, a grade, a fight — feel the win, then ask: am I done, or am I about to overreach? The kid who runs up the score, brags too loud, or pushes one win too far is doing the Alexander mistake. The win is yours. Walk away with it. Save the next push for the next day.",
+    },
+    quiz: [
+      { q: 'How old was Alexander when he became king?', choices: ['12','20','30','40'], correct: 1, explain: "20. His father Philip II was assassinated in 336 BC." },
+      { q: 'What happened with the Gordian Knot?', choices: ['He untied it','He drew his sword and cut it in half','He refused to touch it','He gave it to his horse'], correct: 1, explain: 'Cut it. When the rules of the puzzle will not let you win, change the rules.' },
+      { q: 'How far did Alexander reach?', choices: ['Just Greece','Egypt and Persia, all the way to the Indus River in India','Only the Roman Empire','China'], correct: 1, explain: 'Greece, Egypt, the entire Persian Empire, all the way to modern Pakistan. The largest empire of its time.' },
+      { q: 'What is the biggest leadership lesson from Alexander?', choices: ['Always push further','Vision and ambition take you far — but knowing when to STOP keeps what you built','Avoid all war','Never plan'], correct: 1, explain: 'Both halves matter. Push got him the empire. Refusing to stop killed him and dissolved it.' },
+      { q: 'Alexander died at what age?', choices: ['18','32','55','70'], correct: 1, explain: 'Age 32, in Babylon, of a sudden illness — exhausted after a decade of nonstop war.' },
+    ],
+  },
+  {
+    id: 'caesar',
+    title: 'Julius Caesar — Crossing the Rubicon',
+    subtitle: 'Rome, 49 BC',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Gaius_Iulius_Caesar_(Vatican_Museum).jpg?width=900',
+    imageCredit: 'Bust of Julius Caesar, Vatican Museums — public domain, via Wikimedia Commons',
+    cassianIntro: "Caesar was the best general Rome ever produced and one of the most beloved men in the city. They killed him anyway — twenty-three stab wounds, in the senate, by men he had pardoned. Greatness draws enemies. Learn how he got there. Learn why he fell.",
+    story: [
+      "Gaius Julius Caesar (100–44 BC) was a Roman general, politician, writer, and the most popular man in Rome. After conquering Gaul (modern France) over eight years of brutal warfare, the Roman Senate ordered him to disband his army before crossing back into Italy. To bring his army across the Rubicon River — the legal boundary — meant civil war against Rome itself.",
+      "He paused on the riverbank. He weighed it. Then he crossed and reportedly said 'Alea iacta est' — 'the die is cast.' Once you make that kind of decision, there is no going back. He marched on Rome, defeated his rivals (including Pompey, his old friend), and became dictator. He rebuilt the Roman calendar, expanded citizenship, started big public works, and made many enemies.",
+      "On March 15, 44 BC — the Ides of March — a group of senators, including his close friend Brutus, surrounded him in the Senate and stabbed him 23 times. He was 55. The conspirators thought killing him would restore the Republic. They were wrong. Caesar's death triggered another 17 years of civil war, ending with his adopted son Octavian becoming the first emperor. The Republic was already dead; Caesar had just made it official.",
+    ],
+    principle: {
+      title: 'Some Decisions Have No Going Back. Make Them on Purpose.',
+      body: "Caesar's crossing of the Rubicon is the original 'point of no return' moment. Most people make these decisions accidentally — drifting into a fight, a friendship, a habit they cannot easily undo. Caesar made his on purpose. He paused. He weighed. Then he moved with full commitment. When you can see a decision is irreversible, do not stumble across it. Stand at the bank. Decide. Then march.",
+      quote: '"Alea iacta est" — "The die is cast." — Julius Caesar, on crossing the Rubicon, 49 BC',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Some choices you can take back. Some you cannot. Sending a mean text. Quitting a team. Lying to a friend. Saying something you can't unsay. Before you do an irreversible thing — pause at the river. Picture it crossed. Picture life on the other side. THEN decide. Either commit fully, or step back. The worst place to be is halfway across.",
+    },
+    quiz: [
+      { q: 'What does "Alea iacta est" mean?', choices: ['Victory is mine','The die is cast','Goodbye, Rome','I came, I saw, I conquered'], correct: 1, explain: '"The die is cast." Caesar said it as he crossed the Rubicon. From that moment, going back was impossible.' },
+      { q: 'Why was crossing the Rubicon such a big deal?', choices: ['It was a wide river','It was the legal boundary — bringing his army across meant civil war against Rome itself','It was haunted','He hated rivers'], correct: 1, explain: 'Roman generals were forbidden to bring armies across the Rubicon. Doing so was an act of war against Rome.' },
+      { q: 'On what date was Caesar assassinated?', choices: ['March 15, 44 BC — the Ides of March','July 4, 44 BC','January 1, 44 BC','April 1, 44 BC'], correct: 0, explain: 'The Ides of March. 23 stab wounds in the Senate. His friend Brutus was among the killers.' },
+      { q: 'Did killing Caesar save the Roman Republic?', choices: ['Yes — Rome became free again','No — it triggered 17 more years of civil war, ending with the first Emperor','Yes for a few months','Nobody knows'], correct: 1, explain: 'It triggered another long war that ended with Caesar\'s adopted son Octavian becoming the first emperor. The Republic was already dead.' },
+      { q: 'What is the life lesson of the Rubicon?', choices: ['Avoid rivers','Some decisions cannot be undone — make them on purpose, not by drift','Never lead','Always cross every river'], correct: 1, explain: 'Pause at irreversible decisions. Decide. THEN commit fully. The worst place is halfway across.' },
+    ],
+  },
+  {
+    id: 'augustus',
+    title: 'Augustus — Builder of Empire',
+    subtitle: 'Where Caesar was loud, Augustus was patient',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Statue-Augustus.jpg?width=900',
+    imageCredit: 'Augustus of Prima Porta, early 1st century AD — public domain, via Wikimedia Commons',
+    cassianIntro: "Caesar gets the statues. Augustus built the Empire. He was the quiet one — the patient one — the one who learned from Caesar's death never to let his enemies see him coming. Two thousand years later, his work still shapes Europe.",
+    story: [
+      "When Julius Caesar was murdered in 44 BC, his great-nephew and adopted son was an 18-year-old named Gaius Octavius. Nobody took him seriously. He was sickly, young, and not a soldier. Over the next 17 years he outmaneuvered every rival — including the famous general Mark Antony and Queen Cleopatra of Egypt — and emerged as the sole ruler of Rome in 27 BC. The Senate gave him a new name: Augustus, 'the revered one.'",
+      "Where Caesar had been loud, proud, and openly ambitious, Augustus was quiet and patient. He never called himself king or emperor. He pretended to restore the Republic while quietly controlling every important position himself. He let other people take credit. He moved slowly. He outlasted his enemies — most of them died before they could act against him.",
+      "He ruled for 41 years (27 BC – 14 AD) and built the Pax Romana, the 'Roman Peace' — roughly 200 years (27 BC – 180 AD) of relative peace and prosperity across the Mediterranean. He standardized money, built roads, organized the army, created a postal system, and set up institutions strong enough to hold the empire together long after he was gone. Caesar gave Rome a sword. Augustus gave it a structure. The structure lasted centuries; the sword didn't.",
+    ],
+    principle: {
+      title: 'Patience + Institutions Beat Brilliance + Drama',
+      body: "Caesar was the more talented general and writer. Augustus was the better builder. The world remembers Caesar more — but the world LIVED in Augustus's structures for two centuries. Brilliant moves win battles; patient building wins centuries. The leader who can wait, listen, share credit, and lay one careful brick at a time eventually outbuilds every flashy genius in the room.",
+      quote: '"I found Rome a city of bricks and left it a city of marble." — Augustus, on his rebuilding of the city',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "You do not have to be the loudest person in the room to be the most important. The kid who quietly trains every day, helps without asking for credit, and outlasts the drama is the kid who runs the school by senior year. Augustus over Caesar. Be the builder.",
+    },
+    quiz: [
+      { q: 'Who was Augustus to Julius Caesar?', choices: ['His son','His great-nephew and adopted son','His brother','Unrelated'], correct: 1, explain: 'Great-nephew. Caesar formally adopted him in his will. Nobody took the 18-year-old seriously — at first.' },
+      { q: 'How long did Augustus rule?', choices: ['10 years','41 years','100 years','1 year'], correct: 1, explain: '41 years (27 BC – 14 AD). Long enough to build institutions that outlived him by centuries.' },
+      { q: 'What is the Pax Romana?', choices: ['A Roman feast','Roughly 200 years of peace and stability across the empire (27 BC – 180 AD)','A short truce','A type of bread'], correct: 1, explain: 'The "Roman Peace." Roughly two centuries — the founding period of European civilization.' },
+      { q: 'How was Augustus different from Julius Caesar?', choices: ['Augustus was loud and brash','Augustus was patient, quiet, shared credit, and built lasting institutions','They were identical','Augustus was a general; Caesar was a builder'], correct: 1, explain: "Caesar was loud, ambitious, and was killed for it. Augustus learned that lesson and worked patiently for decades." },
+      { q: 'What is the life takeaway?', choices: ['Always be the loudest','Patience + building institutions outlasts brilliance + drama','Brilliance is the only thing that matters','Be both Caesar and Augustus at once'], correct: 1, explain: 'The patient builder outlasts the loud genius. Caesar got the statue; Augustus got the empire.' },
+    ],
+  },
+  {
+    id: 'lincoln',
+    title: 'Abraham Lincoln — Leadership in Crisis',
+    subtitle: 'The man who held the Union together',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Abraham_Lincoln_O-77_matte_collodion_print.jpg?width=900',
+    imageCredit: 'Abraham Lincoln, photograph by Alexander Gardner, 1863 — public domain, via Wikimedia Commons',
+    cassianIntro: "Lincoln became President of a country tearing in half. He held it together — barely, at enormous cost, and by being ruthless and merciful in exactly the right doses. Then he was assassinated five days after the war ended. Study every choice he made.",
+    story: [
+      "Abraham Lincoln (1809–1865) was the 16th President of the United States. Within weeks of his 1861 inauguration, eleven Southern states had seceded over slavery, and the Civil War began. For four years, more than 600,000 Americans died — more than in every other American war combined. Lincoln carried that weight alone.",
+      "He was ruthless when ruthlessness was required. He suspended habeas corpus, jailing thousands without trial. He approved General William T. Sherman's march through Georgia in 1864 — burning farms, factories, and railroads from Atlanta to the sea — to break the South's ability to fight. He fired generals who would not attack until he found Ulysses S. Grant, who would. He did what was needed to win the war.",
+      "He was merciful when mercy was required. In his Second Inaugural Address, six weeks before his death, with victory in sight, he said: 'With malice toward none, with charity for all... let us strive on to finish the work we are in; to bind up the nation's wounds.' Five days after Confederate General Lee surrendered at Appomattox, Lincoln was shot at Ford's Theater. He died the next morning, April 15, 1865. The Union held — because he had carried both the sword and the open hand at the same time.",
+    ],
+    principle: {
+      title: 'Be Ruthless When You Must. Be Merciful When You Can.',
+      body: "Most leaders are good at one and bad at the other. The all-ruthless leader breaks his enemies and his own people along with them. The all-merciful leader gets walked on and his cause dies. Lincoln did both — hard war, then a soft peace — and held a country together that almost nobody believed could survive. Moral clarity under pressure means knowing which mode this moment requires.",
+      quote: '"With malice toward none, with charity for all..." — Lincoln, Second Inaugural Address, March 4, 1865',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When someone wrongs you, ask the Lincoln question: does this moment call for hard or soft? When a bully crosses a line you cannot let stand, you stand firm — ruthlessly if you have to. When a friend makes a mistake and is already sorry, you forgive. Knowing the difference is what makes a leader. Mistaking one for the other is what breaks one.",
+    },
+    quiz: [
+      { q: 'What war did Lincoln lead the country through?', choices: ['World War I','The American Revolution','The American Civil War (1861–1865)','The War of 1812'], correct: 2, explain: 'The Civil War — 1861 to 1865. More Americans died than in any other war the country has ever fought.' },
+      { q: "Which general did Lincoln approve to march through Georgia and break the South's ability to fight?", choices: ['Grant','Sherman','Lee','MacArthur'], correct: 1, explain: "General William T. Sherman. His march to the sea in 1864 was brutal — and helped end the war." },
+      { q: 'What is the most famous line from his Second Inaugural?', choices: ['"Four score and seven years ago"','"With malice toward none, with charity for all"','"Ask not what your country can do for you"','"The only thing we have to fear is fear itself"'], correct: 1, explain: '"With malice toward none, with charity for all." Six weeks before his death. He was already planning a merciful peace.' },
+      { q: 'When was Lincoln assassinated?', choices: ['Before the war ended','Five days after Lee surrendered','Ten years after the war','He died of old age'], correct: 1, explain: 'April 14, 1865 — five days after Lee surrendered at Appomattox. He died the next morning.' },
+      { q: 'What is the leadership lesson?', choices: ['Always be merciful','Always be ruthless','Be ruthless when you must, merciful when you can — know which moment requires which','Pick one and stick with it'], correct: 2, explain: 'BOTH. Most leaders are good at one. Lincoln carried the sword AND the open hand, at the right times.' },
+    ],
+  },
+  {
+    id: 'churchill',
+    title: 'Winston Churchill — Standing Alone',
+    subtitle: 'Britain, 1940 — when the world expected surrender',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Sir_Winston_Churchill_-_19086236948.jpg?width=900',
+    imageCredit: 'Sir Winston Churchill, British Ministry of Information photograph — public domain (UK Crown, expired), via Wikimedia Commons',
+    cassianIntro: "In May 1940, every reasonable adult in Britain thought they should make peace with Hitler. Churchill said no. He stood alone. He was right. The world owes its freedom to a man who refused to fold when folding was the smart play.",
+    story: [
+      "In May 1940, France was collapsing in days against the Nazi blitzkrieg. The British Expeditionary Force was trapped on the beaches of Dunkirk. Many in the British government — including the Foreign Secretary, Lord Halifax — wanted to negotiate peace with Hitler through Mussolini. It looked like the realistic choice. Britain was alone in Europe. America had not yet entered the war. The Soviets were on Hitler's side at that point. Hitler controlled the Continent.",
+      "Winston Churchill (1874–1965) became Prime Minister on May 10, 1940. In a closed cabinet meeting on May 28, he listened to the arguments for negotiating. Then he refused. He told his ministers: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' That was the moment. Britain would fight.",
+      "He went to Parliament and delivered speeches that became some of the most famous words in the English language: 'We shall fight on the beaches, we shall fight on the landing grounds... we shall never surrender.' Britain held alone for a year. The Battle of Britain (summer 1940) was won by the Royal Air Force. Hitler's planned invasion of Britain was cancelled. America entered the war in December 1941. Hitler eventually lost. None of that happens if Churchill folds in May 1940.",
+    ],
+    principle: {
+      title: 'Sometimes the Right Move Is to Refuse to Fold',
+      body: "Most people fold when everyone around them is folding. Churchill did not. He was probably the only person in that cabinet meeting who could have held the line — and he did. Real courage is not the absence of fear. It is the willingness to stand alone when standing alone is what's needed. The world is mostly shaped by the few people who refuse to fold at the moments that matter.",
+      quote: '"We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields and in the streets, we shall fight in the hills; we shall never surrender." — Churchill, House of Commons, June 4, 1940',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When everyone around you is giving up on something that matters — a teammate cheating, a friend being mocked, a hard project everyone has abandoned — be the one who stands. You will not be popular in the moment. You will be respected for the rest of your life. The Churchill move is rare because it is hard. That is exactly why it matters when you do it.",
+    },
+    quiz: [
+      { q: 'In what month and year did Churchill become Prime Minister?', choices: ['January 1939','May 1940','December 1941','June 1944'], correct: 1, explain: 'May 10, 1940 — the same week the Nazi blitzkrieg broke France.' },
+      { q: 'What did some in his cabinet want to do in May 1940?', choices: ['Invade Germany immediately','Negotiate peace with Hitler','Surrender unconditionally','Send everyone to America'], correct: 1, explain: 'Negotiate peace through Mussolini. Lord Halifax led that camp. Churchill refused.' },
+      { q: 'Which famous speech did he give about fighting on the beaches?', choices: ['"I have a dream"','"Four score and seven years ago"','"We shall fight on the beaches... we shall never surrender."','"Ich bin ein Berliner"'], correct: 2, explain: '"We shall fight on the beaches..." — House of Commons, June 4, 1940.' },
+      { q: 'Which battle did Britain win in summer 1940 that stopped Hitler\'s planned invasion?', choices: ['Battle of Stalingrad','Battle of Britain','Battle of Midway','Battle of Waterloo'], correct: 1, explain: "The Battle of Britain — fought mostly by the Royal Air Force. Hitler cancelled his planned invasion (Operation Sea Lion) after losing it." },
+      { q: "What is the leadership lesson?", choices: ['Always fold when outnumbered','When everyone is folding, be the one who refuses — if you are right','Always fight','Never speak in public'], correct: 1, explain: 'Real courage is standing alone when the moment requires it. The world is shaped by the few who refuse to fold when it matters most.' },
+    ],
+  },
+];
+
+/* ============================================================
+   RECKONER'S HALL — Math & Data Literacy.
+   Atlas teaches concepts, NOT calculation drills. AI can compute.
+   You must learn what data MEANS — and how it gets misused.
+============================================================ */
+const RECKONING_LESSONS = [
+  {
+    id: 'numbers',
+    title: 'What Is a Number, Really?',
+    subtitle: 'Counting, ratios, and the percentage trap',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Liber_abbaci_magliab_f124r.jpg?width=900',
+    imageCredit: 'Fibonacci\'s Liber Abaci, 1202 manuscript — public domain, via Wikimedia Commons',
+    cassianIntro: "AI can do the arithmetic. You need to understand what the numbers MEAN — and the small handful of tricks that fool everyone who doesn't. Today: counting, ratios, and the percentage trap.",
+    story: [
+      "A number is just a way to compare things. The number 5 is meaningless on its own — 5 apples, 5 miles, 5 percent, 5 friends are all completely different. Math is the language we use to track HOW MUCH and BY HOW MUCH. The biggest mistake people make is using numbers without asking 'how much of what, compared to what?'",
+      "RATIOS and PERCENTAGES are where most people get tricked. A ratio compares two things — '3 out of 4 dentists.' A percent is a ratio out of 100 — '75 percent.' They are the same number wearing different clothes. Easy stuff. But here's where adults get fooled: PERCENTAGE OF a number is not always what you think. A $100 jacket on sale at 50 percent off costs $50. Then it gets ANOTHER 50 percent off. Most people guess that's free — $0. Wrong. The second 50 percent comes off $50, not $100. So it costs $25. Two 50 percent discounts ≠ 100 percent off.",
+      "Percentage POINTS vs PERCENT change is the other big trap. If a politician's approval rating goes from 40 percent to 44 percent, that's a 4 percentage POINT rise. But it's a 10 PERCENT rise (4 is 10 percent of 40). Both are true. News headlines pick whichever number sounds more dramatic. 'Approval surges 10 percent!' or 'Approval inches up 4 points!' — same data, opposite emotion. Knowing the difference means you can't be played.",
+    ],
+    principle: {
+      title: 'Numbers Have Units. Always Ask "Of What?"',
+      body: "A naked number is a trick waiting to happen. '50 percent off' — of what original price? 'Sales doubled' — from how many? 'Approval up 10 percent' — points or percent change? Whenever you see a number, train yourself to instantly ask: 'compared to what?' That one question kills more bad arguments than any other.",
+      quote: '"Round numbers are always false." — Samuel Johnson',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Next time you see a sale sign, calculate it for real before you get excited. Next time a headline gives you a percent change, ask: percent of what? Off what starting number? You'll see how often the dramatic number is technically true but practically meaningless. That habit alone makes you sharper than most adults.",
+    },
+    quiz: [
+      { q: 'A $100 jacket is 50% off, then 50% off again. What does it cost?', choices: ['$0','$25','$50','$75'], correct: 1, explain: '$25. The second 50% comes off the already-reduced $50 — not the original $100. Two 50% discounts do NOT add to 100% off.' },
+      { q: 'Approval goes from 40% to 44%. The percentage POINT change is...', choices: ['4 points','10 points','40 points','44 points'], correct: 0, explain: '4 percentage points (44 minus 40). The PERCENT change is 10% (4 is 10% of 40). Both are true; headlines pick the more dramatic one.' },
+      { q: 'A ratio of "3 out of 4" is the same as...', choices: ['25%','50%','75%','100%'], correct: 2, explain: '75%. A ratio out of any number is just a percent waiting to be converted to /100.' },
+      { q: 'What is the most useful question to ask about ANY number you see?', choices: ['"Is it round?"','"Compared to what?"','"Is it old?"','"Who said it?"'], correct: 1, explain: 'Compared to what? Off what base? Of what total? Most number-tricks die instantly when you ask that.' },
+      { q: 'You read "Sales doubled this year!" What\'s the missing question?', choices: ['"Did they really?"','"Doubled from WHAT starting number?"','"Who runs the company?"','"What year is it?"'], correct: 1, explain: 'Doubled from WHAT? Sales going from 1 to 2 is "doubled" — and meaningless. Sales going from 1 million to 2 million is real.' },
+    ],
+  },
+  {
+    id: 'statistics',
+    title: 'Statistics 101 — How Data Lies',
+    subtitle: 'Averages, survivorship bias, correlation traps',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Nightingale-mortality.jpg?width=1200',
+    imageCredit: 'Florence Nightingale\'s mortality diagram, 1858 — public domain, via Wikimedia Commons',
+    cassianIntro: "Statistics is not about doing math. It's about not getting fooled by people who do. Five tricks make up 90 percent of the dishonesty you'll ever face. Learn the five.",
+    story: [
+      "TRICK ONE: averages can lie. If Bill Gates walks into a bar with nine regular people, the AVERAGE income in that bar is over a billion dollars. The MEDIAN income (the middle person) barely changes. Median is the honest number when one or two huge values would distort the average. Whenever you see 'average,' ask if median would tell a different story.",
+      "TRICK TWO: survivorship bias. In World War II, American engineers studied bullet holes on planes that returned from missions. They wanted to add armor where the holes were. A statistician named Abraham Wald said: 'No. Add armor where there ARE NO HOLES. The planes that got shot THERE never came back.' You only see the survivors. Successful CEOs, hit songs, famous athletes — those are the planes that came home. The ones that didn't make it back tell the real story about how hard the path is.",
+      "TRICK THREE: correlation is not causation. Ice cream sales and shark attacks both rise in summer. Eating ice cream does not cause shark attacks. Both are caused by a third thing — hot weather (more people in the ocean, more people eating ice cream). Whenever someone says 'A and B move together, so A must cause B,' look for the hidden third thing.",
+      "TRICK FOUR: '9 out of 10 dentists recommend...' What they don't say: out of how many dentists asked? Five hundred? Twelve? And who picked them? Trick five: the y-axis of a chart. Stretch the scale and a tiny change looks huge. Compress it and a huge change looks tiny. The picture lies; the numbers do not.",
+    ],
+    principle: {
+      title: 'Doubt Loud Claims. Ask the Five Questions.',
+      body: "1) Is this an average or a median? 2) Am I only seeing survivors? 3) Is one thing actually CAUSING the other, or do they just move together? 4) Who chose the sample, and how big was it? 5) Is the chart's scale honest? Ask the five and you will be statistically smarter than 95 percent of adults — including most reporters.",
+      quote: '"There are three kinds of lies: lies, damned lies, and statistics." — popularized by Mark Twain',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick one statistic from a headline or an ad this week and run it through the five questions. You'll find at least one — usually more — that the headline doesn't answer. Now you know what they're hiding. Once you can see the tricks, you can't unsee them. Welcome to thinking like a grown-up.",
+    },
+    quiz: [
+      { q: 'Bill Gates walks into a bar with 9 regular people. What happens to the AVERAGE income?', choices: ['Barely changes','It jumps to over a billion dollars','It goes to zero','Nothing — averages do not work that way'], correct: 1, explain: 'The average explodes — Gates is worth $100+ billion. The MEDIAN (middle person) barely moves. Median is the honest number when one extreme value distorts everything.' },
+      { q: 'The WWII plane armor story is about which bias?', choices: ['Confirmation bias','Survivorship bias','Recency bias','Anchoring bias'], correct: 1, explain: 'Survivorship bias. The planes that got shot in the FATAL spots never came back. You only see the survivors — that is true of CEOs, athletes, hit songs, and almost every success story.' },
+      { q: 'Ice cream sales and shark attacks both rise in summer. Does eating ice cream cause shark attacks?', choices: ['Yes','No — both are caused by a third thing (hot weather brings more swimmers and more ice cream eaters)','Sometimes','Only on Tuesdays'], correct: 1, explain: 'No — correlation is NOT causation. A third factor (hot weather) drives both.' },
+      { q: '"9 out of 10 dentists recommend this toothpaste." What is the key missing question?', choices: ['Are they real dentists?','Out of HOW MANY dentists asked, and who chose them?','What is toothpaste?','Do they brush?'], correct: 1, explain: 'Out of how many, and who picked them? Out of 10? Out of 10,000? Picked at random or hand-selected? Without that, the number means nothing.' },
+      { q: 'What can a misleading chart\'s Y-AXIS do?', choices: ['Make tiny changes look huge or huge changes look tiny','Nothing — charts are always honest','Only show colors','Cure diseases'], correct: 0, explain: 'Stretch or compress the y-axis and you can turn the same data into "DISASTER!" or "barely changing." The picture lies; the numbers do not.' },
+    ],
+  },
+  {
+    id: 'propaganda',
+    title: 'Propaganda by the Numbers',
+    subtitle: 'How polls, headlines, and framing trick you',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Uncle_Sam_(pointing_finger).jpg?width=900',
+    imageCredit: 'Uncle Sam recruiting poster by J.M. Flagg, 1917 — public domain, via Wikimedia Commons',
+    cassianIntro: "Politicians do not lie outright as often as you'd think. They don't have to. They use numbers and words that are TECHNICALLY true but designed to make you feel a certain way. Today you learn the moves.",
+    story: [
+      "LEADING QUESTIONS bend poll results. 'Do you support the President's plan to help working families?' vs 'Do you support the President's plan to raise your taxes?' could be the same plan. The two questions will get opposite answers. When you read 'a recent poll shows 73% support,' the FIRST question to ask is: what was the actual wording? Polls don't measure opinion. They measure how the wording made people feel that day.",
+      "FRAMING effects work on headlines. 'Crime up 5%' and 'Streets 95% as safe as last year' are the same data. 'Unemployment falls to 4%' and 'Four million Americans still out of work' are both true at the same time. Every headline is a frame. The writer picks one and you absorb it. Train yourself to flip every headline: what would the opposite frame look like, using the same numbers?",
+      "CHERRY-PICKING is the third move. Show only the data that supports your point, leave out the rest. 'Stock market hits record high!' — yes, and it crashed twice in the last 18 months on the way there. CONTEXT-DROPPING is its cousin: '10,000 arrests this year!' — yes, and last year it was 50,000. The same fact lands as scary or reassuring depending on what number you leave out. The trick is always what they don't tell you.",
+    ],
+    principle: {
+      title: 'When You See a Number in Politics, Ask: Who Benefits If I Believe This?',
+      body: "Every poll, every chart, every headline was produced by someone with a goal. They chose the wording, the scale, the comparison, what to leave out. Asking 'who benefits if I believe this?' does not mean everyone is lying — it means you remember to look for the frame before you absorb the message. That habit alone is most of what 'thinking for yourself' actually means.",
+      quote: '"It is easier to fool people than to convince them they have been fooled." — often attributed to Mark Twain',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick a news headline that made you feel something strong this week — angry, scared, excited. Reread it slowly. Find the loaded word, the missing context, or the cherry-picked number. Now write the opposite headline using the SAME facts. You'll see how the same data can be spun two ways. Once you can see the spin, the news stops controlling your mood.",
+    },
+    quiz: [
+      { q: '"Do you support the President\'s plan to help working families?" is an example of...', choices: ['A neutral poll','A leading question','A correlation','A median'], correct: 1, explain: 'A leading question. The wording pushes you to a certain answer. Reword it neutrally and the results swing wildly.' },
+      { q: '"Crime up 5%" vs "Streets 95% as safe as last year" — these are...', choices: ['Different numbers','The same data, different frames','Both lies','Both impossible'], correct: 1, explain: 'Same data. Different frame. Every headline picks a frame. Train yourself to flip it.' },
+      { q: 'A politician shows you ONE great quarter of economic numbers, hiding the bad three. That is...', choices: ['Honest reporting','Cherry-picking','A correlation','Survivorship bias'], correct: 1, explain: 'Cherry-picking. Showing only the data that supports the point. The lie is in what you don\'t see.' },
+      { q: 'What is the most powerful question to ask when you see a number in politics?', choices: ['"Is it big?"','"Who benefits if I believe this?"','"Was it on TV?"','"Is it round?"'], correct: 1, explain: 'Who benefits if I believe this? It doesn\'t mean everyone is lying — it reminds you to look for the frame BEFORE absorbing the message.' },
+      { q: '"10,000 arrests this year!" sounds scary. What\'s the most important missing context?', choices: ['How many in previous years?','How tall is the police chief?','How many cars in the city?','How many doctors?'], correct: 0, explain: 'How many last year? If last year was 50,000, this year\'s "10,000" is great news. Same fact, opposite meaning, depending on what they leave out.' },
+    ],
+  },
+  {
+    id: 'probability',
+    title: 'Probability — Real-World Risk',
+    subtitle: 'Why your gut is wrong about chance',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Caravaggio_-_I_Bari.jpg?width=1280',
+    imageCredit: 'The Cardsharps by Caravaggio, c. 1594 — public domain, via Wikimedia Commons',
+    cassianIntro: "Humans are TERRIBLE at probability. We feel scared of the wrong things, hopeful about the wrong things, and bet on the wrong things. Two ideas — base rates and the lottery math — fix most of it.",
+    story: [
+      "BASE RATE FALLACY. Imagine a disease that affects 1 in 1,000 people. A test is 99% accurate. You test positive. Do you have the disease? Most people say yes, 99% chance. The real answer: about 9%. Why? Because out of 1,000 people, only 1 actually has the disease — and 10 healthy people will get false positives (1% of 1,000). So 11 people test positive, but only 1 of them is actually sick. 1 out of 11 ≈ 9%. The TEST accuracy is not the same as YOUR risk. Always ask the base rate first.",
+      "CONJUNCTION FALLACY. Linda is 31, single, smart, outspoken, deeply concerned about social justice. Is it more likely she is (A) a bank teller, or (B) a bank teller AND active in the feminist movement? Most people pick B because it sounds more like Linda. But B can NEVER be more likely than A — every B is automatically also an A. Adding details makes a story feel more real, but it can only make the probability smaller, not larger. Beware of vivid stories.",
+      "THE LOTTERY VS INVESTING. Your chance of winning Powerball jackpot is about 1 in 292 million. Your chance of dying in a car crash this year is about 1 in 9,000. You are roughly 32,000 times more likely to die driving than to win the lottery. Yet millions buy tickets. Meanwhile, $100/month invested in the stock market at the historical 10% average return becomes about $200,000 in 30 years — without buying a single ticket. The lottery is a tax on people who do not understand probability. The stock market is a reward for people who do.",
+    ],
+    principle: {
+      title: 'Always Ask the Base Rate First',
+      body: "Your gut judges probability by how vivid or scary something feels — shark attacks, plane crashes, lottery jackpots. Reality judges probability by base rates. Heart disease kills 700,000 Americans a year; sharks kill about 1. Yet people fear sharks more than cheeseburgers. The single best thinking move you can make about risk: ignore your gut, look up the actual base rate, do the math.",
+      quote: '"It is by logic that we prove, but by intuition that we discover." — Henri Poincaré',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Next time someone (or you) panics about a vivid scary thing — kidnappings, plane crashes, lottery dreams — look up the actual base rate. Then look up the boring thing that kills 100x more people but nobody talks about (heart disease, car accidents, falls in the home). Reality is much less dramatic than the news. Once you know that, you stop wasting fear on the wrong things.",
+    },
+    quiz: [
+      { q: 'A disease hits 1 in 1,000 people. A test is 99% accurate. You test positive. Roughly what is your real chance of having it?', choices: ['99%','75%','50%','About 9%'], correct: 3, explain: 'About 9%. Out of 1,000 people, only 1 is sick, and ~10 will get false positives. So 11 positive results — only 1 of them real. Base rates beat test accuracy.' },
+      { q: 'Linda is described as a feminist activist. Is she more likely to be (A) a bank teller, or (B) a bank teller AND a feminist?', choices: ['B — the details fit','A — adding details can only make probability SMALLER, not larger','Same chance','Cannot tell'], correct: 1, explain: 'A. Every B is automatically also an A. Adding a detail feels more real but makes probability smaller. This is the conjunction fallacy.' },
+      { q: 'Powerball jackpot odds are roughly 1 in 292 million. Your odds of dying in a car crash this year are about 1 in 9,000. How many times more likely is the car crash?', choices: ['10x','100x','1,000x','About 32,000x'], correct: 3, explain: '~32,000 times more likely. Lottery is a tax on people who can\'t do math. Car safety is the actual life-or-death game.' },
+      { q: 'Why is the BASE RATE the most important number when judging risk?', choices: ['It is the easiest number','Your gut feels emotion-rates, not real rates — the base rate is the actual frequency','It rhymes','Tradition'], correct: 1, explain: 'Your gut judges by vividness. Reality runs on base rates. Look up the real frequency and the world stops being scary in the wrong places.' },
+      { q: 'Sharks kill about 1 American per year. Heart disease kills about how many?', choices: ['1,000','50,000','100,000','About 700,000'], correct: 3, explain: '~700,000. People fear sharks. Cheeseburgers are the actual threat. That is the cost of running on gut instead of base rates.' },
+    ],
+  },
+  {
+    id: 'geometry',
+    title: 'Geometry as Pattern',
+    subtitle: 'Math you can see — Pythagoras to fractals',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Sanzio_01.jpg?width=1280',
+    imageCredit: '"The School of Athens" by Raphael, 1509–1511 — Pythagoras visible at lower left — public domain, via Wikimedia Commons',
+    cassianIntro: "Geometry is math you can SEE. The shapes of buildings, the curves of shells, the patterns in lightning — all run on the same handful of rules. Today you learn the rules behind the world.",
+    story: [
+      "PYTHAGORAS (around 570–495 BC) was a Greek philosopher and mathematician who believed numbers ruled the universe. His most famous discovery — the Pythagorean theorem — says that in any right triangle (one with a 90-degree corner), a² + b² = c². The two short sides squared, added together, equal the long side squared. This single rule lets you measure distances, build square corners, and design almost every structure on Earth without ever leaving the ground.",
+      "THE GOLDEN RATIO (about 1.618, called phi) shows up everywhere in nature: the spiral of a nautilus shell, the arrangement of sunflower seeds, the branching of trees, even the proportions of the human face. The Greeks built the Parthenon using it. Renaissance painters used it. We do not fully know why our eyes find it beautiful — but they do, across every culture that has ever been studied. Math made visible.",
+      "FRACTALS are patterns that repeat at every scale. Zoom into a coastline and you see smaller coastlines. Zoom into a lightning bolt and you see smaller bolts. Zoom into a tree branch and you see smaller branches that look like the whole tree. Nature uses fractals because they are an efficient way to fill space — and they are why a tiny tree in a video game can look infinitely complicated using almost no code.",
+      "WHY BUILDINGS STAND: triangles. A square frame can collapse sideways. A triangle cannot — its three sides lock it into a single shape. Every bridge, every roof truss, every crane uses triangles for one reason: geometry is the cheapest way to make something strong. The math is invisible. The shapes are everywhere.",
+    ],
+    principle: {
+      title: 'The World Runs on a Few Shapes. Learn to See Them.',
+      body: "Once you know the Pythagorean theorem, the golden ratio, and fractals, you start to SEE them everywhere — pinecones, skyscrapers, snowflakes, rivers, your own face. Math stops feeling like homework and starts feeling like the secret code of the world. Most adults never learn to see it. The ones who do never get bored, because every walk outside becomes a puzzle they can solve.",
+      quote: '"Mathematics is the language with which God has written the universe." — Galileo Galilei',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Look for triangles in everything strong: bridges, roof beams, cranes, gymnastics equipment, your bike frame. Look for spirals in everything that grew: shells, ferns, pinecones, galaxies. The next time someone says 'when am I ever going to use geometry,' you will have a better answer than your teacher: every single day, in everything you see — once you know how to look.",
+    },
+    quiz: [
+      { q: 'The Pythagorean theorem says, in a right triangle...', choices: ['a + b = c','a × b = c','a² + b² = c²','a² − b² = c²'], correct: 2, explain: 'a² + b² = c². The two short sides squared, added together, equal the long side squared. Works for every right triangle.' },
+      { q: 'About what is the value of the Golden Ratio (phi)?', choices: ['1.0','1.618','2.718','3.14'], correct: 1, explain: 'Approximately 1.618. Shows up in shells, sunflowers, the Parthenon, Renaissance paintings, and human faces.' },
+      { q: 'A fractal is a pattern that...', choices: ['Only appears in math books','Repeats at every scale — zoom in and you see smaller versions of the same shape','Has exactly four sides','Is only found in computers'], correct: 1, explain: 'Self-similar at every scale. Coastlines, trees, lightning, snowflakes — nature uses fractals everywhere.' },
+      { q: 'Why do bridges and roofs use triangles?', choices: ['They look cool','A triangle is the only shape that cannot deform — three sides lock it into one shape','Triangles are cheap to paint','Tradition'], correct: 1, explain: 'A square frame can be pushed sideways. A triangle cannot. Geometry is the cheapest way to make something strong.' },
+      { q: 'What is the big idea of this lesson?', choices: ['Memorize formulas','The world runs on a few simple shapes — learn to see them and everything looks different','Math is only for school','Geometry is too hard'], correct: 1, explain: 'Once you see the shapes, you can\'t un-see them. The world stops feeling random and starts feeling like a puzzle you can solve.' },
+    ],
+  },
+  {
+    id: 'ai-math',
+    title: 'How AI Does Math (And Where It Fails)',
+    subtitle: 'You are the judge, not the calculator',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Charles_Babbage_-_1860.jpg?width=900',
+    imageCredit: 'Charles Babbage, photograph 1860 — inventor of the first mechanical computer — public domain, via Wikimedia Commons',
+    cassianIntro: "AI can multiply ten-digit numbers in a heartbeat. It can also confidently tell you that 1+1 = 3 if you phrase the question wrong. The machine does the math. YOU decide if the answer makes sense. That is the most important skill of the coming century.",
+    story: [
+      "Computers and AI are extraordinary calculators. They can do in one second what would take a human a thousand years. Multiplying gigantic numbers, simulating weather systems, finding patterns in billions of data points — all of it is now cheap and fast. The arithmetic part of math is, for almost all practical purposes, SOLVED.",
+      "What is NOT solved is the JUDGMENT part. AI gives an answer. It does not know if the answer is reasonable. If you ask 'how many windows are in New York City?' and feed it bad data, it will confidently tell you 47 — or 47 billion — and either way it will sound certain. GARBAGE IN, GARBAGE OUT (programmers call it GIGO). The machine cannot tell that your input was wrong, your question was confused, or your assumptions were silly. It only computes.",
+      "YOUR job, growing up alongside AI, is to be the JUDGE. Three skills matter most. ONE: estimation — does this answer feel about right? A laptop should not cost $7. A trip to the moon should not take 4 hours. If the answer is way off your gut estimate, something is wrong. TWO: sanity checking — recompute one piece by hand, ask the same question a different way, check a known case. THREE: knowing which question to ask in the FIRST place. AI is brilliant at answering questions. It is terrible at deciding which question deserves to be asked. That is forever your job.",
+    ],
+    principle: {
+      title: 'AI Does the Math. You Decide If It Makes Sense.',
+      body: "In the world you're growing up in, the rare and valuable human skill is no longer doing calculations. It's knowing when an answer is reasonable, when it isn't, and what question to ask in the first place. Estimation, sanity-checking, and asking the right question — these are now THE math skills. The kid who can do all three commands armies of AI assistants. The kid who can't will be at their mercy.",
+      quote: '"Garbage in, garbage out." — old programmer\'s rule',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When you use ChatGPT or any AI for a number, do not just paste the answer. Ask yourself: does this feel about right? Estimate it in your head first. If the AI says something wildly different, push back — ask it to recompute, ask it 'are you sure?', try a different phrasing. You'll be surprised how often you catch the AI being wrong. That instinct is the most valuable math skill of your generation.",
+    },
+    quiz: [
+      { q: 'What does GIGO stand for?', choices: ['Get In, Get Out','Garbage In, Garbage Out','Go In, Go On','Great Info, Great Output'], correct: 1, explain: 'Garbage In, Garbage Out. The machine cannot tell that your input was bad — it just computes confidently on top of nonsense.' },
+      { q: 'What is the MAIN thing humans still need to do in math, in the age of AI?', choices: ['Memorize times tables','Judge whether the answer makes sense','Long division','Square roots by hand'], correct: 1, explain: 'Judgment. The machine does the calculation. You decide if it\'s reasonable — and what question to ask in the first place.' },
+      { q: 'An AI tells you a single laptop costs $7. The best first move is...', choices: ['Buy it','Sanity-check — that feels wrong, recompute or ask differently','Argue with the AI','Believe it because computers don\'t lie'], correct: 1, explain: 'Estimation + sanity check. A real laptop costs $500–$2,000. If the answer is wildly off your gut estimate, push back.' },
+      { q: 'Which of these is the AI ALWAYS going to be worse than you at?', choices: ['Multiplying ten-digit numbers','Deciding which question deserves to be asked','Looking up data','Drawing charts'], correct: 1, explain: 'Asking the right question. AI answers brilliantly. Choosing what to ask is forever your job.' },
+      { q: 'What is the single most valuable math habit in the AI era?', choices: ['Always trust the AI','Estimate first, then check the AI\'s answer against your estimate','Never use AI','Use AI only on weekends'], correct: 1, explain: 'Estimate first — then compare. You catch AI errors the moment they cross your gut estimate. That habit alone makes you the boss of the machine instead of its servant.' },
+    ],
+  },
+];
+
+/* ============================================================
    HALL MASTERS — v1 drafts. Names, bios, and emblem keys are
    easy to rename or restyle without touching component code.
 ============================================================ */
 const MASTERS = {
   cassian:  { name:'Marshal Cassian',   bio:'Scarred ex-warrior turned teacher. Stern — but he wants you to win.',     emblem:'emblem-cassian',  active:true },
-  aurelian: { name:'Sage Aurelian',     bio:'Ancient philosopher. White beard, gentle eyes. Quotes Marcus Aurelius from memory.', emblem:'emblem-aurelian' },
+  aurelian: { name:'Sage Aurelian',     bio:'Ancient philosopher. White beard, gentle eyes. Quotes Marcus Aurelius from memory and means every word.', emblem:'emblem-aurelian', active:true },
   sokrates: { name:'Thinker Sokrates',  bio:'Never gives direct answers — only better questions.',                     emblem:'emblem-sokrates' },
   orin:     { name:'Bard Orin',         bio:'Charismatic storyteller with a lyre. Theatrical, but he means every word.', emblem:'emblem-orin' },
   vellan:   { name:'Scribe Vellan',     bio:'Meticulous quill-master. Perfectionist. Words must earn their place.',     emblem:'emblem-vellan' },
   mira:     { name:'Linguist Mira',     bio:'Well-traveled polyglot. Scrolls from many lands hang from her belt.',      emblem:'emblem-mira' },
-  atlas:    { name:'Reckoner Atlas',    bio:'Geometric and deliberate. Compass in one hand, abacus in the other.',      emblem:'emblem-atlas' },
-  octavian: { name:'Merchant Octavian', bio:'Shrewd trader in a gold cloak. Knows the price of every silence.',         emblem:'emblem-octavian' },
+  atlas:    { name:'Reckoner Atlas',    bio:'Compass in one hand, abacus in the other. Cares more that you UNDERSTAND a number than that you compute it — the machines compute now; the judgment is yours.', emblem:'emblem-atlas', active:true },
+  octavian: { name:'Statesman Octavian',bio:'Shrewd political mind in the line of Augustus Caesar. Holds a scroll and a signet ring. Measured, watchful, speaks rarely — and always knows who actually has power in the room.', emblem:'emblem-octavian', active:true },
+  mercurius:{ name:'Merchant Mercurius',bio:'Trader of coin, grain, and metal. Knows the price of every silence and the cost of every yes.', emblem:'emblem-mercurius' },
   mercator: { name:'Cartographer Mercator', bio:'World-traveled mapmaker. Compass in one hand, globe at his elbow. He has set foot on every continent and learned the cost.', emblem:'emblem-mercator', active:true },
 };
 
@@ -1313,6 +1876,12 @@ const QUESTS = {
     masterOpening: "Welcome to my Hall. I am Cassian. I have led men. I have lost men. The six lessons here teach the shape of victory — and the cost of arrogance. Pick your first." },
   cartography: { id:'cartography', title:'Geography & Realism', formalTitle:"Griffin's Quest: Geography & Realism", motto:'Know the ground before you walk it.', hall:'cartographer', master:'mercator', lessons: CARTOGRAPHY_LESSONS, active: true,
     masterOpening: "Welcome to my Hall. I am Mercator. I have drawn maps of every coast worth knowing and walked nearly all of them. The six lessons here teach the world as it really is — the land, the wars, the money, the cities, and the empires that built and broke the ground you stand on. Pick your first." },
+  philosophy:  { id:'philosophy',  title:'Philosophy & Theory', formalTitle:"Griffin's Quest: Philosophy & Theory", motto:'Old wisdom, still working.',           hall:'sage',        master:'aurelian', lessons: PHILOSOPHY_LESSONS, active: true,
+    masterOpening: "Welcome to my Hall. I am Aurelian. Six lessons sit before you — the ancient quarrel between the individual and the group, the Stoic discipline of Marcus Aurelius, the questions of Socrates, the habits of Aristotle, the wisdom of the East, and the voices of three Romans who taught the world how to live. Old books. Still working. Pick your first." },
+  statecraft:  { id:'statecraft',  title:'Politics & Leadership', formalTitle:"Griffin's Quest: Politics & Leadership", motto:'Read power. Use it well.',           hall:'statesman',   master:'octavian', lessons: STATECRAFT_LESSONS, active: true,
+    masterOpening: "Welcome to my Hall. I am Octavian. I rose to rule Rome at nineteen and held it for forty years. Six lessons stand before you — Machiavelli's realism, Alexander's vision and overreach, my uncle Caesar's bold crossing, my own patient building, Lincoln's iron and mercy, and Churchill's refusal to fold. Watch what each man did, not what he said. That is how you learn power. Pick your first." },
+  reckoning:   { id:'reckoning',   title:'Math & Data Literacy',  formalTitle:"Griffin's Quest: Math & Data",      motto:'AI does the math. You judge the answer.', hall:'reckoner',    master:'atlas',   lessons: RECKONING_LESSONS, active: true,
+    masterOpening: "Welcome to my Hall. I am Atlas. I will not drill you on times tables — machines do that now. I will teach you what numbers MEAN, where they LIE, and why YOU must always be the judge of whether the answer makes sense. Six lessons: what a number really is, how data fools us, propaganda by the numbers, real-world probability, geometry as pattern, and how to think alongside AI without being fooled by it. Pick your first." },
 };
 
 /* ============================================================
@@ -1334,7 +1903,20 @@ const ROWS = [
   },
   { id:'sage',     hall:"Sage's Hall",     master:'aurelian', motto:'Old wisdom, still working.',
     subjects:[
-      { id:'philosophy', name:'Philosophy', sub:'Greek · Roman · Civil War' },
+      { id:'philosophy', name:'Philosophy & Theory', sub:'6 quests · 30 questions', active:true },
+      { id:'philosophy-advanced', name:'Advanced Schools', sub:'Coming soon' },
+    ],
+  },
+  { id:'statesman', hall:"Statesman's Hall", master:'octavian', motto:'Read power. Use it well.',
+    subjects:[
+      { id:'statecraft', name:'Politics & Leadership', sub:'6 quests · 30 questions', active:true },
+      { id:'statecraft-advanced', name:'Founding Documents', sub:'Coming soon' },
+    ],
+  },
+  { id:'reckoner', hall:"Reckoner's Hall", master:'atlas',    motto:'AI does the math. You judge the answer.',
+    subjects:[
+      { id:'reckoning', name:'Math & Data Literacy', sub:'6 quests · 30 questions', active:true },
+      { id:'reckoning-advanced', name:'Advanced Geometry', sub:'Coming soon' },
     ],
   },
   { id:'thinker',  hall:"Thinker's Hall",  master:'sokrates', motto:'Better questions beat fast answers.',
@@ -1366,14 +1948,7 @@ const ROWS = [
       { id:'languages', name:'Languages', sub:'Spanish · Italian' },
     ],
   },
-  { id:'reckoner', hall:"Reckoner's Hall", master:'atlas',    motto:'The language of the universe.',
-    subjects:[
-      { id:'arithmetic', name:'Arithmetic', sub:'Coming soon' },
-      { id:'geometry', name:'Geometry', sub:'Coming soon' },
-      { id:'statistics', name:'Statistics', sub:'Coming soon' },
-    ],
-  },
-  { id:'merchant', hall:"Merchant's Hall", master:'octavian', motto:'Make it, keep it, grow it.',
+  { id:'merchant', hall:"Merchant's Hall", master:'mercurius',motto:'Make it, keep it, grow it.',
     subjects:[
       { id:'operations', name:'Operations', sub:'Coming soon' },
       { id:'founding', name:'Founding', sub:'Coming soon' },
@@ -1400,7 +1975,7 @@ function defaultState() {
     name: 'E',
     xp: 0,
     streak: { last: null, count: 0 },
-    quests: { strategy: { lessons: {} }, cartography: { lessons: {} } },
+    quests: { strategy: { lessons: {} }, cartography: { lessons: {} }, philosophy: { lessons: {} }, statecraft: { lessons: {} }, reckoning: { lessons: {} } },
     reviewQueue: [],
   };
 }
@@ -1604,6 +2179,93 @@ function CartographyCallout({ state }) {
   );
 }
 
+function PhilosophyCallout({ state }) {
+  const lessons = PHILOSOPHY_LESSONS;
+  const mastered = lessons.filter(l => isLessonMastered(state, 'philosophy', l.id)).length;
+  const pct = (mastered / lessons.length) * 100;
+  return (
+    <button onClick={() => window.location.hash = '#quest/philosophy'} className="block w-full text-left mt-4 card card-hover p-6 transition fadeup">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="heraldic text-xs font-bold text-gold-deep flex items-center gap-2">
+            <span className="inline-block w-6 h-px bg-gold"/>
+            GRIFFIN'S QUEST · NEW · ACTIVE
+            <span className="inline-block w-6 h-px bg-gold"/>
+          </div>
+          <div className="font-display text-3xl sm:text-4xl ink mt-2 leading-tight">Philosophy &amp; Theory</div>
+          <div className="ink-soft mt-1 italic">"Old wisdom, still working."</div>
+          <div className="ink-soft text-sm mt-3 max-w-prose">Six quests with Sage Aurelian. Individualism vs collectivism, Stoicism, Socrates, Aristotle, East vs West, and three Roman voices on how to live.</div>
+        </div>
+        <div className="text-right">
+          <div className="heraldic text-xs uppercase text-gold-deep tracking-widest">Mastered</div>
+          <div className="font-display text-5xl ink">{mastered}<span className="ink-muted text-2xl">/{lessons.length}</span></div>
+        </div>
+      </div>
+      <div className="mt-5 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+      </div>
+    </button>
+  );
+}
+
+function StatecraftCallout({ state }) {
+  const lessons = STATECRAFT_LESSONS;
+  const mastered = lessons.filter(l => isLessonMastered(state, 'statecraft', l.id)).length;
+  const pct = (mastered / lessons.length) * 100;
+  return (
+    <button onClick={() => window.location.hash = '#quest/statecraft'} className="block w-full text-left mt-4 card card-hover p-6 transition fadeup">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="heraldic text-xs font-bold text-gold-deep flex items-center gap-2">
+            <span className="inline-block w-6 h-px bg-gold"/>
+            GRIFFIN'S QUEST · NEW · ACTIVE
+            <span className="inline-block w-6 h-px bg-gold"/>
+          </div>
+          <div className="font-display text-3xl sm:text-4xl ink mt-2 leading-tight">Politics &amp; Leadership</div>
+          <div className="ink-soft mt-1 italic">"Read power. Use it well."</div>
+          <div className="ink-soft text-sm mt-3 max-w-prose">Six quests with Statesman Octavian. Machiavelli, Alexander, Caesar, Augustus, Lincoln, Churchill — how real power is won, kept, and lost.</div>
+        </div>
+        <div className="text-right">
+          <div className="heraldic text-xs uppercase text-gold-deep tracking-widest">Mastered</div>
+          <div className="font-display text-5xl ink">{mastered}<span className="ink-muted text-2xl">/{lessons.length}</span></div>
+        </div>
+      </div>
+      <div className="mt-5 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+      </div>
+    </button>
+  );
+}
+
+function ReckoningCallout({ state }) {
+  const lessons = RECKONING_LESSONS;
+  const mastered = lessons.filter(l => isLessonMastered(state, 'reckoning', l.id)).length;
+  const pct = (mastered / lessons.length) * 100;
+  return (
+    <button onClick={() => window.location.hash = '#quest/reckoning'} className="block w-full text-left mt-4 card card-hover p-6 transition fadeup">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="heraldic text-xs font-bold text-gold-deep flex items-center gap-2">
+            <span className="inline-block w-6 h-px bg-gold"/>
+            GRIFFIN'S QUEST · NEW · ACTIVE
+            <span className="inline-block w-6 h-px bg-gold"/>
+          </div>
+          <div className="font-display text-3xl sm:text-4xl ink mt-2 leading-tight">Math &amp; Data Literacy</div>
+          <div className="ink-soft mt-1 italic">"AI does the math. You judge the answer."</div>
+          <div className="ink-soft text-sm mt-3 max-w-prose">Six quests with Reckoner Atlas. Concepts over calculation: how numbers, statistics, propaganda, probability, geometry, and AI math actually work — and how they get misused.</div>
+        </div>
+        <div className="text-right">
+          <div className="heraldic text-xs uppercase text-gold-deep tracking-widest">Mastered</div>
+          <div className="font-display text-5xl ink">{mastered}<span className="ink-muted text-2xl">/{lessons.length}</span></div>
+        </div>
+      </div>
+      <div className="mt-5 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+      </div>
+    </button>
+  );
+}
+
 function DrillCallout({ state }) {
   const count = state.reviewQueue?.length || 0;
   const empty = count === 0;
@@ -1711,6 +2373,9 @@ function Hub({ state, setState }) {
         <div className="mt-8 gold-line-strong"/>
         <StrategyCallout state={state}/>
         <CartographyCallout state={state}/>
+        <PhilosophyCallout state={state}/>
+        <StatecraftCallout state={state}/>
+        <ReckoningCallout state={state}/>
         <DrillCallout state={state}/>
       </div>
       <HubWelcomeOnce/>
