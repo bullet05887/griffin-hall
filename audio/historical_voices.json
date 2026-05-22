@@ -1,0 +1,19 @@
+{
+  "_template_locked_2026_05_22_by_john": {
+    "historical_figures_1st_person": "I am [NAME]. Today's lesson: [LESSON TITLE]. I am known for [1-line bio of legacy]. [Then the story / teaching content — keep existing first-person content]",
+    "hall_masters": "I am Master [NAME]. Welcome to [HALL NAME]. Here I [what is taught in this Hall]. Listen well."
+  },
+  "_engine": "elevenlabs",
+  "_model": "eleven_multilingual_v2",
+  "_voice_settings": { "stability": 0.55, "similarity_boost": 0.75, "style": 0.30, "use_speaker_boost": true },
+  "figures": {
+    "washington_delaware": {
+      "voice_id": "nPczCjzI2devNBz1zQrb",
+      "voice_name": "Brian - Deep, Resonant and Comforting",
+      "lesson_id": "delaware",
+      "quest_id": "strategy",
+      "file": "audio/historical/washington_delaware.mp3",
+      "opener": "I am George Washington. Today's lesson: Crossing the Delaware. I am known for leading the Continental Army to victory in the American Revolution and serving as the first President of the United States."
+    }
+  }
+}

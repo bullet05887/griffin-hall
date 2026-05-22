@@ -414,6 +414,16 @@ const MASTER_VOICE_PREFS = {
 
 const FEMALE_NAME_HINTS = ['samantha','karen','zira','victoria','tessa','female','allison','susan','catherine','fiona','moira','serena'];
 
+/* Pre-rendered ElevenLabs MP3s. When set, useNarration plays the file instead of
+   browser SpeechSynthesis. Keys are master IDs; lesson MP3s live on lesson.audioUrl. */
+const MASTER_INTRO_AUDIO = {
+  cassian:  'audio/masters/cassian_intro.mp3',
+  mercator: 'audio/masters/mercator_intro.mp3',
+  aurelian: 'audio/masters/aurelian_intro.mp3',
+  octavian: 'audio/masters/octavian_intro.mp3',
+  atlas:    'audio/masters/atlas_intro.mp3',
+};
+
 const NARRATION_PREFS_KEY = 'griffin-hall:narration:v1';
 const HUB_WELCOME_KEY     = 'griffin-hall:hub-welcomed:v1';
 
@@ -471,29 +481,60 @@ function useVoices() {
   return voices;
 }
 
-function useNarration(text, masterKey) {
+function useNarration(text, masterKey, audioUrl) {
   const voices = useVoices();
   const prefs  = MASTER_VOICE_PREFS[masterKey] || MASTER_VOICE_PREFS.cassian;
   const voice  = useMemo(() => pickVoice(voices, prefs), [voices, masterKey]);
   const [playing, setPlaying] = useState(false);
   const [paused,  setPaused]  = useState(false);
   const [userPrefs, setUserPrefs] = useState(loadNarrationPrefs);
-  const supported = typeof window !== 'undefined' && !!window.speechSynthesis;
+  const audioRef = useRef(null);
+  const hasSS = typeof window !== 'undefined' && !!window.speechSynthesis;
+  const hasMp3 = !!audioUrl;
+  const supported = hasMp3 || hasSS;
+  const mode = hasMp3 ? 'mp3' : (hasSS ? 'tts' : 'none');
 
-  function setRate(r)   { const np = { ...userPrefs, rate: r };   setUserPrefs(np); saveNarrationPrefs(np); }
-  function setVolume(v) { const np = { ...userPrefs, volume: v }; setUserPrefs(np); saveNarrationPrefs(np); }
+  function setRate(r)   { const np = { ...userPrefs, rate: r };   setUserPrefs(np); saveNarrationPrefs(np);
+    if (audioRef.current) try { audioRef.current.playbackRate = Math.max(0.5, Math.min(2.0, r / 0.9)); } catch (e) {} }
+  function setVolume(v) { const np = { ...userPrefs, volume: v }; setUserPrefs(np); saveNarrationPrefs(np);
+    if (audioRef.current) try { audioRef.current.volume = Math.max(0, Math.min(1.0, v)); } catch (e) {} }
 
+  function stopMp3() {
+    const a = audioRef.current;
+    if (a) { try { a.pause(); a.currentTime = 0; } catch (e) {} }
+    setPlaying(false); setPaused(false);
+  }
   function stop() {
-    if (!supported) return;
-    window.speechSynthesis.cancel();
+    if (hasMp3) stopMp3();
+    if (hasSS)  window.speechSynthesis.cancel();
     setPlaying(false); setPaused(false);
   }
   function play() {
-    if (!supported || !text) return;
+    if (!supported) return;
+    if (hasMp3) {
+      // Stop any TTS that may be running
+      if (hasSS) window.speechSynthesis.cancel();
+      let a = audioRef.current;
+      if (!a) {
+        a = new Audio(audioUrl);
+        audioRef.current = a;
+        a.addEventListener('play',  () => { setPlaying(true);  setPaused(false); });
+        a.addEventListener('pause', () => { setPaused(true); });
+        a.addEventListener('ended', () => { setPlaying(false); setPaused(false); try { a.currentTime = 0; } catch (e) {} });
+        a.addEventListener('error', () => { setPlaying(false); setPaused(false); });
+      }
+      try { a.currentTime = 0; } catch (e) {}
+      try { a.playbackRate = Math.max(0.5, Math.min(2.0, (userPrefs.rate ?? 0.9) / 0.9)); } catch (e) {}
+      try { a.volume = Math.max(0, Math.min(1.0, userPrefs.volume ?? 1)); } catch (e) {}
+      const p = a.play();
+      if (p && p.catch) p.catch(() => { setPlaying(false); setPaused(false); });
+      return;
+    }
+    // Browser TTS fallback
+    if (!text) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     if (voice) u.voice = voice;
-    // Combine master's natural rate with user's speed multiplier (default 0.9× = 1× of master)
     u.rate   = Math.max(0.5, Math.min(2.0, (prefs.rate ?? 0.9) * (userPrefs.rate / 0.9)));
     u.pitch  = Math.max(0,   Math.min(2.0,  prefs.pitch ?? 1));
     u.volume = Math.max(0,   Math.min(1.0,  userPrefs.volume));
@@ -503,15 +544,25 @@ function useNarration(text, masterKey) {
     window.speechSynthesis.speak(u);
   }
   function pauseResume() {
-    if (!supported) return;
+    if (hasMp3) {
+      const a = audioRef.current;
+      if (!a) return;
+      if (a.paused) { const p = a.play(); if (p && p.catch) p.catch(()=>{}); setPaused(false); }
+      else          { a.pause(); setPaused(true); }
+      return;
+    }
+    if (!hasSS) return;
     if (paused) { window.speechSynthesis.resume(); setPaused(false); }
     else        { window.speechSynthesis.pause();  setPaused(true); }
   }
 
   // Auto-stop when this component unmounts (e.g. navigating away from lesson)
-  useEffect(() => () => { if (supported) window.speechSynthesis.cancel(); }, []);
+  useEffect(() => () => {
+    if (hasSS) try { window.speechSynthesis.cancel(); } catch (e) {}
+    if (audioRef.current) try { audioRef.current.pause(); } catch (e) {}
+  }, []);
 
-  return { play, stop, pauseResume, playing, paused, voice, voices, prefs: userPrefs, setRate, setVolume, supported };
+  return { play, stop, pauseResume, playing, paused, voice, voices, prefs: userPrefs, setRate, setVolume, supported, mode };
 }
 
 function buildLessonNarration(lesson, masterKey) {
@@ -533,10 +584,12 @@ function buildLessonNarration(lesson, masterKey) {
   return out.join(' ');
 }
 
-function NarrationPanel({ text, masterKey, label }) {
-  const n = useNarration(text, masterKey);
+function NarrationPanel({ text, masterKey, label, audioUrl }) {
+  const n = useNarration(text, masterKey, audioUrl);
   if (!n.supported) return null;
-  const voiceName = n.voice ? (n.voice.name + (n.voice.lang ? ' · ' + n.voice.lang : '')) : 'default voice';
+  const voiceName = n.mode === 'mp3'
+    ? 'studio narration'
+    : (n.voice ? (n.voice.name + (n.voice.lang ? ' · ' + n.voice.lang : '')) : 'default voice');
   return (
     <div className="card p-4 sm:p-5" style={{ borderLeft:'3px solid var(--crimson)' }}>
       <div className="flex flex-wrap items-center gap-3">
@@ -593,8 +646,8 @@ function NarrationPanel({ text, masterKey, label }) {
   );
 }
 
-function HallDoorAutoplay({ masterKey, text }) {
-  const n = useNarration(text, masterKey);
+function HallDoorAutoplay({ masterKey, text, audioUrl }) {
+  const n = useNarration(text, masterKey, audioUrl);
   const triedRef = useRef(false);
   useEffect(() => {
     if (!n.supported || triedRef.current) return;
@@ -656,6 +709,7 @@ const STRATEGY_LESSONS = [
     subtitle: 'Christmas Night, 1776',
     image: 'https://en.wikipedia.org/wiki/Special:FilePath/Washington_Crossing_the_Delaware_by_Emanuel_Leutze,_MMA-NYC,_1851.jpg?width=1280',
     imageCredit: 'Painting: Emanuel Leutze, 1851 — public domain, via Wikimedia Commons',
+    audioUrl: 'audio/historical/washington_delaware.mp3',
     cassianIntro: "Today we study Washington at the Delaware. Most generals stayed warm by their fires. This one stepped onto a frozen river. Listen close.",
     story: [
       "It was Christmas night, 1776. The American Revolution was almost over — and the Americans were losing. Washington's army was tired, half-starved, and shrinking. Their enlistments ended in five days. After that, most soldiers would just go home, and the Revolution would die.",
@@ -2452,6 +2506,7 @@ function QuestView({ questId, state }) {
           <>
             <MasterIntroCard masterKey={quest.master} openingLine={masterOpening}/>
             <HallDoorAutoplay masterKey={quest.master}
+              audioUrl={MASTER_INTRO_AUDIO[quest.master]}
               text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}/>
           </>
         )}
@@ -2849,6 +2904,7 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
           <NarrationPanel
             text={buildLessonNarration(lesson, quest.master)}
             masterKey={quest.master}
+            audioUrl={lesson.audioUrl}
             label={MASTERS[quest.master]?.name}/>
         </div>
       )}

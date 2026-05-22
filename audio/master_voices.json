@@ -1,0 +1,14 @@
+{
+  "_template": "Hall Masters speak the locked opener pattern: \"I am Master [NAME]. Welcome to [HALL NAME]. Here [what is taught]. Listen well.\"",
+  "_locked_at": "2026-05-22",
+  "_engine": "elevenlabs",
+  "_model": "eleven_multilingual_v2",
+  "_voice_settings": { "stability": 0.55, "similarity_boost": 0.75, "style": 0.30, "use_speaker_boost": true },
+  "masters": {
+    "cassian":  { "voice_id": "SOYHLrjzK2X1ezoPC6cr", "voice_name": "Harry - Fierce Warrior",                "hall": "Marshal's Hall",     "file": "audio/masters/cassian_intro.mp3" },
+    "mercator": { "voice_id": "onwK4e9ZLuTAKqWW03F9", "voice_name": "Daniel - Steady Broadcaster (British)", "hall": "Cartographer's Hall", "file": "audio/masters/mercator_intro.mp3" },
+    "aurelian": { "voice_id": "pqHfZKP75CvOlQylNhV4", "voice_name": "Bill - Wise, Mature, Balanced",        "hall": "Sage's Hall",        "file": "audio/masters/aurelian_intro.mp3" },
+    "octavian": { "voice_id": "pNInz6obpgDQGcFmaJgB", "voice_name": "Adam - Dominant, Firm",                "hall": "Statesman's Hall",   "file": "audio/masters/octavian_intro.mp3" },
+    "atlas":    { "voice_id": "iP95p4xoKVk53GoZ742B", "voice_name": "Chris - Charming, Down-to-Earth",      "hall": "Reckoner's Hall",    "file": "audio/masters/atlas_intro.mp3" }
+  }
+}
