@@ -114,6 +114,59 @@
     border-radius: 0 12px 12px 0;
   }
 
+  .dispatch-letter {
+    border: 1px solid rgba(120, 90, 40, 0.35);
+    border-radius: 4px;
+    background: linear-gradient(180deg, #f5ead2 0%, #ecdfba 100%);
+    box-shadow: inset 0 0 40px rgba(120, 80, 30, 0.08), 0 4px 12px rgba(20, 14, 6, 0.18);
+    overflow: hidden;
+  }
+  .dispatch-summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    background: rgba(120, 80, 30, 0.07);
+    border-bottom: 1px solid rgba(120, 90, 40, 0.18);
+    color: #5a3a14;
+    list-style: none;
+    user-select: none;
+  }
+  .dispatch-summary::-webkit-details-marker { display: none; }
+  .dispatch-summary:hover { background: rgba(120, 80, 30, 0.12); }
+  .dispatch-letter[open] .dispatch-summary { border-bottom: 1px solid rgba(120, 90, 40, 0.32); }
+  .dispatch-icon { margin-right: 6px; }
+  .dispatch-body {
+    padding: 28px 32px 32px;
+    font-family: 'Crimson Text', 'Crimson Pro', Georgia, 'Times New Roman', serif;
+    color: #3a2410;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  .dispatch-date {
+    font-style: italic;
+    text-align: right;
+    color: #5a3a14;
+    margin-bottom: 18px;
+  }
+  .dispatch-p {
+    margin: 0 0 14px;
+    text-indent: 1.5em;
+  }
+  .dispatch-quote {
+    font-style: italic;
+    text-align: center;
+    margin: 22px 12px 18px;
+    color: #4a2c0e;
+    border-top: 1px solid rgba(120, 90, 40, 0.25);
+    border-bottom: 1px solid rgba(120, 90, 40, 0.25);
+    padding: 12px 0;
+  }
+  .dispatch-sig {
+    text-align: right;
+    font-style: italic;
+    margin-top: 14px;
+    color: #4a2c0e;
+  }
+
   .quiz-correct { background: rgba(122,139,90,0.15); border-color: #6f8a4a; }
   .quiz-wrong { background: rgba(155,34,38,0.10); border-color: var(--crimson); }
   .quiz-disabled { opacity: 0.55; cursor: not-allowed; }
@@ -706,16 +759,31 @@ const STRATEGY_LESSONS = [
   {
     id: 'delaware',
     title: 'Washington Crosses the Delaware',
-    subtitle: 'Christmas Night, 1776',
+    subtitle: 'A Cause That Would Not Die',
     image: 'https://en.wikipedia.org/wiki/Special:FilePath/Washington_Crossing_the_Delaware_by_Emanuel_Leutze,_MMA-NYC,_1851.jpg?width=1280',
     imageCredit: 'Painting: Emanuel Leutze, 1851 — public domain, via Wikimedia Commons',
     audioUrl: 'audio/historical/washington_delaware.mp3',
     cassianIntro: "Today we study Washington at the Delaware. Most generals stayed warm by their fires. This one stepped onto a frozen river. Listen close.",
     story: [
-      "It was Christmas night, 1776. The American Revolution was almost over — and the Americans were losing. Washington's army was tired, half-starved, and shrinking. Their enlistments ended in five days. After that, most soldiers would just go home, and the Revolution would die.",
-      "Washington had one move left. Across the icy Delaware River, in a town called Trenton, sat about 1,500 Hessian soldiers — German troops fighting for the British. They were tired. For weeks they had been chasing American militia raids through the snow. Their commander, Colonel Rall, had received warnings of an American attack and brushed them aside. No real army, he believed, would come at them in a winter storm, on Christmas, across a frozen river.",
-      "Washington decided: that's exactly when we go. His men crossed the river in the dark through ice floes and a howling sleet storm. They marched nine miles in snow, surprised the Hessians at dawn, and won the battle in about 45 minutes. Almost no Americans died. The whole Revolution caught fire again.",
+      "These were the times that tried men's souls. In the bleak December of 1776, the American Army was a broken thing — half-starved, half-frozen, half its size from desertion. The British and their hired Hessians sat warm in their winter quarters. Many in Congress had already begun to whisper that the Revolution was finished.",
+      "General Washington saw what others would not. By the New Year, three thousand of his men would be free to walk home — their enlistments expired. If the Army melted away, so would Liberty itself. Waiting was death.",
+      "So on Christmas night, in a storm so violent that no enemy would believe it, the General crossed the Delaware River. Ice ground against the boats. The wind cut through worn coats. Men without shoes wrapped their feet in rags and left blood in the snow.",
+      "Nine miles they marched in silence to the town of Trenton. There the Hessians slept — their colonel having received warning of an attack and laughed it off as impossible. He was wrong.",
+      "At dawn, the Americans struck. Three-quarters of an hour later, it was over. Nine hundred Hessians surrendered. Two Americans died. The Revolution, which a week before had been near a corpse, drew breath again.",
     ],
+    dispatch: {
+      date: "The 26th day of December, in the Year of Our Lord 1776",
+      paragraphs: [
+        "Gentlemen, I take up my pen to set down what has passed.",
+        "We were on this Christmas night in retreat, sore beaten by an enemy in greater numbers and better supplied. The cause of Liberty was, by many an account, near extinguished. Yet I judged that to delay was to die — that the soldier's enlistment expires the first of January, and with it the Army; that to wait was to surrender all that we had bled for.",
+        "I therefore resolved upon an action which men have since called madness. With near two thousand four hundred troops, I crossed the Delaware in the night, through ice and a violent storm, that we might fall upon the Hessian garrison at Trenton at the first light.",
+        "The march from McConkey's Ferry was nine miles in the snow. We were dressed poor; many of the men had not shoes, and left bloody prints upon the road. Yet not a man turned back.",
+        "Colonel Rall, their commander, had been warned of our approach and had thought it a thing impossible. He was, in this, mistaken.",
+        "In three quarters of an hour the affair was concluded. We took above nine hundred prisoners and lost but two men killed.",
+      ],
+      closingQuote: "The greatest force is often the willingness to move when none believe movement possible.",
+      signature: "— G. Washington, Commander-in-Chief",
+    },
     principle: {
       title: 'Surprise + Timing = Force Multipliers',
       body: "A small force can beat a big force if it shows up where and when nobody expects. Washington didn't have more soldiers, better weapons, or rested troops. He had one thing: he was willing to go when nobody thought going was possible. That made his small army hit like a big one.",
@@ -2920,6 +2988,27 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
           <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>{p}</p>
         ))}
       </div>
+      {lesson.dispatch && (
+        <div className="wrap-narrow mt-8">
+          <details className="dispatch-letter">
+            <summary className="dispatch-summary heraldic text-xs font-bold uppercase tracking-[0.25em]">
+              <span className="dispatch-icon">✉️</span> Read the General's Own Dispatch
+            </summary>
+            <div className="dispatch-body">
+              <div className="dispatch-date">{lesson.dispatch.date}</div>
+              {lesson.dispatch.paragraphs.map((p, i) => (
+                <p key={i} className="dispatch-p">{p}</p>
+              ))}
+              {lesson.dispatch.closingQuote && (
+                <p className="dispatch-quote">{lesson.dispatch.closingQuote}</p>
+              )}
+              {lesson.dispatch.signature && (
+                <div className="dispatch-sig">{lesson.dispatch.signature}</div>
+              )}
+            </div>
+          </details>
+        </div>
+      )}
       {lesson.cards && (
         <div className="wrap-narrow mt-8">
           <CardsBlock cards={lesson.cards}/>
