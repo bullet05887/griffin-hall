@@ -5,7 +5,14 @@
   },
   "_engine": "elevenlabs",
   "_model": "eleven_multilingual_v2",
-  "_voice_settings": { "stability": 0.55, "similarity_boost": 0.75, "style": 0.30, "use_speaker_boost": true },
+  "_voice_settings": {
+    "stability": 0.55,
+    "similarity_boost": 0.75,
+    "style": 0.3,
+    "use_speaker_boost": true
+  },
+  "_generated_at": "2026-05-22",
+  "_count": 14,
   "figures": {
     "washington_delaware": {
       "voice_id": "nPczCjzI2devNBz1zQrb",
@@ -14,6 +21,149 @@
       "quest_id": "strategy",
       "file": "audio/historical/washington_delaware.mp3",
       "opener": "I am George Washington. Today's lesson: Crossing the Delaware. I am known for leading the Continental Army to victory in the American Revolution and serving as the first President of the United States."
+    },
+    "custer_custer": {
+      "voice_id": "ODq5zmih8GrVes37Dizd",
+      "voice_name": "Patrick - Shouty American Male",
+      "figure_slug": "custer",
+      "figure_name": "George Armstrong Custer",
+      "bio": "leading the United States 7th Cavalry, my golden hair, my bravado on the frontier, and my last stand at the Little Bighorn in June of 1876",
+      "lesson_id": "custer",
+      "hall_slug": "marshal",
+      "file": "audio/historical/custer_custer.mp3",
+      "chars": 1262
+    },
+    "suntzu_suntzu": {
+      "voice_id": "GBv7mTt0atIp3Br8iCZE",
+      "voice_name": "Thomas - Calm, Measured",
+      "figure_slug": "suntzu",
+      "figure_name": "Sun Tzu",
+      "bio": "writing thirteen short chapters called The Art of War, twenty-five centuries ago in ancient China, that are still read by generals, athletes, and merchants today",
+      "lesson_id": "suntzu",
+      "hall_slug": "marshal",
+      "file": "audio/historical/suntzu_suntzu.mp3",
+      "chars": 1182
+    },
+    "hannibal_cannae": {
+      "voice_id": "zcAOhNBS3c14rBihAFp1",
+      "voice_name": "Giovanni - Italian, Commanding",
+      "figure_slug": "hannibal",
+      "figure_name": "Hannibal Barca",
+      "bio": "marching war elephants across the Alps in winter to bring Carthage to the gates of Rome, and for breaking the Roman legions at Cannae",
+      "lesson_id": "cannae",
+      "hall_slug": "marshal",
+      "file": "audio/historical/hannibal_cannae.mp3",
+      "chars": 1241
+    },
+    "eisenhower_dday": {
+      "voice_id": "2EiwWnXFnvU5JabPnv8n",
+      "voice_name": "Clyde - Middle-Aged American War Veteran",
+      "figure_slug": "eisenhower",
+      "figure_name": "Dwight D. Eisenhower",
+      "bio": "commanding the Allied forces on the sixth of June, nineteen forty-four, the largest sea invasion in history, on the beaches of Normandy, and later serving as the thirty-fourth President of the United States",
+      "lesson_id": "dday",
+      "hall_slug": "marshal",
+      "file": "audio/historical/eisenhower_dday.mp3",
+      "chars": 1356
+    },
+    "marcus_aurelius_stoicism": {
+      "voice_id": "flq6f7yk4E4fJM5XTYuZ",
+      "voice_name": "Michael - Orotund, Older Male",
+      "figure_slug": "marcus_aurelius",
+      "figure_name": "Marcus Aurelius",
+      "bio": "ruling Rome as emperor for nineteen years, leading the legions on the Danube frontier, and writing my private notebook the Meditations, never meant for any eyes but my own",
+      "lesson_id": "stoicism",
+      "hall_slug": "sage",
+      "file": "audio/historical/marcus_aurelius_stoicism.mp3",
+      "chars": 1420
+    },
+    "socrates_socrates": {
+      "voice_id": "Zlb1dXrM653N07WRdFW3",
+      "voice_name": "Joseph - British, Measured",
+      "figure_slug": "socrates",
+      "figure_name": "Socrates",
+      "bio": "walking the streets of Athens twenty-four hundred years ago asking simple questions that unraveled men who thought they were wise, and for drinking the hemlock rather than betraying the examined life",
+      "lesson_id": "socrates",
+      "hall_slug": "sage",
+      "file": "audio/historical/socrates_socrates.mp3",
+      "chars": 1431
+    },
+    "aristotle_aristotle": {
+      "voice_id": "CYw3kZ02Hs0563khs1Fj",
+      "voice_name": "Dave - British Conversational",
+      "figure_slug": "aristotle",
+      "figure_name": "Aristotle",
+      "bio": "studying under Plato, tutoring a boy who would become Alexander the Great, and writing on logic, biology, ethics, and politics — works the West would read for two thousand years",
+      "lesson_id": "aristotle",
+      "hall_slug": "sage",
+      "file": "audio/historical/aristotle_aristotle.mp3",
+      "chars": 1489
+    },
+    "machiavelli_machiavelli": {
+      "voice_id": "ErXwobaYiN019PkySvjV",
+      "voice_name": "Antoni - Well-Rounded",
+      "figure_slug": "machiavelli",
+      "figure_name": "Niccolo Machiavelli",
+      "bio": "serving the Republic of Florence as a diplomat, watching popes and princes scheme up close, and writing a short, hard little book called The Prince that told rulers how the world actually works",
+      "lesson_id": "machiavelli",
+      "hall_slug": "statesman",
+      "file": "audio/historical/machiavelli_machiavelli.mp3",
+      "chars": 1608
+    },
+    "alexander_alexander": {
+      "voice_id": "TX3LPaxmHKxFdv7VOQHJ",
+      "voice_name": "Liam - Articulate Young Male",
+      "figure_slug": "alexander",
+      "figure_name": "Alexander of Macedon",
+      "bio": "conquering Persia, Egypt, and lands as far as the Indus by the age of thirty, never losing a battle, and founding cities that still bear my name",
+      "lesson_id": "alexander",
+      "hall_slug": "statesman",
+      "file": "audio/historical/alexander_alexander.mp3",
+      "chars": 1379
+    },
+    "caesar_caesar": {
+      "voice_id": "VR6AewLTigWG4xSOukaG",
+      "voice_name": "Arnold - Crisp Male",
+      "figure_slug": "caesar",
+      "figure_name": "Gaius Julius Caesar",
+      "bio": "conquering Gaul, crossing the Rubicon with the Thirteenth Legion in defiance of the Senate, and ending the Roman Republic on the steps of the Senate house",
+      "lesson_id": "caesar",
+      "hall_slug": "statesman",
+      "file": "audio/historical/caesar_caesar.mp3",
+      "chars": 1464
+    },
+    "augustus_augustus": {
+      "voice_id": "29vD33N1CtxCmqQRPOHJ",
+      "voice_name": "Drew - Well-Rounded Male",
+      "figure_slug": "augustus",
+      "figure_name": "Augustus Caesar",
+      "bio": "becoming the first emperor of Rome at the age of nineteen, ending a century of civil wars, and founding the Pax Romana — two centuries of Roman peace",
+      "lesson_id": "augustus",
+      "hall_slug": "statesman",
+      "file": "audio/historical/augustus_augustus.mp3",
+      "chars": 1504
+    },
+    "lincoln_lincoln": {
+      "voice_id": "bVMeCyTHy58xNoL34h3p",
+      "voice_name": "Jeremy - American",
+      "figure_slug": "lincoln",
+      "figure_name": "Abraham Lincoln",
+      "bio": "serving as the sixteenth President of the United States, holding the Union together through four years of civil war, and ending slavery in America",
+      "lesson_id": "lincoln",
+      "hall_slug": "statesman",
+      "file": "audio/historical/lincoln_lincoln.mp3",
+      "chars": 1509
+    },
+    "churchill_churchill": {
+      "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+      "voice_name": "George - British, Warm",
+      "figure_slug": "churchill",
+      "figure_name": "Winston Churchill",
+      "bio": "standing as British Prime Minister in the dark year of nineteen-forty when Britain stood alone against Hitler, and refusing — in speeches the whole free world heard — to ever surrender",
+      "lesson_id": "churchill",
+      "hall_slug": "statesman",
+      "file": "audio/historical/churchill_churchill.mp3",
+      "chars": 1638
     }
   }
 }

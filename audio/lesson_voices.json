@@ -1,0 +1,557 @@
+{
+  "_template_locked_2026_05_22_by_john": "Hall Master narrates the lesson in their own voice. Opener: \"I am Master [NAME]. Today's lesson: [TITLE]. ...\" followed by the story, principle, and modern application.",
+  "_engine": "elevenlabs",
+  "_model": "eleven_multilingual_v2",
+  "_voice_settings": {
+    "stability": 0.55,
+    "similarity_boost": 0.75,
+    "style": 0.3,
+    "use_speaker_boost": true
+  },
+  "_generated_at": "2026-05-22",
+  "_count": 30,
+  "lessons": {
+    "delaware": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "hall_slug": "marshal",
+      "lesson_id": "delaware",
+      "title": "Washington Crosses the Delaware",
+      "file": "audio/lessons/marshal/delaware.mp3",
+      "chars": 1755
+    },
+    "custer": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "hall_slug": "marshal",
+      "lesson_id": "custer",
+      "title": "Overconfidence Kills",
+      "file": "audio/lessons/marshal/custer.mp3",
+      "chars": 1728
+    },
+    "suntzu": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "hall_slug": "marshal",
+      "lesson_id": "suntzu",
+      "title": "Sun Tzu and the Art of War",
+      "file": "audio/lessons/marshal/suntzu.mp3",
+      "chars": 1573
+    },
+    "cannae": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "hall_slug": "marshal",
+      "lesson_id": "cannae",
+      "title": "Hannibal at Cannae",
+      "file": "audio/lessons/marshal/cannae.mp3",
+      "chars": 1675
+    },
+    "dday": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "hall_slug": "marshal",
+      "lesson_id": "dday",
+      "title": "D-Day: Combined Arms",
+      "file": "audio/lessons/marshal/dday.mp3",
+      "chars": 1704
+    },
+    "stalingrad": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "hall_slug": "marshal",
+      "lesson_id": "stalingrad",
+      "title": "Stalingrad: Holding the Line",
+      "file": "audio/lessons/marshal/stalingrad.mp3",
+      "chars": 1886
+    },
+    "world": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "hall_slug": "cartographer",
+      "lesson_id": "world",
+      "title": "The World — Continents & Oceans",
+      "file": "audio/lessons/cartographer/world.mp3",
+      "chars": 1840
+    },
+    "usa": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "hall_slug": "cartographer",
+      "lesson_id": "usa",
+      "title": "United States — 50 States & Capitals",
+      "file": "audio/lessons/cartographer/usa.mp3",
+      "chars": 1927
+    },
+    "conflicts": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "hall_slug": "cartographer",
+      "lesson_id": "conflicts",
+      "title": "The World on Fire — Current Conflicts",
+      "file": "audio/lessons/cartographer/conflicts.mp3",
+      "chars": 1773
+    },
+    "economies": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "hall_slug": "cartographer",
+      "lesson_id": "economies",
+      "title": "Money Flows — Major Economies",
+      "file": "audio/lessons/cartographer/economies.mp3",
+      "chars": 1528
+    },
+    "cities": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "hall_slug": "cartographer",
+      "lesson_id": "cities",
+      "title": "Cultural Centers — Ten Great Cities",
+      "file": "audio/lessons/cartographer/cities.mp3",
+      "chars": 1159
+    },
+    "empires": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "hall_slug": "cartographer",
+      "lesson_id": "empires",
+      "title": "Empires — Rise and Fall",
+      "file": "audio/lessons/cartographer/empires.mp3",
+      "chars": 1253
+    },
+    "individualism": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "hall_slug": "sage",
+      "lesson_id": "individualism",
+      "title": "Individualism vs Collectivism",
+      "file": "audio/lessons/sage/individualism.mp3",
+      "chars": 2246
+    },
+    "stoicism": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "hall_slug": "sage",
+      "lesson_id": "stoicism",
+      "title": "Stoicism: Marcus Aurelius",
+      "file": "audio/lessons/sage/stoicism.mp3",
+      "chars": 1948
+    },
+    "socrates": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "hall_slug": "sage",
+      "lesson_id": "socrates",
+      "title": "Socrates and the Examined Life",
+      "file": "audio/lessons/sage/socrates.mp3",
+      "chars": 1887
+    },
+    "aristotle": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "hall_slug": "sage",
+      "lesson_id": "aristotle",
+      "title": "Aristotle and Virtue",
+      "file": "audio/lessons/sage/aristotle.mp3",
+      "chars": 2060
+    },
+    "eastwest": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "hall_slug": "sage",
+      "lesson_id": "eastwest",
+      "title": "Eastern vs Western Thought",
+      "file": "audio/lessons/sage/eastwest.mp3",
+      "chars": 2245
+    },
+    "romans": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "hall_slug": "sage",
+      "lesson_id": "romans",
+      "title": "Roman Wisdom — Cicero, Seneca, Aurelius",
+      "file": "audio/lessons/sage/romans.mp3",
+      "chars": 2166
+    },
+    "machiavelli": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "hall_slug": "statesman",
+      "lesson_id": "machiavelli",
+      "title": "See the World as It Is, Not as You Wish It Were",
+      "file": "audio/lessons/statesman/machiavelli.mp3",
+      "chars": 2131
+    },
+    "alexander": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "hall_slug": "statesman",
+      "lesson_id": "alexander",
+      "title": "Alexander the Great",
+      "file": "audio/lessons/statesman/alexander.mp3",
+      "chars": 1811
+    },
+    "caesar": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "hall_slug": "statesman",
+      "lesson_id": "caesar",
+      "title": "Julius Caesar — Crossing the Rubicon",
+      "file": "audio/lessons/statesman/caesar.mp3",
+      "chars": 2043
+    },
+    "augustus": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "hall_slug": "statesman",
+      "lesson_id": "augustus",
+      "title": "Augustus — Builder of Empire",
+      "file": "audio/lessons/statesman/augustus.mp3",
+      "chars": 1997
+    },
+    "lincoln": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "hall_slug": "statesman",
+      "lesson_id": "lincoln",
+      "title": "Abraham Lincoln — Leadership in Crisis",
+      "file": "audio/lessons/statesman/lincoln.mp3",
+      "chars": 2098
+    },
+    "churchill": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "hall_slug": "statesman",
+      "lesson_id": "churchill",
+      "title": "Winston Churchill — Standing Alone",
+      "file": "audio/lessons/statesman/churchill.mp3",
+      "chars": 2193
+    },
+    "numbers": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "hall_slug": "reckoner",
+      "lesson_id": "numbers",
+      "title": "What Is a Number, Really?",
+      "file": "audio/lessons/reckoner/numbers.mp3",
+      "chars": 2056
+    },
+    "statistics": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "hall_slug": "reckoner",
+      "lesson_id": "statistics",
+      "title": "Statistics 101 — How Data Lies",
+      "file": "audio/lessons/reckoner/statistics.mp3",
+      "chars": 2247
+    },
+    "propaganda": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "hall_slug": "reckoner",
+      "lesson_id": "propaganda",
+      "title": "Propaganda by the Numbers",
+      "file": "audio/lessons/reckoner/propaganda.mp3",
+      "chars": 2080
+    },
+    "probability": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "hall_slug": "reckoner",
+      "lesson_id": "probability",
+      "title": "Probability — Real-World Risk",
+      "file": "audio/lessons/reckoner/probability.mp3",
+      "chars": 2380
+    },
+    "geometry": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "hall_slug": "reckoner",
+      "lesson_id": "geometry",
+      "title": "Geometry as Pattern",
+      "file": "audio/lessons/reckoner/geometry.mp3",
+      "chars": 2470
+    },
+    "ai-math": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "hall_slug": "reckoner",
+      "lesson_id": "ai-math",
+      "title": "How AI Does Math (And Where It Fails)",
+      "file": "audio/lessons/reckoner/ai-math.mp3",
+      "chars": 2285
+    }
+  },
+  "congratulations": {
+    "cassian.delaware": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "lesson_id": "delaware",
+      "file": "audio/masters/cassian/delaware_congrats.mp3",
+      "chars": 167
+    },
+    "cassian.custer": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "lesson_id": "custer",
+      "file": "audio/masters/cassian/custer_congrats.mp3",
+      "chars": 139
+    },
+    "cassian.suntzu": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "lesson_id": "suntzu",
+      "file": "audio/masters/cassian/suntzu_congrats.mp3",
+      "chars": 155
+    },
+    "cassian.cannae": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "lesson_id": "cannae",
+      "file": "audio/masters/cassian/cannae_congrats.mp3",
+      "chars": 153
+    },
+    "cassian.dday": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "lesson_id": "dday",
+      "file": "audio/masters/cassian/dday_congrats.mp3",
+      "chars": 154
+    },
+    "cassian.stalingrad": {
+      "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+      "voice_name": "Harry - Fierce Warrior",
+      "master": "cassian",
+      "lesson_id": "stalingrad",
+      "file": "audio/masters/cassian/stalingrad_congrats.mp3",
+      "chars": 161
+    },
+    "mercator.world": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "lesson_id": "world",
+      "file": "audio/masters/mercator/world_congrats.mp3",
+      "chars": 134
+    },
+    "mercator.usa": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "lesson_id": "usa",
+      "file": "audio/masters/mercator/usa_congrats.mp3",
+      "chars": 149
+    },
+    "mercator.conflicts": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "lesson_id": "conflicts",
+      "file": "audio/masters/mercator/conflicts_congrats.mp3",
+      "chars": 147
+    },
+    "mercator.economies": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "lesson_id": "economies",
+      "file": "audio/masters/mercator/economies_congrats.mp3",
+      "chars": 135
+    },
+    "mercator.cities": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "lesson_id": "cities",
+      "file": "audio/masters/mercator/cities_congrats.mp3",
+      "chars": 140
+    },
+    "mercator.empires": {
+      "voice_id": "onwK4e9ZLuTAKqWW03F9",
+      "voice_name": "Daniel - Steady Broadcaster (British)",
+      "master": "mercator",
+      "lesson_id": "empires",
+      "file": "audio/masters/mercator/empires_congrats.mp3",
+      "chars": 122
+    },
+    "aurelian.individualism": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "lesson_id": "individualism",
+      "file": "audio/masters/aurelian/individualism_congrats.mp3",
+      "chars": 140
+    },
+    "aurelian.stoicism": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "lesson_id": "stoicism",
+      "file": "audio/masters/aurelian/stoicism_congrats.mp3",
+      "chars": 145
+    },
+    "aurelian.socrates": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "lesson_id": "socrates",
+      "file": "audio/masters/aurelian/socrates_congrats.mp3",
+      "chars": 158
+    },
+    "aurelian.aristotle": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "lesson_id": "aristotle",
+      "file": "audio/masters/aurelian/aristotle_congrats.mp3",
+      "chars": 140
+    },
+    "aurelian.eastwest": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "lesson_id": "eastwest",
+      "file": "audio/masters/aurelian/eastwest_congrats.mp3",
+      "chars": 149
+    },
+    "aurelian.romans": {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "voice_name": "Bill - Wise, Mature, Balanced",
+      "master": "aurelian",
+      "lesson_id": "romans",
+      "file": "audio/masters/aurelian/romans_congrats.mp3",
+      "chars": 128
+    },
+    "octavian.machiavelli": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "lesson_id": "machiavelli",
+      "file": "audio/masters/octavian/machiavelli_congrats.mp3",
+      "chars": 189
+    },
+    "octavian.alexander": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "lesson_id": "alexander",
+      "file": "audio/masters/octavian/alexander_congrats.mp3",
+      "chars": 168
+    },
+    "octavian.caesar": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "lesson_id": "caesar",
+      "file": "audio/masters/octavian/caesar_congrats.mp3",
+      "chars": 164
+    },
+    "octavian.augustus": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "lesson_id": "augustus",
+      "file": "audio/masters/octavian/augustus_congrats.mp3",
+      "chars": 150
+    },
+    "octavian.lincoln": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "lesson_id": "lincoln",
+      "file": "audio/masters/octavian/lincoln_congrats.mp3",
+      "chars": 162
+    },
+    "octavian.churchill": {
+      "voice_id": "pNInz6obpgDQGcFmaJgB",
+      "voice_name": "Adam - Dominant, Firm",
+      "master": "octavian",
+      "lesson_id": "churchill",
+      "file": "audio/masters/octavian/churchill_congrats.mp3",
+      "chars": 157
+    },
+    "atlas.numbers": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "lesson_id": "numbers",
+      "file": "audio/masters/atlas/numbers_congrats.mp3",
+      "chars": 168
+    },
+    "atlas.statistics": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "lesson_id": "statistics",
+      "file": "audio/masters/atlas/statistics_congrats.mp3",
+      "chars": 158
+    },
+    "atlas.propaganda": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "lesson_id": "propaganda",
+      "file": "audio/masters/atlas/propaganda_congrats.mp3",
+      "chars": 198
+    },
+    "atlas.probability": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "lesson_id": "probability",
+      "file": "audio/masters/atlas/probability_congrats.mp3",
+      "chars": 143
+    },
+    "atlas.geometry": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "lesson_id": "geometry",
+      "file": "audio/masters/atlas/geometry_congrats.mp3",
+      "chars": 171
+    },
+    "atlas.ai-math": {
+      "voice_id": "iP95p4xoKVk53GoZ742B",
+      "voice_name": "Chris - Charming, Down-to-Earth",
+      "master": "atlas",
+      "lesson_id": "ai-math",
+      "file": "audio/masters/atlas/ai-math_congrats.mp3",
+      "chars": 186
+    }
+  }
+}
