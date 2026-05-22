@@ -340,6 +340,34 @@
         <ellipse cx="66" cy="22" rx="4" ry="2" transform="rotate(30 66 22)"/>
       </g>
     </symbol>
+
+    <symbol id="emblem-mercator" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="46" fill="#1a2942"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a44c" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#c9a44c" stroke-width="0.6" opacity="0.5"/>
+      <g fill="none" stroke="#c9a44c" strokeWidth="1.2">
+        <circle cx="50" cy="50" r="22"/>
+        <path d="M28 50 L 72 50"/>
+        <path d="M50 28 L 50 72"/>
+        <path d="M50 28 Q 38 50 50 72"/>
+        <path d="M50 28 Q 62 50 50 72"/>
+        <path d="M34 38 Q 50 50 66 38"/>
+        <path d="M34 62 Q 50 50 66 62"/>
+      </g>
+      <g fill="#c9a44c">
+        <path d="M50 10 L 54 22 L 50 18 L 46 22 Z"/>
+        <path d="M50 90 L 54 78 L 50 82 L 46 78 Z"/>
+        <path d="M10 50 L 22 46 L 18 50 L 22 54 Z"/>
+        <path d="M90 50 L 78 46 L 82 50 L 78 54 Z"/>
+        <circle cx="50" cy="50" r="2.5"/>
+      </g>
+      <g fill="#c9a44c" opacity="0.85">
+        <text x="50" y="20" textAnchor="middle" fontFamily="Cinzel, serif" fontSize="7" fontWeight="700">N</text>
+        <text x="50" y="88" textAnchor="middle" fontFamily="Cinzel, serif" fontSize="7" fontWeight="700">S</text>
+        <text x="14" y="53" textAnchor="middle" fontFamily="Cinzel, serif" fontSize="7" fontWeight="700">W</text>
+        <text x="86" y="53" textAnchor="middle" fontFamily="Cinzel, serif" fontSize="7" fontWeight="700">E</text>
+      </g>
+    </symbol>
   </defs>
 </svg>
 
@@ -778,6 +806,493 @@ const STRATEGY_LESSONS = [
 ];
 
 /* ============================================================
+   CARTOGRAPHER'S HALL — Geography, Realism, the World as it is.
+   Mercator's six quests. Same shape as STRATEGY_LESSONS, with a
+   couple of extra fields the LessonView knows how to render:
+     - typeDrill: { intro, items:[{prompt, answer, aliases?}] }
+     - cards:    [{ title, subtitle?, body?, kv?:[{label, body}] }]
+   The quiz array still drives mastery / drill queue.
+============================================================ */
+const CARTOGRAPHY_LESSONS = [
+  {
+    id: 'world',
+    title: 'The World — Continents & Oceans',
+    subtitle: 'The whole map, one glance',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Equirectangular_projection_SW.jpg?width=1280',
+    imageCredit: 'Equirectangular projection world map — public domain, via Wikimedia Commons',
+    cassianIntro: "Every traveler begins at the boundary between sea and land. Today you learn the seven continents and the five oceans — spell them, place them, carry them in your head. Once you can picture the world, the news stops sounding like noise.",
+    story: [
+      "The Earth is a sphere mostly covered in water. About 71% of it is ocean. The other 29% — the dry parts — we call land. Mapmakers split that land into seven big chunks called continents: Asia, Africa, North America, South America, Antarctica, Europe, and Australia. We split the water into five oceans: the Pacific, the Atlantic, the Indian, the Arctic, and the Southern.",
+      "Asia is the largest continent — about a third of all the land on Earth — and more people live there than on any other continent (over half of humanity). Africa is second-largest by area and has the youngest population in the world. The Pacific Ocean is the biggest of all — bigger than every continent combined put together.",
+      "Antarctica is the strangest continent. It's almost entirely covered in ice, no country owns it, and almost nobody lives there year-round — just scientists in research stations. Australia is the only continent that's also a single country. Europe and Asia are technically one giant landmass (called Eurasia), but we treat them as two continents because their histories are so different.",
+    ],
+    typeDrill: {
+      title: 'Map Drill: Continents & Oceans',
+      intro: "Type each one. Spell carefully. Type any name once it pops into your head — you can do them in any order.",
+      items: [
+        { prompt: "Largest continent by area. Home of China, India, Russia, Japan.", answer: "Asia" },
+        { prompt: "Second-largest continent. Sahara desert, Nile river, Egypt, Nigeria.", answer: "Africa" },
+        { prompt: "Continent with the United States, Canada, Mexico.", answer: "North America", aliases: ["north america", "n. america", "n america"] },
+        { prompt: "Continent with Brazil, Argentina, Peru, the Amazon rainforest.", answer: "South America", aliases: ["south america", "s. america", "s america"] },
+        { prompt: "Ice-covered continent at the bottom of the world. No countries.", answer: "Antarctica" },
+        { prompt: "Continent of France, Germany, Italy, the United Kingdom.", answer: "Europe" },
+        { prompt: "Continent that is also a single country. Kangaroos. Sydney.", answer: "Australia" },
+        { prompt: "Largest ocean. Between Asia and the Americas.", answer: "Pacific", aliases: ["pacific ocean"] },
+        { prompt: "Ocean between the Americas and Europe / Africa.", answer: "Atlantic", aliases: ["atlantic ocean"] },
+        { prompt: "Ocean south of Asia, east of Africa, west of Australia.", answer: "Indian", aliases: ["indian ocean"] },
+        { prompt: "Ocean around the North Pole. Mostly frozen.", answer: "Arctic", aliases: ["arctic ocean"] },
+        { prompt: "Ocean ringing Antarctica.", answer: "Southern", aliases: ["southern ocean", "antarctic ocean", "antarctic"] },
+      ],
+    },
+    principle: {
+      title: 'Memorize the Map. The Rest Follows.',
+      body: "Every smart adult you'll ever meet has a mental picture of the world. They know roughly where Ukraine is. Where Taiwan sits. Where Saudi Arabia touches the Persian Gulf. When the news mentions a place, they see it on a map in their head before reading the next sentence. That mental map is the foundation of understanding the world.",
+      quote: '"Geography is the stage on which the human drama is played." — Will Durant',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When you hear a place on the news — Gaza, Crimea, Taiwan, Sudan — find it on a globe before bed. Not on Google Maps zoomed in. On a globe, where you can see what's next to it. Borders matter. Distances matter. The Atlantic Ocean is the reason America was safe from the World Wars for so long.",
+    },
+    quiz: [
+      { q: 'Which continent is largest by area?', choices: ['Africa','Asia','North America','Antarctica'], correct: 1, explain: 'Asia. About a third of all the land on Earth.' },
+      { q: 'Which continent has the most people?', choices: ['Asia','Africa','Europe','North America'], correct: 0, explain: 'Asia. Over half of all humans alive live in Asia — China and India alone are about 2.8 billion of the world\'s 8.1 billion people.' },
+      { q: 'Which is the largest ocean?', choices: ['Atlantic','Indian','Pacific','Southern'], correct: 2, explain: 'The Pacific. Bigger than every continent combined.' },
+      { q: 'Roughly what percent of Earth\'s surface is ocean?', choices: ['29%','50%','71%','90%'], correct: 2, explain: 'About 71% — most of the planet is water.' },
+      { q: 'Which continent is also a single country?', choices: ['Greenland','Antarctica','Australia','Iceland'], correct: 2, explain: 'Australia. The only continent that is also one country.' },
+      { q: 'Which ocean surrounds the North Pole?', choices: ['Arctic','Atlantic','Pacific','Southern'], correct: 0, explain: 'The Arctic Ocean. Mostly frozen — though shrinking each year as the planet warms.' },
+      { q: 'Eurasia is what?', choices: ['A made-up continent','A small country','The combined landmass of Europe and Asia','A new ocean'], correct: 2, explain: 'Eurasia = Europe + Asia, the single huge landmass we split into two continents because of history, not geography.' },
+    ],
+  },
+  {
+    id: 'usa',
+    title: 'United States — 50 States & Capitals',
+    subtitle: 'The four regions of America',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Map_of_USA_with_state_names.svg?width=1280',
+    imageCredit: 'Blank US map with state names — public domain, via Wikimedia Commons',
+    cassianIntro: "America is fifty states, but they don't act like fifty. They act like five regions — each with its own personality, its own industry, its own way of talking. Learn the names, the capitals, and the regions, and you'll start to hear what an adult really means when they say 'the South' or 'the Midwest.'",
+    story: [
+      "America is divided into 50 states. They aren't equal — Texas is bigger than France, Rhode Island is smaller than some Western counties. Each state has its own government, its own capital city, and a personality shaped by what it makes and who settled it.",
+      "We group states into four main regions. The NORTHEAST (New England + Mid-Atlantic) — Boston, New York, Philadelphia — the oldest part of the country. Finance, top universities, fishing, history. The SOUTH (Virginia down to Florida, across to Texas) — football culture, cotton history, oil in Texas, music in Tennessee and Louisiana — and the fastest-growing region in the country today. The MIDWEST (Ohio across to the Dakotas) — corn, wheat, cars (Detroit), the heartland that feeds the country. The WEST (Rockies out to Hawaii) — tech (California), entertainment (Hollywood), aerospace, deserts, mountains, surfers.",
+      "If someone says 'made in America,' it actually means something different in each region. Detroit makes cars. Silicon Valley makes phones, chips, and software. Texas drills oil. Iowa grows corn. Kentucky makes bourbon. Hollywood makes movies. Wall Street in New York moves money. Knowing which place makes what is how grown-ups read the country.",
+    ],
+    typeDrill: {
+      title: 'Capital Drill: 50 States',
+      intro: "Each state has one capital. Type it. (Hint: the capital is usually NOT the most famous city in the state — Albany not New York City, Sacramento not Los Angeles, Springfield not Chicago.) Misses become hints for next time.",
+      mode: 'sequence',
+      items: [
+        { prompt: "Capital of Alabama", answer: "Montgomery" },
+        { prompt: "Capital of Alaska", answer: "Juneau" },
+        { prompt: "Capital of Arizona", answer: "Phoenix" },
+        { prompt: "Capital of Arkansas", answer: "Little Rock" },
+        { prompt: "Capital of California", answer: "Sacramento" },
+        { prompt: "Capital of Colorado", answer: "Denver" },
+        { prompt: "Capital of Connecticut", answer: "Hartford" },
+        { prompt: "Capital of Delaware", answer: "Dover" },
+        { prompt: "Capital of Florida", answer: "Tallahassee" },
+        { prompt: "Capital of Georgia", answer: "Atlanta" },
+        { prompt: "Capital of Hawaii", answer: "Honolulu" },
+        { prompt: "Capital of Idaho", answer: "Boise" },
+        { prompt: "Capital of Illinois", answer: "Springfield" },
+        { prompt: "Capital of Indiana", answer: "Indianapolis" },
+        { prompt: "Capital of Iowa", answer: "Des Moines" },
+        { prompt: "Capital of Kansas", answer: "Topeka" },
+        { prompt: "Capital of Kentucky", answer: "Frankfort" },
+        { prompt: "Capital of Louisiana", answer: "Baton Rouge" },
+        { prompt: "Capital of Maine", answer: "Augusta" },
+        { prompt: "Capital of Maryland", answer: "Annapolis" },
+        { prompt: "Capital of Massachusetts", answer: "Boston" },
+        { prompt: "Capital of Michigan", answer: "Lansing" },
+        { prompt: "Capital of Minnesota", answer: "Saint Paul", aliases: ["st paul","st. paul","saint paul"] },
+        { prompt: "Capital of Mississippi", answer: "Jackson" },
+        { prompt: "Capital of Missouri", answer: "Jefferson City" },
+        { prompt: "Capital of Montana", answer: "Helena" },
+        { prompt: "Capital of Nebraska", answer: "Lincoln" },
+        { prompt: "Capital of Nevada", answer: "Carson City" },
+        { prompt: "Capital of New Hampshire", answer: "Concord" },
+        { prompt: "Capital of New Jersey", answer: "Trenton" },
+        { prompt: "Capital of New Mexico", answer: "Santa Fe" },
+        { prompt: "Capital of New York", answer: "Albany" },
+        { prompt: "Capital of North Carolina", answer: "Raleigh" },
+        { prompt: "Capital of North Dakota", answer: "Bismarck" },
+        { prompt: "Capital of Ohio", answer: "Columbus" },
+        { prompt: "Capital of Oklahoma", answer: "Oklahoma City" },
+        { prompt: "Capital of Oregon", answer: "Salem" },
+        { prompt: "Capital of Pennsylvania", answer: "Harrisburg" },
+        { prompt: "Capital of Rhode Island", answer: "Providence" },
+        { prompt: "Capital of South Carolina", answer: "Columbia" },
+        { prompt: "Capital of South Dakota", answer: "Pierre" },
+        { prompt: "Capital of Tennessee", answer: "Nashville" },
+        { prompt: "Capital of Texas", answer: "Austin" },
+        { prompt: "Capital of Utah", answer: "Salt Lake City" },
+        { prompt: "Capital of Vermont", answer: "Montpelier" },
+        { prompt: "Capital of Virginia", answer: "Richmond" },
+        { prompt: "Capital of Washington", answer: "Olympia" },
+        { prompt: "Capital of West Virginia", answer: "Charleston" },
+        { prompt: "Capital of Wisconsin", answer: "Madison" },
+        { prompt: "Capital of Wyoming", answer: "Cheyenne" },
+      ],
+    },
+    principle: {
+      title: "States Aren't Just Lines. They're Communities.",
+      body: "Each state has its own laws, taxes, schools, and culture. People in Florida live differently from people in Vermont — not just weather, but how they vote, what they eat, what they value. America is more like 50 small countries glued together than one big one. That's why the country is so hard to govern from one capital — and why it's also so hard to break.",
+      quote: '"All politics is local." — Tip O\'Neill',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick a state you've never thought about — Idaho, West Virginia, Maine, Mississippi — and find out what it makes. Potatoes, coal, lobster, catfish. Now you know one more piece of why America works the way it does.",
+    },
+    quiz: [
+      { q: 'Which region is the fastest-growing in America today?', choices: ['Northeast','South','Midwest','West'], correct: 1, explain: 'The South. Texas, Florida, Georgia, the Carolinas — millions of people moved south in the last two decades for lower taxes, warmer weather, and jobs.' },
+      { q: 'Which city is the capital of the country\'s most populous state, California?', choices: ['Los Angeles','San Francisco','Sacramento','San Diego'], correct: 2, explain: 'Sacramento. NOT LA or San Francisco. Most state capitals are smaller cities — easier to govern from.' },
+      { q: 'What is Detroit, Michigan famous for making?', choices: ['Movies','Cars','Computer chips','Bourbon'], correct: 1, explain: 'Cars. Detroit is the historic home of Ford, General Motors, and Chrysler.' },
+      { q: 'What does Silicon Valley (in California) make?', choices: ['Wine','Tech — software, chips, phones','Beef','Steel'], correct: 1, explain: 'Tech. Apple, Google, Meta, Nvidia — most of the world\'s top tech companies are clustered around San Francisco Bay.' },
+      { q: 'Which region includes Massachusetts, New York, and Pennsylvania?', choices: ['South','Midwest','Northeast','West'], correct: 2, explain: 'The Northeast — the oldest part of the country, where the original 13 colonies were.' },
+      { q: 'What state is famous for oil drilling and ranching?', choices: ['Iowa','Maine','Texas','Vermont'], correct: 2, explain: 'Texas. Oil, cattle, NASA in Houston, tech in Austin. Bigger than France.' },
+      { q: 'Iowa, Nebraska, and the Dakotas mainly produce...', choices: ['Movies','Corn, wheat, and other grain','Microchips','Lobster'], correct: 1, explain: 'Grain. The Midwest feeds the country (and much of the world).' },
+    ],
+  },
+  {
+    id: 'conflicts',
+    title: 'The World on Fire — Current Conflicts',
+    subtitle: 'Seven wars happening right now',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/BlankMap-World.svg?width=1280',
+    imageCredit: 'World political map base — public domain, via Wikimedia Commons',
+    cassianIntro: "The world has always had wars. The names change; the reasons do not. Today I show you the seven big fights happening right now — who is who, what they want, and why. I'm not going to pretty it up. You're old enough to hear it straight. Once you see the patterns, the news will never confuse you again.",
+    story: [
+      "Right now there are wars and serious armed conflicts on five continents. The seven biggest are Ukraine vs. Russia, Israel vs. Hamas / Hezbollah / Iran, Iran vs. Saudi Arabia (by proxy), China vs. Taiwan (still cold, but loaded), the Sudanese civil war, the Myanmar civil war, and the war in the eastern Democratic Republic of the Congo. Together they have killed or displaced tens of millions of people in just the last few years.",
+      "Wars happen for the same five reasons they always have. LAND — one country wants ground another holds. FAITH — one religion or sect against another. RESOURCES — oil, water, gold, rare earth metals. FEAR — one side believes if they don't strike now, the other will get too strong. AMBITION — a leader wants to be remembered as great. Most modern wars are a mix of two or three. The propaganda will tell you it's about something noble. Look underneath. Find the five.",
+      "Below is each major fight, who is actually fighting, and what they actually want. None of these are 'both sides have a point' situations — they all have FACTS. Knowing the facts is what makes you very hard to fool.",
+    ],
+    cards: [
+      {
+        title: '1. Ukraine vs. Russia',
+        subtitle: '2014 / full-scale invasion February 2022 — ongoing',
+        kv: [
+          { label: 'Who', body: 'Russia (invader) vs. Ukraine (defender). NATO countries — especially the US, UK, Germany, Poland — supply Ukraine with weapons, training, and intelligence but do not put their own troops on the ground.' },
+          { label: 'What they want', body: 'Russia wants Crimea (annexed 2014), the Donbas region, and a Ukraine that is friendly to Moscow rather than NATO. Ukraine wants every kilometer of its internationally recognized 1991 borders back, including Crimea.' },
+          { label: 'Real cause', body: "Vladimir Putin sees a free, Western-aligned Ukraine as a threat — both to his regime (a successful free Ukraine right next door makes Russians ask why they don't have that) and to his belief that Ukraine is historically Russian land. Russia invaded full-scale in February 2022. Hundreds of thousands have died." },
+          { label: 'Plain takeaway', body: 'Russia invaded a smaller neighbor to keep it from joining the West. Ukraine has resisted longer than nearly anyone predicted.' },
+        ],
+      },
+      {
+        title: '2. Israel vs. Hamas, Hezbollah, the Houthis, and Iran',
+        subtitle: 'October 7, 2023 — ongoing',
+        kv: [
+          { label: 'Who', body: 'Israel vs. Hamas (Palestinian Islamist group that ran Gaza), Hezbollah (Lebanese Shia militia), the Houthis (Yemeni Shia militia), all armed and funded by Iran. Iran itself has exchanged direct missile fire with Israel twice.' },
+          { label: 'What they want', body: 'Hamas\'s stated goal is destroying the state of Israel. Israel\'s stated goal is destroying Hamas as a military force and freeing Israeli hostages taken on October 7, 2023, when Hamas attacked Israel and killed about 1,200 civilians at music festivals and in towns near the Gaza border. The underlying dispute is control of historic Palestine — the same small piece of land.' },
+          { label: 'Real cause', body: 'A century-old territorial dispute between Jews and Arabs over the same land — both with legitimate historical claims, neither willing to disappear. Iran has weaponized that dispute against Israel as part of its larger goal of becoming the dominant Shia power in the Middle East.' },
+          { label: 'Plain takeaway', body: 'Hamas attacked first on Oct 7, 2023. Israel responded by invading Gaza. Gaza civilians have suffered massively. The deeper fight is Iran trying to destroy Israel from a distance using proxies.' },
+        ],
+      },
+      {
+        title: '3. Iran vs. Saudi Arabia (proxy war across the region)',
+        subtitle: 'Cold war, fought through others',
+        kv: [
+          { label: 'Who', body: 'Iran (Shia Muslim, Persian, run by clerics) vs. Saudi Arabia (Sunni Muslim, Arab, run by the House of Saud). They don\'t fight each other directly — they fight through smaller groups in other countries.' },
+          { label: 'What they want', body: 'Leadership of the Muslim world and dominance of the Middle East. Also money — both are major oil exporters competing for influence.' },
+          { label: 'Real cause', body: 'A 1,400-year-old religious split (Shia vs. Sunni Islam, dating to the death of the Prophet Muhammad in 632 AD) combined with modern geopolitics. Iran funds Hezbollah, Hamas, the Houthis, and Shia militias in Iraq. Saudi Arabia and other Sunni Gulf states fund the opposing sides. This proxy war shapes the wars in Yemen, Syria, Lebanon, and Iraq.' },
+          { label: 'Plain takeaway', body: 'Two regional powers using smaller countries as battlegrounds. Most of the violence in the Middle East has either Iranian or Saudi fingerprints somewhere on it.' },
+        ],
+      },
+      {
+        title: '4. China vs. Taiwan',
+        subtitle: 'No shooting war yet — but the biggest "what if" on Earth',
+        kv: [
+          { label: 'Who', body: 'The People\'s Republic of China (the mainland, Communist Party-run, 1.4 billion people) vs. the Republic of China (Taiwan, a democracy of about 24 million people).' },
+          { label: 'What they want', body: 'China says Taiwan is a breakaway province that belongs to it and must be reunified. Taiwan says it has been an independent self-governing democracy since 1949, when the losing side of the Chinese Civil War retreated to the island.' },
+          { label: 'Real cause', body: 'National identity AND microchips. Taiwan makes about 90% of the world\'s most advanced computer chips through TSMC. Whoever controls Taiwan controls the most important industry of the modern world. China\'s leader Xi Jinping has said he wants Taiwan reunified — possibly by force — by 2049.' },
+          { label: 'Plain takeaway', body: 'If China invades Taiwan, the United States is treaty-committed to consider defending it. That would be the biggest war since 1945.' },
+        ],
+      },
+      {
+        title: '5. Sudan Civil War',
+        subtitle: 'April 2023 — ongoing',
+        kv: [
+          { label: 'Who', body: 'The Sudanese Armed Forces (SAF, the official army, led by General Abdel Fattah al-Burhan) vs. the Rapid Support Forces (RSF, a paramilitary force led by General Mohamed "Hemedti" Dagalo, grown out of the old Janjaweed militias of Darfur).' },
+          { label: 'What they want', body: 'Power. Both generals helped overthrow a dictator together in 2019, then turned on each other when the time came to share power. Neither can stand losing.' },
+          { label: 'Real cause', body: 'Two warlords who refuse to share, plus gold mines, farmland, and old ethnic scores from the Darfur genocide of the early 2000s. The RSF has been accused of ethnic cleansing in Darfur again.' },
+          { label: 'Plain takeaway', body: 'The worst humanitarian crisis on Earth right now. Tens of millions hungry, millions displaced, almost no Western news coverage.' },
+        ],
+      },
+      {
+        title: '6. Myanmar Civil War',
+        subtitle: 'Coup February 2021 — ongoing',
+        kv: [
+          { label: 'Who', body: 'The Myanmar military (the "Tatmadaw") vs. a coalition of pro-democracy fighters and ethnic minority armies (Karen, Kachin, Arakan, Chin, and many others).' },
+          { label: 'What they want', body: 'Democracy itself, and the survival of ethnic minorities. In February 2021 the military overthrew the elected civilian government and arrested its leaders. The country has been fighting back since.' },
+          { label: 'Real cause', body: 'The Myanmar military has run the country off and on for 60 years and refused to lose power to elected civilians. Ethnic armies that already wanted independence joined the pro-democracy side.' },
+          { label: 'Plain takeaway', body: 'A military dictatorship trying to hold on against its own people. Massive and brutal, almost invisible in Western news.' },
+        ],
+      },
+      {
+        title: '7. Eastern DRC (Democratic Republic of the Congo)',
+        subtitle: 'Decades-long, hot again since 2022',
+        kv: [
+          { label: 'Who', body: 'The Congolese army (FARDC) vs. M23 (a Rwanda-backed armed group), plus dozens of other militias. Neighboring countries — Rwanda, Uganda, Burundi — back different sides.' },
+          { label: 'What they want', body: 'Minerals. Eastern DRC sits on some of the world\'s biggest deposits of cobalt, coltan, gold, and tin — the metals in every phone, laptop, and electric car.' },
+          { label: 'Real cause', body: 'After the 1994 Rwandan genocide, the killers fled across the border into eastern DRC and never fully left. That triggered three decades of fighting that have killed roughly six million people. Rwanda now backs M23 partly to keep enemies out of its border zone, partly to control mineral smuggling.' },
+          { label: 'Plain takeaway', body: 'The deadliest war you\'ve never heard of. Your phone runs on metals from these mines.' },
+        ],
+      },
+    ],
+    principle: {
+      title: "Wars Aren't Mysteries. They're Patterns.",
+      body: "Every fight on the news is some mix of LAND, FAITH, RESOURCES, FEAR, or AMBITION. The newspapers will dress it up in big words. Strip those away. Ask which of those five things is really driving it. Then watch how the war moves. You'll be right more often than the pundits.",
+      quote: '"In war, truth is the first casualty." — Aeschylus',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "When you hear about a conflict, don't just absorb who's 'the good guys.' Ask: what does each side actually want? What are they willing to do to get it? Who benefits if it keeps going? Adults who do this look very smart compared to adults who don't.",
+    },
+    quiz: [
+      { q: 'In what year did Russia launch the full-scale invasion of Ukraine?', choices: ['2014','2018','2022','2024'], correct: 2, explain: 'February 24, 2022 — full-scale invasion. (Russia had already annexed Crimea and started the Donbas war in 2014.)' },
+      { q: 'On what date did Hamas attack Israel and trigger the current Gaza war?', choices: ['September 11, 2001','October 7, 2023','March 15, 2022','June 6, 2024'], correct: 1, explain: 'October 7, 2023. Hamas killed about 1,200 Israeli civilians and took roughly 250 hostages into Gaza.' },
+      { q: 'Which company makes about 90% of the world\'s most advanced microchips?', choices: ['Intel (USA)','Samsung (South Korea)','TSMC (Taiwan)','SMIC (China)'], correct: 2, explain: 'TSMC — Taiwan Semiconductor Manufacturing Company. The single most strategically important factory on Earth.' },
+      { q: 'How do Iran and Saudi Arabia mostly fight each other?', choices: ['Direct war','Proxy wars through smaller groups in other countries','They don\'t fight','Through the United Nations'], correct: 1, explain: 'Proxies. Iran funds Hezbollah, Hamas, the Houthis, and Shia militias. Saudi Arabia funds opposing groups. The fight plays out in Yemen, Syria, Lebanon, Iraq.' },
+      { q: 'Which two generals are at war in Sudan?', choices: ['Burhan and Hemedti','Putin and Zelensky','Kim and Moon','Sisi and Hifter'], correct: 0, explain: 'General Abdel Fattah al-Burhan (army / SAF) vs. General Mohamed "Hemedti" Dagalo (RSF). Two former allies, now mortal enemies.' },
+      { q: 'What did the Myanmar military do in February 2021?', choices: ['Won a war','Overthrew the elected government in a coup','Granted democracy','Joined NATO'], correct: 1, explain: 'They overthrew the civilian government and arrested its leaders. The country has been at civil war since.' },
+      { q: 'Which minerals fuel the war in eastern DRC?', choices: ['Iron and copper','Diamonds and silver','Cobalt, coltan, and gold','Salt and oil'], correct: 2, explain: 'Cobalt, coltan, gold, tin — the metals inside your phone and every electric vehicle on Earth.' },
+      { q: 'What are the five universal drivers of war from this lesson?', choices: ['Land, faith, resources, fear, ambition','Money, food, water, anger, pride','Trade, taxes, taxes, taxes, more taxes','Hunger, thirst, cold, heat, boredom'], correct: 0, explain: 'LAND, FAITH, RESOURCES, FEAR, AMBITION. Strip the propaganda and you\'ll find these five every time.' },
+    ],
+  },
+  {
+    id: 'economies',
+    title: 'Money Flows — Major Economies',
+    subtitle: 'Who makes what, who depends on whom',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Eckert_IV_projection_SW.jpg?width=1280',
+    imageCredit: 'Eckert IV projection world map — public domain, via Wikimedia Commons',
+    cassianIntro: "Money flows where value is made. Today we trace those flows. Knowing what each country actually makes is how you understand who is rising, who is falling, and why. Headlines lie. Trade balances don't.",
+    story: [
+      "An economy is what a country makes, grows, sells, and buys. Some countries get rich by pulling stuff from the ground — oil, gold, copper. Some get rich by building things in factories — cars, chips, machines. Some get rich by selling services and ideas — banking, software, movies, medicine. The biggest ones do all three.",
+      "Today the world economy is led by two giants: the United States (about $28 trillion a year) and China (about $18 trillion). After them come Germany, Japan, India, the United Kingdom, France, Italy — the rest of the G7 plus India. Russia, Brazil, and India together with China are called the BRICS — emerging powers trying to weigh in against the West.",
+      "Below are the major economies and what each one actually makes. Memorize this and you will never be lost when an adult says 'follow the money.'",
+    ],
+    cards: [
+      {
+        title: 'United States — about $28 trillion',
+        subtitle: 'The biggest economy on Earth',
+        kv: [
+          { label: 'Makes', body: 'Software (Apple, Microsoft, Google), social platforms (Meta), microchip designs (Nvidia), aerospace (Boeing, SpaceX), entertainment (Hollywood, Netflix), finance (Wall Street), and food on a massive scale (corn, soybeans, beef).' },
+          { label: 'Power source', body: 'Innovation, the world\'s top universities, and the US dollar being the world\'s reserve currency. Everyone wants dollars, so America can borrow cheaply.' },
+        ],
+      },
+      {
+        title: 'China — about $18 trillion',
+        subtitle: 'The world\'s factory',
+        kv: [
+          { label: 'Makes', body: 'Almost everything physical — phones, clothes, batteries, electric vehicles (BYD), solar panels, ships, steel. About 30% of global manufacturing happens in China.' },
+          { label: 'Power source', body: 'Massive low-cost labor pool, 30 years of factory build-out, and a government that can direct money into whatever industry it wants to dominate next.' },
+        ],
+      },
+      {
+        title: 'Germany — about $4.5 trillion',
+        subtitle: 'Europe\'s industrial heart',
+        kv: [
+          { label: 'Makes', body: 'Luxury cars (Mercedes-Benz, BMW, Porsche, Volkswagen), industrial machinery, chemicals, pharmaceuticals.' },
+          { label: 'Power source', body: 'Engineering precision and the "Mittelstand" — thousands of small and mid-size family-owned manufacturers that quietly dominate their global niches.' },
+        ],
+      },
+      {
+        title: 'Japan — about $4 trillion',
+        subtitle: 'Quality obsession',
+        kv: [
+          { label: 'Makes', body: 'Cars (Toyota, Honda, Nissan), electronics (Sony, Nintendo, Canon), industrial robots, precision materials.' },
+          { label: 'Power source', body: '"Kaizen" — relentless small improvements — plus decades of investment in high-end manufacturing. Japanese quality became a brand of its own.' },
+        ],
+      },
+      {
+        title: 'India — about $3.7 trillion',
+        subtitle: 'Fastest-growing major economy',
+        kv: [
+          { label: 'Makes', body: 'Software services (Infosys, TCS, Wipro), generic pharmaceuticals (much of the affordable medicine in the world), call centers, increasingly: semiconductors and manufacturing.' },
+          { label: 'Power source', body: 'A huge English-speaking workforce and elite engineering universities (the IITs). India will pass Germany and Japan in the next decade.' },
+        ],
+      },
+      {
+        title: 'United Kingdom — about $3.3 trillion',
+        subtitle: 'A small island, a huge financial center',
+        kv: [
+          { label: 'Makes', body: 'Finance (the City of London), insurance (Lloyd\'s), luxury goods (Burberry, Aston Martin), pharmaceuticals (AstraZeneca, GSK), aerospace components (Rolls-Royce jet engines).' },
+          { label: 'Power source', body: 'Legacy of the British Empire: English language, English common law, deep capital markets, and a global network of trading relationships.' },
+        ],
+      },
+      {
+        title: 'Russia — about $2 trillion',
+        subtitle: 'A petro-state with nukes',
+        kv: [
+          { label: 'Makes', body: 'Oil, natural gas, wheat, nickel, aluminum, fertilizer, weapons. Very little else of global importance.' },
+          { label: 'Power source', body: 'Sitting on enormous reserves of fossil fuels and metals — and on roughly 5,500 nuclear warheads. The economy is fragile: when oil prices crash, Russia crashes.' },
+        ],
+      },
+      {
+        title: 'Saudi Arabia — about $1.1 trillion',
+        subtitle: 'The original oil kingdom',
+        kv: [
+          { label: 'Makes', body: 'Oil. Saudi Aramco is the most profitable company on the planet. The kingdom is now trying to diversify into tourism, sports, AI, and entertainment under its "Vision 2030" plan.' },
+          { label: 'Power source', body: 'The world\'s largest reserves of cheap-to-pump oil. The Saudis can flood the market or starve it — which is how OPEC moves global gas prices.' },
+        ],
+      },
+      {
+        title: 'Switzerland — about $0.9 trillion',
+        subtitle: 'Tiny country, enormous influence',
+        kv: [
+          { label: 'Makes', body: 'Watches (Rolex, Patek Philippe), banking (UBS), pharmaceuticals (Novartis, Roche), specialty chemicals, chocolate. Punches massively above its size.' },
+          { label: 'Power source', body: 'Centuries of neutrality, strict bank secrecy (less strict now), and a reputation for extreme quality and reliability.' },
+        ],
+      },
+      {
+        title: 'Taiwan — about $0.8 trillion',
+        subtitle: 'The chip island',
+        kv: [
+          { label: 'Makes', body: 'Advanced semiconductors. TSMC alone produces about 90% of the world\'s most cutting-edge chips — the chips inside iPhones, Nvidia AI cards, and military hardware.' },
+          { label: 'Power source', body: 'Forty years of investment, world-leading expertise, and intense secrecy about its chip-making processes. The most important country in the world per capita.' },
+        ],
+      },
+    ],
+    principle: {
+      title: "What a Country Makes IS Its Power.",
+      body: "Armies and politics get the headlines. But underneath, the real story is who makes the stuff the world actually needs. A country that makes chips, food, oil, or medicine has leverage. A country that just buys things has dependency. Look at every country and ask: what would the world miss if they vanished tomorrow? That answer is their power.",
+      quote: '"Trade is the engine of civilization." — adapted from Adam Smith',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Flip over five things in your house — a phone, a shoe, a toy, a snack, a tool. Read the 'Made in ___' label. You'll see China, Vietnam, Mexico, Germany, USA, sometimes others. That's the map of the world economy, sitting in your hand.",
+    },
+    quiz: [
+      { q: 'Largest economy in the world today?', choices: ['China','United States','Germany','Japan'], correct: 1, explain: 'United States — about $28 trillion a year.' },
+      { q: 'Second-largest economy?', choices: ['Japan','India','China','Germany'], correct: 2, explain: 'China — about $18 trillion. The world\'s factory.' },
+      { q: 'Country making about 90% of the world\'s most advanced microchips?', choices: ['South Korea','Taiwan','China','United States'], correct: 1, explain: 'Taiwan, through TSMC.' },
+      { q: 'Germany is most famous for exporting...', choices: ['Oil','Cars and industrial machinery','Software','Movies'], correct: 1, explain: 'Cars (Mercedes, BMW, Porsche, VW) and precision industrial machinery.' },
+      { q: 'India\'s biggest economic strength is...', choices: ['Oil','Movies and music','Software services and pharmaceuticals','Watches'], correct: 2, explain: 'Software services (Infosys, TCS) and generic pharmaceuticals.' },
+      { q: 'Russia\'s economy depends mainly on what?', choices: ['Cars','Oil, natural gas, and grain','Tech','Tourism'], correct: 1, explain: 'Oil, gas, grain, and metals. When global oil prices fall, Russia hurts.' },
+      { q: 'The "BRICS" group of emerging economies stands for...', choices: ['Brazil, Russia, India, China, South Africa','Britain, Russia, Italy, Canada, Sweden','Bahrain, Romania, Indonesia, Chile, Senegal','Belgium, Romania, Iran, Cuba, Saudi Arabia'], correct: 0, explain: 'Brazil, Russia, India, China, South Africa — the original five. Several more have joined since 2024.' },
+    ],
+  },
+  {
+    id: 'cities',
+    title: 'Cultural Centers — Ten Great Cities',
+    subtitle: 'Each city is a way of seeing life',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Colosseum_in_Rome,_Italy_-_April_2007.jpg?width=1280',
+    imageCredit: 'The Colosseum, Rome — public domain, via Wikimedia Commons',
+    cassianIntro: "Maps show land. They don't show culture. For that you must visit the cities. Each great city has a heartbeat — what its people love, what they fear, what they pass on to their children. Today we visit ten. I have stood in every one of them.",
+    story: [
+      "A city isn't just buildings. It's a way of seeing life. Romans see life as old, layered, sacred. Parisians see life as something to be tasted, argued about, dressed for. Tokyoites see life as a craft to perfect. Each great city is a school for a different way of being human.",
+      "Below are ten cities that shaped the world. Each has a few things it is famous for, a few habits its people carry, and a flavor you'd notice within an hour of arriving. Pay attention to which one calls to you. Someday you'll go.",
+    ],
+    cards: [
+      { title: 'Rome, Italy', subtitle: 'The Eternal City', body: ["Three thousand years of history stacked on the same seven hills. Capital of the Roman Empire, then the center of the Catholic Church (the Pope lives in the Vatican, an independent country inside Rome itself). Italians live for family, food, and afternoon coffee — la dolce vita, the sweet life. Every block has Roman ruins under it. The pasta isn't a meal; it's a religion."] },
+      { title: 'Paris, France', subtitle: 'The capital of beauty', body: ["France made art, fashion, philosophy, and cuisine into national sports. Home of the Louvre, the Eiffel Tower, and 400 years of European thought (Voltaire, Descartes, Sartre). Parisians argue about coffee, politics, and the right way to wear a scarf with equal seriousness. Bread bought daily. Wine with lunch."] },
+      { title: 'Tokyo, Japan', subtitle: 'The most disciplined city on Earth', body: ["Trains run to the second. Streets are spotless even though there are almost no public trash cans. Home of Nintendo, Sony, anime, sushi, and a culture built on respect, craft, and quiet. Loud Americans stand out instantly. Tokyo runs on bowing, not handshakes."] },
+      { title: 'Istanbul, Turkey', subtitle: 'The bridge between East and West', body: ["The only city on Earth that sits on two continents — Europe and Asia, divided by the Bosporus strait. Was Constantinople, capital of the Byzantine (Eastern Roman) Empire for 1,000 years, then capital of the Ottoman Empire for another 500. The Hagia Sophia was a Christian cathedral, then a mosque, then a museum, now a mosque again. Bazaars, mosques, tea, and the call to prayer five times a day."] },
+      { title: 'Buenos Aires, Argentina', subtitle: 'The Paris of South America', body: ["Tango dancing in the streets, world-class beef (the best steak you will ever eat), and European-style architecture from Argentina's wealthy 1900s. Football (soccer) is treated as a near-religious experience — see Boca Juniors vs. River Plate. The most European-feeling city in the Americas."] },
+      { title: 'Cairo, Egypt', subtitle: 'The largest city in the Arab world', body: ["The pyramids of Giza are right at the city's edge — 4,500 years old, still standing. Home to Al-Azhar University, founded around 970 AD, the center of Sunni Islamic scholarship. The Nile River runs straight through the middle. Loud, dusty, ancient, and very much alive."] },
+      { title: 'Mumbai, India', subtitle: 'Bollywood and finance', body: ["India's financial capital and home of Bollywood — the world's biggest movie industry by number of films made (more than Hollywood). About 20 million people. Wild contrasts: glass skyscrapers next to massive slums. Chai (tea) and street food at every corner. The Indian Ocean on one side."] },
+      { title: 'Berlin, Germany', subtitle: 'Engineering and history\'s hardest lessons', body: ["Germany's capital. Split in half by the Berlin Wall during the Cold War (1961–1989). When the wall fell on November 9, 1989, the Cold War effectively ended. Today Berlin is the techno music capital of the world and one of Europe's most creative cities — while also being the place where Germany works through the memory of the Nazi era."] },
+      { title: 'New York, USA', subtitle: 'The world\'s financial capital', body: ["America's biggest city. Home of Wall Street (finance), Broadway (theater), the Statue of Liberty, the United Nations headquarters, and every accent in the world walking the same sidewalk. Loud, fast, expensive, alive 24 hours. Pizza, bagels, and yellow cabs."] },
+      { title: 'London, England', subtitle: 'The original global city', body: ["The British Empire was run from here. English law and English markets still shape the world. Black cabs, red double-decker buses, the Houses of Parliament, and the Tower of London — standing on the same ground for nearly 1,000 years. The Thames River and the City of London are still the second-biggest finance hub on Earth."] },
+    ],
+    principle: {
+      title: "Cities Teach What Countries Can't.",
+      body: "A country is too big to feel. A city you can walk in a day. The way people behave on a Roman piazza, in a Tokyo subway, in a Cairo coffeehouse — that's what 'culture' actually means. Travel the cities and you understand the countries from the inside, in a way no textbook will give you.",
+      quote: '"He who would travel happily must travel light." — Antoine de Saint-Exupéry',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick one city from this list and watch a 10-minute walking tour on YouTube tonight. Notice how the people move, what they eat, what the streets sound like. You can travel the world with your eyes long before you go with your feet.",
+    },
+    quiz: [
+      { q: 'Which city is the only major city to sit on two continents?', choices: ['Cairo','Istanbul','Buenos Aires','London'], correct: 1, explain: 'Istanbul — split by the Bosporus strait between Europe and Asia.' },
+      { q: 'Which city is home to Bollywood, the world\'s biggest movie industry by number of films?', choices: ['Tokyo','Cairo','Mumbai','Buenos Aires'], correct: 2, explain: 'Mumbai, India.' },
+      { q: 'In which year did the Berlin Wall fall?', choices: ['1969','1989','1999','2009'], correct: 1, explain: 'November 9, 1989 — effectively ending the Cold War in Europe.' },
+      { q: 'The Vatican (home of the Pope) is located inside which city?', choices: ['Paris','Madrid','Rome','Lisbon'], correct: 2, explain: 'Rome. The Vatican is technically an independent country (the smallest in the world) sitting inside Rome.' },
+      { q: 'Which city is home to Wall Street and Broadway?', choices: ['London','Chicago','New York','Boston'], correct: 2, explain: 'New York City. Wall Street = global finance. Broadway = American theater.' },
+      { q: 'Which city is famous for tango dancing and the best beef in the world?', choices: ['Mumbai','Buenos Aires','Cairo','Tokyo'], correct: 1, explain: 'Buenos Aires, Argentina.' },
+      { q: 'Tokyo, Japan is famous for which cultural trait?', choices: ['Loud arguments in cafés','Discipline, craft, and quiet','24-hour parties in the streets','Tango dancing'], correct: 1, explain: 'Discipline, craft, quiet. Tokyo runs on respect — bowing, punctuality, and obsessive quality.' },
+    ],
+  },
+  {
+    id: 'empires',
+    title: 'Empires — Rise and Fall',
+    subtitle: 'Six empires. Same pattern.',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Mongol_Empire_map.gif?width=1280',
+    imageCredit: 'Mongol Empire at its greatest extent — public domain, via Wikimedia Commons',
+    cassianIntro: "Every empire on this list believed it would last forever. None did. Today we study six of them — how each rose, and how each fell. Pay attention to the patterns. The next great empire is being built right now, and you'll see it more clearly because you saw the others.",
+    story: [
+      "An empire is a state that rules over many peoples and lands beyond its original home. For most of human history this is how the world was actually organized. Today we live in an unusual moment of mostly nation-states — but the empires are the deep grooves the world still runs in.",
+      "Below are six of the greatest. Each rose by being better at something than its neighbors — better armies, better roads, better trade, better religion, better money. Each fell when it overreached, ran out of money, or rotted from inside. Read carefully. The patterns repeat.",
+    ],
+    cards: [
+      {
+        title: 'Roman Empire',
+        subtitle: '~27 BC – 476 AD (Western); Eastern Roman / Byzantine survived until 1453',
+        kv: [
+          { label: 'Rise', body: 'Started as a small city on the Tiber River in Italy. Built the best army of its time (the legion), the best road network the world had seen (some Roman roads still exist), and a system of written law that worked across many cultures. Over 200 years it spread across Europe, North Africa, and the Middle East.' },
+          { label: 'Fall', body: 'Got too big to defend. Mercenaries replaced citizen soldiers. The borders cracked under pressure from Germanic tribes (Goths, Vandals, Huns). Internal corruption and constant civil wars between rival emperors drained the treasury. Christianity replaced the old civic religion, changing what citizens were willing to die for. The Western half collapsed in 476 AD. The Eastern half — Byzantium — lasted another thousand years before Constantinople fell to the Ottoman Turks in 1453.' },
+        ],
+      },
+      {
+        title: 'Mongol Empire',
+        subtitle: '1206 – 1368 (peak around 1279, largest contiguous land empire ever)',
+        kv: [
+          { label: 'Rise', body: 'Genghis Khan unified the warring Mongol tribes through brutal discipline. They had the fastest cavalry in history (every soldier rode three or four horses, switching them out), learned siege warfare from conquered Chinese engineers, and were merciless to cities that resisted but tolerant of those that submitted. In a single generation they conquered the largest contiguous land empire in human history — from Korea to Poland.' },
+          { label: 'Fall', body: 'Too big to govern from one place. The empire split into four khanates that fought each other. The Black Death plague (which Mongol trade routes helped spread) destroyed populations on a massive scale. The conquered peoples — Russians, Chinese, Persians — eventually outnumbered and outlearned the Mongol elite, who were absorbed into the cultures they had conquered.' },
+        ],
+      },
+      {
+        title: 'British Empire',
+        subtitle: '~1583 – 1997 (peak around 1920: a quarter of the world)',
+        kv: [
+          { label: 'Rise', body: 'A small wet island in the North Atlantic built the best navy on Earth and used it to plant trading colonies on every continent. The Industrial Revolution started in Britain (1760s) and made it the world\'s factory before anyone else. At its peak in 1920, the British Empire ruled about a quarter of the world\'s land and people — "the empire on which the sun never sets."' },
+          { label: 'Fall', body: 'Two World Wars (1914–1918, 1939–1945) bankrupted Britain. The colonies — especially India (independent 1947) — demanded freedom and got it. The United States quietly inherited Britain\'s role as the global power. Hong Kong was returned to China in 1997, closing the empire\'s last big chapter.' },
+        ],
+      },
+      {
+        title: 'Ottoman Empire',
+        subtitle: '1299 – 1922',
+        kv: [
+          { label: 'Rise', body: 'Started as a small Turkish principality in what is now Turkey. Conquered Constantinople in 1453, ending the Eastern Roman Empire and renaming the city Istanbul. Spread across the Middle East, North Africa, and the Balkans. The Sultan was both political ruler and Caliph — religious leader of Sunni Islam — and protector of the holy cities of Mecca and Medina.' },
+          { label: 'Fall', body: 'Slow rot over centuries. The Ottomans failed to industrialize while Europe did. Lost wars to Russia, lost territories in the Balkans, became known as "the sick man of Europe" through the 1800s. Allied with Germany in World War I and lost. Britain and France carved up the empire in 1920. Mustafa Kemal Atatürk turned the remaining Turkish core into the modern Republic of Turkey in 1923, abolishing the Sultanate and the Caliphate.' },
+        ],
+      },
+      {
+        title: 'Spanish Empire',
+        subtitle: '1492 – 1898',
+        kv: [
+          { label: 'Rise', body: 'Christopher Columbus reached the Americas in 1492 under Spanish flag. Within 30 years, Hernán Cortés had toppled the Aztec Empire (Mexico) and Francisco Pizarro had toppled the Inca Empire (Peru). Spanish galleons began shipping gold and silver back to Spain by the boatload. For roughly two centuries (1500s–1600s) Spain was the richest country in Europe.' },
+          { label: 'Fall', body: 'Spent the gold instead of investing it. Constant wars in Europe — especially religious wars against Protestants — drained the treasury. The English navy under Drake beat the Spanish Armada in 1588. South American colonies revolted in the early 1800s under leaders like Simón Bolívar and José de San Martín, and won their independence one by one. The last colonies — Cuba, Puerto Rico, and the Philippines — were lost to the United States in the Spanish-American War of 1898.' },
+        ],
+      },
+      {
+        title: 'Soviet Union (USSR)',
+        subtitle: '1922 – 1991',
+        kv: [
+          { label: 'Rise', body: 'After the Russian Revolution of 1917, the communists (led by Lenin, then Stalin) built a vast industrial state on Marxist-Leninist ideology. After winning World War II — at the cost of about 27 million Soviet dead — the USSR controlled all of Eastern Europe and competed with the United States for global leadership during the Cold War (roughly 1947–1991).' },
+          { label: 'Fall', body: 'Communism didn\'t work as an economy. The Soviet system couldn\'t keep up with Western productivity. The USSR spent itself broke on the arms race and on a disastrous war in Afghanistan (1979–1989). Mikhail Gorbachev tried to reform the system with "glasnost" and "perestroika" — too little, too late. Eastern European countries broke free in 1989 (the Berlin Wall fell that November). The USSR formally dissolved on December 26, 1991, splitting into 15 separate countries — including Russia, Ukraine, Kazakhstan, and the Baltic states.' },
+        ],
+      },
+    ],
+    principle: {
+      title: "Empires Die the Same Way.",
+      body: "Overreach. Money problems. Internal rot. Loss of belief. Then a younger, hungrier rival shows up. Every single empire on this list followed that pattern. Watch the United States and China today and you will see all four of those forces working on both sides. The question is never whether the cycle will turn — only when.",
+      quote: '"The arc of history is long, but it bends." — adapted from Theodore Parker',
+    },
+    modern: {
+      title: 'In your life this week:',
+      body: "Pick one empire and ask: what habits made them strong? What habits made them weak? Now ask the same about your own country — and about your own family, your own school. Greatness is built. Greatness is lost. Both are decisions, made one day at a time.",
+    },
+    quiz: [
+      { q: 'Which empire built the legion, Roman roads, and a written system of law?', choices: ['Mongol','Roman','Ottoman','Spanish'], correct: 1, explain: 'The Roman Empire. Many Roman roads are still in use today.' },
+      { q: 'Who unified the Mongol tribes and started the largest contiguous land empire in history?', choices: ['Kublai Khan','Tamerlane','Attila','Genghis Khan'], correct: 3, explain: 'Genghis Khan (born Temüjin). Kublai Khan was his grandson.' },
+      { q: 'About what year did the British Empire reach its largest extent?', choices: ['1620','1820','1920','2020'], correct: 2, explain: 'Around 1920 — about a quarter of the world\'s land and people. After World War I.' },
+      { q: 'The Ottoman Empire conquered Constantinople in what year?', choices: ['476','1066','1453','1789'], correct: 2, explain: '1453. The Eastern Roman Empire finally ended. The city was renamed Istanbul.' },
+      { q: 'What did Spanish galleons mostly carry home from the Americas?', choices: ['Spices','Gold and silver','Cars','Wheat'], correct: 1, explain: 'Gold and silver from Mexico and Peru, for nearly 300 years.' },
+      { q: 'The USSR formally dissolved in what year?', choices: ['1985','1989','1991','2001'], correct: 2, explain: 'December 26, 1991. Russia and 14 other republics became separate countries.' },
+      { q: 'According to this lesson, the same four forces have killed every empire. They are...', choices: ['Plague, famine, ice age, asteroid','Overreach, money problems, internal rot, loss of belief','Bad weather and bad food','Foreign tourists'], correct: 1, explain: 'Overreach + money problems + internal rot + loss of belief — then a younger rival shows up. Every empire on this list followed that pattern.' },
+    ],
+  },
+];
+
+/* ============================================================
    HALL MASTERS — v1 drafts. Names, bios, and emblem keys are
    easy to rename or restyle without touching component code.
 ============================================================ */
@@ -790,10 +1305,14 @@ const MASTERS = {
   mira:     { name:'Linguist Mira',     bio:'Well-traveled polyglot. Scrolls from many lands hang from her belt.',      emblem:'emblem-mira' },
   atlas:    { name:'Reckoner Atlas',    bio:'Geometric and deliberate. Compass in one hand, abacus in the other.',      emblem:'emblem-atlas' },
   octavian: { name:'Merchant Octavian', bio:'Shrewd trader in a gold cloak. Knows the price of every silence.',         emblem:'emblem-octavian' },
+  mercator: { name:'Cartographer Mercator', bio:'World-traveled mapmaker. Compass in one hand, globe at his elbow. He has set foot on every continent and learned the cost.', emblem:'emblem-mercator', active:true },
 };
 
 const QUESTS = {
-  strategy: { id:'strategy', title:'War & Strategy', formalTitle:"Griffin's Quest: War & Strategy", motto:'Win before the first shot.', hall:'marshal', master:'cassian', lessons: STRATEGY_LESSONS, active: true },
+  strategy:    { id:'strategy',    title:'War & Strategy',      formalTitle:"Griffin's Quest: War & Strategy",      motto:'Win before the first shot.',          hall:'marshal',     master:'cassian',  lessons: STRATEGY_LESSONS,    active: true,
+    masterOpening: "Welcome to my Hall. I am Cassian. I have led men. I have lost men. The six lessons here teach the shape of victory — and the cost of arrogance. Pick your first." },
+  cartography: { id:'cartography', title:'Geography & Realism', formalTitle:"Griffin's Quest: Geography & Realism", motto:'Know the ground before you walk it.', hall:'cartographer', master:'mercator', lessons: CARTOGRAPHY_LESSONS, active: true,
+    masterOpening: "Welcome to my Hall. I am Mercator. I have drawn maps of every coast worth knowing and walked nearly all of them. The six lessons here teach the world as it really is — the land, the wars, the money, the cities, and the empires that built and broke the ground you stand on. Pick your first." },
 };
 
 /* ============================================================
@@ -805,6 +1324,12 @@ const ROWS = [
     subjects:[
       { id:'strategy', name:'War & Strategy', sub:'6 battles · 30 questions', active:true },
       { id:'game-theory', name:'Game Theory', sub:'Coming soon' },
+    ],
+  },
+  { id:'cartographer', hall:"Cartographer's Hall", master:'mercator', motto:'Know the ground before you walk it.',
+    subjects:[
+      { id:'cartography', name:'Geography & Realism', sub:'6 quests · 50+ questions', active:true },
+      { id:'cartography-advanced', name:'Advanced Maps', sub:'Coming soon' },
     ],
   },
   { id:'sage',     hall:"Sage's Hall",     master:'aurelian', motto:'Old wisdom, still working.',
@@ -875,7 +1400,7 @@ function defaultState() {
     name: 'E',
     xp: 0,
     streak: { last: null, count: 0 },
-    quests: { strategy: { lessons: {} } },
+    quests: { strategy: { lessons: {} }, cartography: { lessons: {} } },
     reviewQueue: [],
   };
 }
@@ -890,7 +1415,7 @@ function loadState() {
           name: o.name || 'E',
           xp: o.xp || 0,
           streak: o.streak || { last:null, count:0 },
-          quests: { strategy: o.subjects?.strategy || { lessons: {} } },
+          quests: { strategy: o.subjects?.strategy || { lessons: {} }, cartography: { lessons: {} } },
           reviewQueue: (o.reviewQueue || []).map(r => ({ ...r, quest: r.subject || 'strategy' })),
         };
       }
@@ -1050,6 +1575,35 @@ function StrategyCallout({ state }) {
   );
 }
 
+function CartographyCallout({ state }) {
+  const lessons = CARTOGRAPHY_LESSONS;
+  const mastered = lessons.filter(l => isLessonMastered(state, 'cartography', l.id)).length;
+  const pct = (mastered / lessons.length) * 100;
+  return (
+    <button onClick={() => window.location.hash = '#quest/cartography'} className="block w-full text-left mt-4 card card-hover p-6 transition fadeup">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="heraldic text-xs font-bold text-gold-deep flex items-center gap-2">
+            <span className="inline-block w-6 h-px bg-gold"/>
+            GRIFFIN'S QUEST · NEW · ACTIVE
+            <span className="inline-block w-6 h-px bg-gold"/>
+          </div>
+          <div className="font-display text-3xl sm:text-4xl ink mt-2 leading-tight">Geography &amp; Realism</div>
+          <div className="ink-soft mt-1 italic">"Know the ground before you walk it."</div>
+          <div className="ink-soft text-sm mt-3 max-w-prose">Six quests with Cartographer Mercator. Continents, US states, current wars, world economies, great cities, and the rise &amp; fall of empires.</div>
+        </div>
+        <div className="text-right">
+          <div className="heraldic text-xs uppercase text-gold-deep tracking-widest">Mastered</div>
+          <div className="font-display text-5xl ink">{mastered}<span className="ink-muted text-2xl">/{lessons.length}</span></div>
+        </div>
+      </div>
+      <div className="mt-5 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+      </div>
+    </button>
+  );
+}
+
 function DrillCallout({ state }) {
   const count = state.reviewQueue?.length || 0;
   const empty = count === 0;
@@ -1156,6 +1710,7 @@ function Hub({ state, setState }) {
         </div>
         <div className="mt-8 gold-line-strong"/>
         <StrategyCallout state={state}/>
+        <CartographyCallout state={state}/>
         <DrillCallout state={state}/>
       </div>
       <HubWelcomeOnce/>
@@ -1207,7 +1762,7 @@ function QuestView({ questId, state }) {
   }
   const mastered = quest.lessons.filter(l => isLessonMastered(state, questId, l.id)).length;
   const pct = (mastered/quest.lessons.length) * 100;
-  const masterOpening = "Welcome to my Hall. I am Cassian. I have led men. I have lost men. The six lessons here teach the shape of victory — and the cost of arrogance. Pick your first.";
+  const masterOpening = quest.masterOpening || "Welcome to my Hall. The lessons below open in order — master the first to unlock the next.";
   return (
     <div className="pb-safe">
       <div className="wrap pt-8 sm:pt-10">
@@ -1355,6 +1910,157 @@ function QuizQuestion({ q, qIdx, onCorrect, onWrong, onPicked }) {
   );
 }
 
+function normalize(s) {
+  return (s || '').toString().trim().toLowerCase().replace(/[.’']/g, '').replace(/\s+/g, ' ');
+}
+
+function TypeDrillBlock({ drill, onCorrect }) {
+  const items = drill.items || [];
+  const [pos, setPos] = useState(0);
+  const [value, setValue] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | wrong | right | skipped
+  const [doneSet, setDoneSet] = useState(() => new Set());
+  const inputRef = useRef(null);
+
+  if (items.length === 0) return null;
+  const finished = pos >= items.length;
+  const cur = items[pos];
+
+  function check(e) {
+    e?.preventDefault?.();
+    if (finished || !cur) return;
+    const a = normalize(value);
+    const accepted = [cur.answer, ...(cur.aliases || [])].map(normalize);
+    if (accepted.includes(a)) {
+      const wasFirst = status === 'idle';
+      setStatus('right');
+      setDoneSet(prev => { const ns = new Set(prev); ns.add(pos); return ns; });
+      if (wasFirst && onCorrect) onCorrect();
+      setTimeout(() => {
+        setValue('');
+        setStatus('idle');
+        setPos(p => p + 1);
+        setTimeout(() => inputRef.current?.focus(), 30);
+      }, 450);
+    } else {
+      setStatus('wrong');
+      if (inputRef.current) {
+        inputRef.current.classList.remove('shake');
+        // eslint-disable-next-line no-unused-expressions
+        inputRef.current.offsetWidth;
+        inputRef.current.classList.add('shake');
+      }
+    }
+  }
+  function reveal() {
+    setStatus('shown');
+  }
+  function next() {
+    setValue('');
+    setStatus('idle');
+    setPos(p => p + 1);
+    setTimeout(() => inputRef.current?.focus(), 30);
+  }
+  function restart() {
+    setPos(0); setValue(''); setStatus('idle'); setDoneSet(new Set());
+    setTimeout(() => inputRef.current?.focus(), 30);
+  }
+
+  const firstTryRight = doneSet.size;
+  const pct = Math.round((pos / items.length) * 100);
+
+  return (
+    <div className="card p-5 sm:p-6 fadeup" style={{ borderLeft:'3px solid var(--gold)' }}>
+      <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em]">Practice Drill</div>
+      <h2 className="font-display text-3xl ink mt-1">{drill.title || 'Drill'}</h2>
+      {drill.intro && <p className="ink-soft mt-2 leading-relaxed">{drill.intro}</p>}
+      <div className="mt-4 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+        <div className="h-full progress-bar transition-all duration-500" style={{ width: pct + '%' }}/>
+      </div>
+      <div className="flex justify-between mt-1 text-[11px] heraldic uppercase tracking-widest ink-soft">
+        <span>{pos}/{items.length} done</span>
+        <span>{firstTryRight} first-try wins</span>
+      </div>
+
+      {finished ? (
+        <div className="mt-6 text-center">
+          <div className="font-display text-3xl ink">Drill complete.</div>
+          <div className="ink-soft mt-2">First-try wins: <span className="font-bold ink">{firstTryRight}</span> of {items.length} ({Math.round(firstTryRight/items.length*100)}%)</div>
+          <button onClick={restart} className="mt-5 inline-flex items-center gap-2 bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:brightness-110">
+            <Icon.Refresh className="w-4 h-4"/> Run it again
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={check} className="mt-5">
+          <div className="text-sm heraldic uppercase tracking-widest text-gold-deep font-bold">Item {pos+1} of {items.length}</div>
+          <div className="font-display text-2xl ink mt-1 leading-snug">{cur.prompt}</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <input
+              ref={inputRef}
+              value={value}
+              onChange={(e) => { setValue(e.target.value); if (status === 'wrong') setStatus('idle'); }}
+              autoComplete="off" autoCorrect="off" spellCheck="false"
+              placeholder="Type your answer…"
+              className={"flex-1 min-w-[200px] px-4 py-3 rounded-lg border bg-parchment ink text-lg outline-none transition " + (status==='wrong' ? "border-crimson" : status==='right' ? "border-green-700" : "border-ink-soft/40 focus:border-navy")}
+            />
+            <button type="submit" className="bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-3 rounded-lg hover:brightness-110">Check</button>
+            <button type="button" onClick={reveal} className="card heraldic font-bold uppercase tracking-widest text-xs px-4 py-3 rounded-lg ink hover:bg-parchment-deep">Show answer</button>
+          </div>
+          {status === 'wrong' && (
+            <div className="mt-3 text-sm text-crimson border-l-2 border-crimson pl-3 italic fadeup">
+              Not quite. Try again — or tap "Show answer" if you want a peek.
+            </div>
+          )}
+          {status === 'shown' && (
+            <div className="mt-3 fadeup">
+              <div className="text-sm ink-soft border-l-2 border-gold pl-3">
+                Answer: <span className="font-bold ink">{cur.answer}</span>
+              </div>
+              <button type="button" onClick={next} className="mt-3 inline-flex items-center gap-2 bg-crimson text-parchment heraldic font-bold uppercase tracking-widest text-sm px-4 py-2 rounded-lg hover:brightness-110">
+                <Icon.Refresh className="w-4 h-4"/> Next item
+              </button>
+            </div>
+          )}
+          {status === 'right' && (
+            <div className="mt-3 text-sm border-l-2 pl-3 italic fadeup" style={{ borderColor:'#6f8a4a', color:'#3f6020' }}>
+              Yes — <span className="font-bold">{cur.answer}</span>.
+            </div>
+          )}
+        </form>
+      )}
+    </div>
+  );
+}
+
+function CardsBlock({ cards }) {
+  if (!cards || cards.length === 0) return null;
+  return (
+    <div className="space-y-4">
+      {cards.map((c, i) => (
+        <div key={i} className="card p-5 sm:p-6 fadeup" style={{ borderLeft:'3px solid var(--gold)', animationDelay:(i*60)+'ms' }}>
+          <div className="font-display text-2xl ink leading-tight">{c.title}</div>
+          {c.subtitle && (
+            <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em] mt-1">{c.subtitle}</div>
+          )}
+          {c.body && (Array.isArray(c.body) ? c.body : [c.body]).map((p, j) => (
+            <p key={j} className="ink leading-relaxed mt-2">{p}</p>
+          ))}
+          {c.kv && (
+            <dl className="mt-4 space-y-3">
+              {c.kv.map((kv, j) => (
+                <div key={j} className="grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-1 sm:gap-4">
+                  <dt className="heraldic text-[11px] font-bold text-gold-deep uppercase tracking-[0.2em] sm:pt-1">{kv.label}</dt>
+                  <dd className="ink text-sm sm:text-base leading-relaxed">{kv.body}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function LessonView({ questId, lessonId, state, setState, goQuest }) {
   const quest = QUESTS[questId];
   const lesson = quest?.lessons.find(l => l.id === lessonId);
@@ -1487,6 +2193,11 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
           <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>{p}</p>
         ))}
       </div>
+      {lesson.cards && (
+        <div className="wrap-narrow mt-8">
+          <CardsBlock cards={lesson.cards}/>
+        </div>
+      )}
       <div className="wrap-narrow mt-10">
         <div className="principle-box p-5 sm:p-6">
           <div className="heraldic text-xs text-gold-deep font-bold uppercase tracking-[0.25em] flex items-center gap-2">
@@ -1503,6 +2214,13 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
           <p className="mt-2 ink leading-relaxed">{lesson.modern.body}</p>
         </div>
       </div>
+      {lesson.typeDrill && (
+        <div className="wrap-narrow mt-8">
+          <TypeDrillBlock drill={lesson.typeDrill} onCorrect={() => {
+            setState(prev => { const ns = { ...prev, xp: prev.xp + 2 }; saveState(ns); return ns; });
+          }}/>
+        </div>
+      )}
       <div className="wrap-narrow mt-12">
         <div className="text-center">
           <div className="heraldic text-xs text-gold-deep font-bold uppercase tracking-[0.3em]">The Trial</div>
