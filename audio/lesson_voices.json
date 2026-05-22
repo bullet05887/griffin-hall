@@ -1,5 +1,5 @@
 {
-  "_template_locked_2026_05_22_by_john": "Hall Master narrates the lesson in their own voice. Opener: \"I am Master [NAME]. Today's lesson: [TITLE]. ...\" followed by the story, principle, and modern application.",
+  "_template_locked_2026_05_22_by_john": "Hall Master narrates the lesson in their own voice. The Hall door intro already establishes who the Master is, so the per-lesson MP3 dives straight into the lesson content (story -> principle -> modern). For historical-figure lessons (Washington, Hannibal, etc.) the figure speaks in first person.",
   "_engine": "elevenlabs",
   "_model": "eleven_multilingual_v2",
   "_voice_settings": {
@@ -69,7 +69,8 @@
       "lesson_id": "stalingrad",
       "title": "Stalingrad: Holding the Line",
       "file": "audio/lessons/marshal/stalingrad.mp3",
-      "chars": 1886
+      "chars": 1808,
+      "no_master_self_intro": true
     },
     "world": {
       "voice_id": "onwK4e9ZLuTAKqWW03F9",
@@ -79,7 +80,8 @@
       "lesson_id": "world",
       "title": "The World — Continents & Oceans",
       "file": "audio/lessons/cartographer/world.mp3",
-      "chars": 1840
+      "chars": 1758,
+      "no_master_self_intro": true
     },
     "usa": {
       "voice_id": "onwK4e9ZLuTAKqWW03F9",
@@ -89,7 +91,8 @@
       "lesson_id": "usa",
       "title": "United States — 50 States & Capitals",
       "file": "audio/lessons/cartographer/usa.mp3",
-      "chars": 1927
+      "chars": 1840,
+      "no_master_self_intro": true
     },
     "conflicts": {
       "voice_id": "onwK4e9ZLuTAKqWW03F9",
@@ -99,7 +102,8 @@
       "lesson_id": "conflicts",
       "title": "The World on Fire — Current Conflicts",
       "file": "audio/lessons/cartographer/conflicts.mp3",
-      "chars": 1773
+      "chars": 1685,
+      "no_master_self_intro": true
     },
     "economies": {
       "voice_id": "onwK4e9ZLuTAKqWW03F9",
@@ -109,7 +113,8 @@
       "lesson_id": "economies",
       "title": "Money Flows — Major Economies",
       "file": "audio/lessons/cartographer/economies.mp3",
-      "chars": 1528
+      "chars": 1448,
+      "no_master_self_intro": true
     },
     "cities": {
       "voice_id": "onwK4e9ZLuTAKqWW03F9",
@@ -119,7 +124,8 @@
       "lesson_id": "cities",
       "title": "Cultural Centers — Ten Great Cities",
       "file": "audio/lessons/cartographer/cities.mp3",
-      "chars": 1159
+      "chars": 1072,
+      "no_master_self_intro": true
     },
     "empires": {
       "voice_id": "onwK4e9ZLuTAKqWW03F9",
@@ -129,7 +135,8 @@
       "lesson_id": "empires",
       "title": "Empires — Rise and Fall",
       "file": "audio/lessons/cartographer/empires.mp3",
-      "chars": 1253
+      "chars": 1178,
+      "no_master_self_intro": true
     },
     "individualism": {
       "voice_id": "pqHfZKP75CvOlQylNhV4",
@@ -139,7 +146,8 @@
       "lesson_id": "individualism",
       "title": "Individualism vs Collectivism",
       "file": "audio/lessons/sage/individualism.mp3",
-      "chars": 2246
+      "chars": 2166,
+      "no_master_self_intro": true
     },
     "stoicism": {
       "voice_id": "pqHfZKP75CvOlQylNhV4",
@@ -179,7 +187,8 @@
       "lesson_id": "eastwest",
       "title": "Eastern vs Western Thought",
       "file": "audio/lessons/sage/eastwest.mp3",
-      "chars": 2245
+      "chars": 2169,
+      "no_master_self_intro": true
     },
     "romans": {
       "voice_id": "pqHfZKP75CvOlQylNhV4",
@@ -189,7 +198,8 @@
       "lesson_id": "romans",
       "title": "Roman Wisdom — Cicero, Seneca, Aurelius",
       "file": "audio/lessons/sage/romans.mp3",
-      "chars": 2166
+      "chars": 2076,
+      "no_master_self_intro": true
     },
     "machiavelli": {
       "voice_id": "pNInz6obpgDQGcFmaJgB",
@@ -259,7 +269,8 @@
       "lesson_id": "numbers",
       "title": "What Is a Number, Really?",
       "file": "audio/lessons/reckoner/numbers.mp3",
-      "chars": 2056
+      "chars": 1983,
+      "no_master_self_intro": true
     },
     "statistics": {
       "voice_id": "iP95p4xoKVk53GoZ742B",
@@ -269,7 +280,8 @@
       "lesson_id": "statistics",
       "title": "Statistics 101 — How Data Lies",
       "file": "audio/lessons/reckoner/statistics.mp3",
-      "chars": 2247
+      "chars": 2170,
+      "no_master_self_intro": true
     },
     "propaganda": {
       "voice_id": "iP95p4xoKVk53GoZ742B",
@@ -279,7 +291,8 @@
       "lesson_id": "propaganda",
       "title": "Propaganda by the Numbers",
       "file": "audio/lessons/reckoner/propaganda.mp3",
-      "chars": 2080
+      "chars": 2007,
+      "no_master_self_intro": true
     },
     "probability": {
       "voice_id": "iP95p4xoKVk53GoZ742B",
@@ -289,7 +302,8 @@
       "lesson_id": "probability",
       "title": "Probability — Real-World Risk",
       "file": "audio/lessons/reckoner/probability.mp3",
-      "chars": 2380
+      "chars": 2303,
+      "no_master_self_intro": true
     },
     "geometry": {
       "voice_id": "iP95p4xoKVk53GoZ742B",
@@ -299,7 +313,8 @@
       "lesson_id": "geometry",
       "title": "Geometry as Pattern",
       "file": "audio/lessons/reckoner/geometry.mp3",
-      "chars": 2470
+      "chars": 2404,
+      "no_master_self_intro": true
     },
     "ai-math": {
       "voice_id": "iP95p4xoKVk53GoZ742B",
@@ -309,7 +324,8 @@
       "lesson_id": "ai-math",
       "title": "How AI Does Math (And Where It Fails)",
       "file": "audio/lessons/reckoner/ai-math.mp3",
-      "chars": 2285
+      "chars": 2200,
+      "no_master_self_intro": true
     }
   },
   "congratulations": {
@@ -553,5 +569,6 @@
       "file": "audio/masters/atlas/ai-math_congrats.mp3",
       "chars": 186
     }
-  }
+  },
+  "_regenerated_no_self_intro_at": "2026-05-22"
 }
