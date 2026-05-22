@@ -133,13 +133,51 @@
   .dispatch-summary::-webkit-details-marker { display: none; }
   .dispatch-summary:hover { background: rgba(120, 80, 30, 0.12); }
   .dispatch-letter[open] .dispatch-summary { border-bottom: 1px solid rgba(120, 90, 40, 0.32); }
-  .dispatch-icon { margin-right: 6px; }
+  .dispatch-summary { display: flex; align-items: center; gap: 8px; }
+  .dispatch-icon { display: inline-flex; align-items: center; margin-right: 4px; line-height: 0; }
+  .dispatch-chevron {
+    margin-left: auto;
+    font-size: 14px;
+    color: #7a5a2c;
+    transition: transform 0.2s ease;
+  }
+  .dispatch-letter[open] .dispatch-chevron { transform: rotate(180deg); }
   .dispatch-body {
     padding: 28px 32px 32px;
+    margin: 0 6px;
     font-family: 'Crimson Text', 'Crimson Pro', Georgia, 'Times New Roman', serif;
     color: #3a2410;
     font-size: 17px;
     line-height: 1.75;
+    background:
+      linear-gradient(180deg, #f5ead2 0%, #ecdfba 100%),
+      radial-gradient(circle at 20% 30%, rgba(120, 80, 30, 0.04) 0px, transparent 60px),
+      radial-gradient(circle at 80% 70%, rgba(120, 80, 30, 0.05) 0px, transparent 80px);
+    box-shadow: inset 0 0 60px rgba(120, 80, 30, 0.10), inset 0 2px 6px rgba(120, 80, 30, 0.12);
+    clip-path: polygon(
+      0% 1%, 1% 0%, 6% 0.6%, 12% 0%, 18% 0.4%, 26% 0%, 34% 0.5%, 42% 0%, 50% 0.4%,
+      58% 0%, 66% 0.5%, 74% 0%, 82% 0.4%, 88% 0%, 94% 0.5%, 99% 0%, 100% 1%,
+      100% 99%, 99% 100%, 94% 99.5%, 88% 100%, 82% 99.6%, 74% 100%, 66% 99.5%,
+      58% 100%, 50% 99.6%, 42% 100%, 34% 99.5%, 26% 100%, 18% 99.6%, 12% 100%,
+      6% 99.4%, 1% 100%, 0% 99%
+    );
+  }
+  .dispatch-seal { text-align: center; margin-bottom: 14px; line-height: 0; }
+  @media (max-width: 540px) {
+    .dispatch-body { padding: 22px 18px 26px; font-size: 16px; margin: 0; }
+  }
+  .body-callout {
+    font-family: 'Crimson Text', 'Crimson Pro', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--gold-deep, #8a6a1c);
+    text-align: center;
+    padding: 14px 18px;
+    margin: 0 auto;
+    max-width: 640px;
+    border-top: 1px solid rgba(201, 164, 76, 0.35);
+    border-bottom: 1px solid rgba(201, 164, 76, 0.35);
   }
   .dispatch-date {
     font-style: italic;
@@ -758,7 +796,7 @@ function HubWelcomeOnce() {
 const STRATEGY_LESSONS = [
   {
     id: 'delaware',
-    title: 'Washington Crosses the Delaware',
+    title: 'Washington Crossing the Delaware',
     subtitle: 'A Cause That Would Not Die',
     image: 'https://en.wikipedia.org/wiki/Special:FilePath/Washington_Crossing_the_Delaware_by_Emanuel_Leutze,_MMA-NYC,_1851.jpg?width=1280',
     imageCredit: 'Painting: Emanuel Leutze, 1851 — public domain, via Wikimedia Commons',
@@ -771,6 +809,7 @@ const STRATEGY_LESSONS = [
       "Nine miles they marched in silence to the town of Trenton. There the Hessians slept — their colonel having received warning of an attack and laughed it off as impossible. He was wrong.",
       "At dawn, the Americans struck. Three-quarters of an hour later, it was over. Nine hundred Hessians surrendered. Two Americans died. The Revolution, which a week before had been near a corpse, drew breath again.",
     ],
+    bodyCallout: "The small force that moves when no one expects it strikes with the weight of a great army.",
     dispatch: {
       date: "The 26th day of December, in the Year of Our Lord 1776",
       paragraphs: [
@@ -2988,13 +3027,37 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
           <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>{p}</p>
         ))}
       </div>
+      {lesson.bodyCallout && (
+        <div className="wrap-narrow mt-6">
+          <p className="body-callout">{lesson.bodyCallout}</p>
+        </div>
+      )}
       {lesson.dispatch && (
         <div className="wrap-narrow mt-8">
           <details className="dispatch-letter">
             <summary className="dispatch-summary heraldic text-xs font-bold uppercase tracking-[0.25em]">
-              <span className="dispatch-icon">✉️</span> Read the General's Own Dispatch
+              <span className="dispatch-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2.2" y="5.2" width="19.6" height="13.6" rx="1.4" fill="#f4e8c8" stroke="#7a5a2c" strokeWidth="1"/>
+                  <path d="M2.6 5.8 L12 13.2 L21.4 5.8" fill="none" stroke="#7a5a2c" strokeWidth="1" strokeLinejoin="round"/>
+                  <circle cx="12" cy="15" r="4.6" fill="#9b2226" stroke="#5e1213" strokeWidth="0.6"/>
+                  <circle cx="12" cy="15" r="3.4" fill="none" stroke="#3a0708" strokeWidth="0.35" opacity="0.55"/>
+                  <text x="12" y="16.85" textAnchor="middle" fontFamily="Georgia, serif" fontSize="4.6" fontWeight="700" fill="#3a0708" letterSpacing="-0.3">GW</text>
+                </svg>
+              </span>
+              Read the General's Own Dispatch
+              <span className="dispatch-chevron" aria-hidden="true">▾</span>
             </summary>
             <div className="dispatch-body">
+              <div className="dispatch-seal" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2.2" y="5.2" width="19.6" height="13.6" rx="1.4" fill="#f4e8c8" stroke="#7a5a2c" strokeWidth="1"/>
+                  <path d="M2.6 5.8 L12 13.2 L21.4 5.8" fill="none" stroke="#7a5a2c" strokeWidth="1" strokeLinejoin="round"/>
+                  <circle cx="12" cy="15" r="4.6" fill="#9b2226" stroke="#5e1213" strokeWidth="0.6"/>
+                  <circle cx="12" cy="15" r="3.4" fill="none" stroke="#3a0708" strokeWidth="0.35" opacity="0.55"/>
+                  <text x="12" y="16.85" textAnchor="middle" fontFamily="Georgia, serif" fontSize="4.6" fontWeight="700" fill="#3a0708" letterSpacing="-0.3">GW</text>
+                </svg>
+              </div>
               <div className="dispatch-date">{lesson.dispatch.date}</div>
               {lesson.dispatch.paragraphs.map((p, i) => (
                 <p key={i} className="dispatch-p">{p}</p>
