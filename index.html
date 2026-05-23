@@ -754,8 +754,20 @@
     to   { transform: rotate(360deg); }
   }
   @keyframes griffin-idle {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-2px) rotate(0.5deg); }
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-10px) rotate(-2deg); }
+  }
+  @keyframes emblem-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-8px) rotate(0.6deg); }
+  }
+  @keyframes feedback-pulse {
+    0%, 100% { transform: translateY(0) scale(1);     box-shadow: 0 8px 22px -6px rgba(15,26,44,0.45); }
+    50%      { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 30px -8px rgba(201,164,76,0.55); }
+  }
+  @keyframes locked-shimmer-idle {
+    0%, 100% { opacity: 0.42; }
+    50%      { opacity: 0.62; }
   }
   @keyframes relic-shine {
     0%, 100% { filter: drop-shadow(0 0 0 transparent); }
@@ -770,33 +782,35 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- flag wave (flag relic + any element tagged .flag-icon / [data-icon="flag"]) --- */
+  /* --- flag wave (flag relic + any element tagged .flag-icon / [data-icon="flag"])
+        NOTE: loosened to ALL .relic-tile (locked + earned) so a fresh visitor with no
+        earned relics still sees motion in Trophy Hall. */
   .flag-icon, [data-icon="flag"],
-  .relic-tile.earned svg:has(> use[href="#relic-flag"]) {
+  .relic-tile svg:has(> use[href="#relic-flag"]) {
     animation: flag-wave 4s ease-in-out infinite;
     transform-origin: top left;
   }
 
   /* --- lantern flicker (skip Sokrates orb — that already pulses) --- */
   .lantern-icon,
-  .relic-tile.earned svg:has(> use[href="#relic-lantern"]),
-  .relic-tile.earned svg:has(> use[href="#relic-lighthouse"]) {
+  .relic-tile svg:has(> use[href="#relic-lantern"]),
+  .relic-tile svg:has(> use[href="#relic-lighthouse"]) {
     animation: lantern-glow 3s ease-in-out infinite;
   }
 
   /* --- sword glint --- */
   .sword-icon,
-  .relic-tile.earned svg:has(> use[href="#relic-saber"]),
-  .relic-tile.earned svg:has(> use[href="#relic-stiletto"]) {
+  .relic-tile svg:has(> use[href="#relic-saber"]),
+  .relic-tile svg:has(> use[href="#relic-stiletto"]) {
     animation: sword-glint 6s ease-in-out infinite;
     transform-origin: center;
   }
 
   /* --- compass slow rotation (whole compass; needle isn't separately addressable) --- */
   .compass-needle,
-  .relic-tile.earned svg:has(> use[href="#relic-compass"]),
-  .relic-tile.earned svg:has(> use[href="#relic-compass-rose"]),
-  .relic-tile.earned svg:has(> use[href="#relic-sextant"]) {
+  .relic-tile svg:has(> use[href="#relic-compass"]),
+  .relic-tile svg:has(> use[href="#relic-compass-rose"]),
+  .relic-tile svg:has(> use[href="#relic-sextant"]) {
     animation: compass-needle 30s linear infinite;
     transform-origin: center;
   }
@@ -804,9 +818,9 @@
   /* --- scroll / parchment / quill shine (use shine instead of stroke-write
         because the relic paths aren't stroked) --- */
   .scroll-icon,
-  .relic-tile.earned svg:has(> use[href="#relic-scroll"]),
-  .relic-tile.earned svg:has(> use[href="#relic-parchment"]),
-  .relic-tile.earned svg:has(> use[href="#relic-quill"]) {
+  .relic-tile svg:has(> use[href="#relic-scroll"]),
+  .relic-tile svg:has(> use[href="#relic-parchment"]),
+  .relic-tile svg:has(> use[href="#relic-quill"]) {
     animation: relic-shine 5s ease-in-out infinite;
   }
   /* keep the original spec's stroke-write available for any explicitly tagged path */
@@ -815,11 +829,19 @@
     animation: scroll-write 2.5s ease-out forwards;
   }
 
-  /* --- griffin companion idle flutter --- */
-  .griffin-companion svg { animation: griffin-idle 3s ease-in-out infinite; transform-origin: center; }
+  /* --- griffin companion idle flutter (only the FIRST stage SVG, leave flame alone) --- */
+  .griffin-companion > .gc-wrap > svg:first-of-type { animation: griffin-idle 3s ease-in-out infinite; transform-origin: center; }
 
-  /* --- relic shine for ALL earned tiles (gentle background pulse) --- */
-  .relic-tile.earned .relic-icon svg { animation: relic-shine 4s ease-in-out infinite; }
+  /* --- main hero emblem on home page floats gently --- */
+  .griffin-emblem { animation: emblem-float 5s ease-in-out infinite; transform-origin: center; will-change: transform; }
+
+  /* --- relic shine for ALL relic tiles (gentle background pulse). Locked tiles get
+        a separate opacity breath so fresh visitors see the wall of relics breathing. --- */
+  .relic-tile .relic-icon svg { animation: relic-shine 4s ease-in-out infinite; }
+  .relic-tile.locked { animation: locked-shimmer-idle 4s ease-in-out infinite; }
+
+  /* --- bottom-left feedback chat button: gentle pulse to draw attention --- */
+  .feedback-btn { animation: feedback-pulse 3.5s ease-in-out infinite; }
 
   /* --- hall-enter fade-in for elements tagged .hall-icon --- */
   .hall-icon { animation: hall-enter 0.8s ease-out forwards; }
@@ -828,8 +850,11 @@
     .flag-icon, [data-icon="flag"],
     .lantern-icon, .sword-icon, .compass-needle, .scroll-icon,
     .griffin-companion svg,
-    .relic-tile.earned svg,
-    .relic-tile.earned .relic-icon svg,
+    .relic-tile svg,
+    .relic-tile .relic-icon svg,
+    .relic-tile.locked,
+    .griffin-emblem,
+    .feedback-btn,
     .hall-icon {
       animation: none !important;
     }
