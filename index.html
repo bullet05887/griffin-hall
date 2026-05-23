@@ -835,6 +835,7 @@ const STRATEGY_LESSONS = [
     image: 'https://en.wikipedia.org/wiki/Special:FilePath/Washington_Crossing_the_Delaware_by_Emanuel_Leutze,_MMA-NYC,_1851.jpg?width=1280',
     imageCredit: 'Painting: Emanuel Leutze, 1851 — public domain, via Wikimedia Commons',
     audioUrl: 'audio/historical/washington_delaware.mp3',
+    videoUrl: '/video/lessons/marshal/washington_delaware.mp4',
     cassianIntro: "Today we study Washington at the Delaware. Most generals stayed warm by their fires. This one stepped onto a frozen river. Listen close.",
     story: [
       "These were the times that tried men's souls. In the bleak December of 1776, the American Army was a broken thing — half-starved, half-frozen, half its size from desertion. The British and their hired Hessians sat warm in their winter quarters. Many in Congress had already begun to whisper that the Revolution was finished.",
@@ -3709,6 +3710,20 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
         </div>
       )}
 
+      {lesson.videoUrl && (
+        <div className="wrap-narrow mt-5">
+          <div className="hero-frame rounded-md overflow-hidden">
+            <video
+              src={lesson.videoUrl}
+              poster={lesson.image}
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full aspect-[16/10] object-cover bg-black"
+            />
+          </div>
+        </div>
+      )}
       <div className="wrap-narrow mt-5">
         <div className="hero-frame rounded-md overflow-hidden">
           <img src={lesson.image} alt={lesson.title} className="w-full aspect-[16/10] object-cover" loading="eager"/>
