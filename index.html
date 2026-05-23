@@ -430,6 +430,192 @@
     color: var(--gold); margin-bottom: 4px;
   }
   .toast-master .tm-body { font-size: 17px; line-height: 1.35; font-style: italic; }
+
+  /* ============================================================
+     SOKRATES — floating orb + chat panel + curiosity chips
+  ============================================================ */
+  .sokrates-orb {
+    position: fixed; right: 20px; bottom: 20px; z-index: 60;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #2c3a55 0%, #1a2942 60%, #0f1a2c 100%);
+    border: 2px solid var(--gold); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; pointer-events: auto;
+    box-shadow: 0 0 0 0 rgba(201,164,76,0.55), 0 8px 22px -6px rgba(15,26,44,0.55);
+    animation: sokrates-pulse 2.6s ease-in-out infinite;
+    transition: transform .15s ease;
+  }
+  .sokrates-orb:hover { transform: translateY(-2px) scale(1.04); }
+  .sokrates-orb:focus { outline: none; box-shadow: 0 0 0 3px rgba(201,164,76,0.4), 0 8px 22px -6px rgba(15,26,44,0.55); }
+  @keyframes sokrates-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(201,164,76,0.55), 0 8px 22px -6px rgba(15,26,44,0.55); }
+    70%  { box-shadow: 0 0 0 14px rgba(201,164,76,0), 0 8px 22px -6px rgba(15,26,44,0.55); }
+    100% { box-shadow: 0 0 0 0 rgba(201,164,76,0), 0 8px 22px -6px rgba(15,26,44,0.55); }
+  }
+  .sokrates-panel {
+    position: fixed; right: 16px; bottom: 16px; z-index: 65;
+    width: min(420px, calc(100vw - 32px));
+    max-height: min(640px, calc(100vh - 32px));
+    background: var(--parchment);
+    border: 1px solid var(--gold); border-radius: 14px;
+    box-shadow: 0 24px 60px -18px rgba(15,26,44,0.6);
+    display: flex; flex-direction: column; overflow: hidden;
+    animation: sokrates-slideup .26s ease-out both;
+  }
+  @keyframes sokrates-slideup {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .sokrates-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: var(--navy); color: var(--parchment);
+    border-bottom: 1px solid var(--gold);
+  }
+  .sokrates-head-emblem {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(201,164,76,0.15); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .sokrates-head-text { flex: 1; min-width: 0; }
+  .sokrates-head-name {
+    font-family:'Cinzel', serif; font-weight: 700;
+    font-size: 14px; letter-spacing: 0.08em; color: var(--gold);
+  }
+  .sokrates-head-sub {
+    font-family:'Instrument Serif', Georgia, serif;
+    font-size: 11px; font-style: italic; color: rgba(244,236,216,0.7);
+  }
+  .sokrates-head-btn {
+    background: transparent; color: var(--parchment);
+    border: 1px solid rgba(244,236,216,0.25); border-radius: 6px;
+    width: 28px; height: 28px;
+    font-size: 16px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sokrates-head-btn:hover { background: rgba(244,236,216,0.1); }
+  .sokrates-body {
+    flex: 1; overflow-y: auto;
+    padding: 14px;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(201,164,76,0.08), transparent 60%),
+      var(--parchment);
+    display: flex; flex-direction: column; gap: 10px;
+    font-family:'Instrument Serif', Georgia, serif;
+    font-size: 16px; line-height: 1.45; color: var(--ink);
+  }
+  .sokrates-msg {
+    max-width: 88%;
+    padding: 9px 13px; border-radius: 14px;
+    word-wrap: break-word; white-space: pre-wrap;
+  }
+  .sokrates-msg-sokrates {
+    align-self: flex-start;
+    background: var(--parchment-warm);
+    border: 1px solid var(--parchment-deep);
+    border-bottom-left-radius: 4px;
+  }
+  .sokrates-msg-user {
+    align-self: flex-end;
+    background: var(--navy); color: var(--parchment);
+    border-bottom-right-radius: 4px;
+  }
+  .sokrates-typing { display: inline-flex; gap: 4px; padding: 12px 14px; }
+  .sokrates-typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ink-muted);
+    animation: sokrates-dot 1.2s infinite ease-in-out;
+  }
+  .sokrates-typing span:nth-child(2) { animation-delay: 0.15s; }
+  .sokrates-typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes sokrates-dot {
+    0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-3px); }
+  }
+  .sokrates-warn {
+    padding: 6px 12px; font-size: 12px;
+    background: rgba(155,34,38,0.08); color: var(--crimson-deep);
+    border-top: 1px solid rgba(155,34,38,0.2);
+    font-family:'Cinzel', serif; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .sokrates-form {
+    display: flex; gap: 8px; padding: 10px;
+    background: var(--parchment-warm);
+    border-top: 1px solid var(--parchment-deep);
+  }
+  .sokrates-input {
+    flex: 1; min-width: 0;
+    padding: 9px 12px; border-radius: 10px;
+    border: 1px solid var(--parchment-deep);
+    background: var(--parchment);
+    font-family:'Instrument Serif', Georgia, serif; font-size: 15px;
+    color: var(--ink);
+  }
+  .sokrates-input:focus { outline: none; border-color: var(--gold); }
+  .sokrates-input:disabled { opacity: 0.5; }
+  .sokrates-send {
+    background: var(--navy); color: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 10px; width: 40px;
+    font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sokrates-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  .sokrates-send:not(:disabled):hover { background: var(--navy-deep); }
+
+  /* Curiosity chips (Marshal's Hall lesson view) */
+  .curiosity-block {
+    background:
+      linear-gradient(180deg, rgba(201,164,76,0.06), rgba(201,164,76,0.02));
+    border: 1px solid var(--gold);
+    border-left: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .curiosity-head {
+    display: flex; align-items: center; gap: 8px;
+    font-family:'Cinzel', serif; font-size: 11px; font-weight: 700;
+    color: var(--gold-deep); text-transform: uppercase; letter-spacing: 0.25em;
+    margin-bottom: 10px;
+  }
+  .curiosity-head svg { color: var(--gold-deep); }
+  .curiosity-list { display: flex; flex-direction: column; gap: 8px; }
+  .curiosity-chip {
+    display: flex; align-items: center; gap: 10px;
+    text-align: left;
+    background: var(--parchment);
+    border: 1px solid var(--parchment-deep);
+    border-radius: 999px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-family:'Instrument Serif', Georgia, serif;
+    font-size: 15px; color: var(--ink);
+    transition: all .15s ease;
+  }
+  .curiosity-chip:hover {
+    border-color: var(--gold);
+    background: var(--parchment-warm);
+    transform: translateX(2px);
+  }
+  .curiosity-chip-emoji {
+    flex-shrink: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--navy); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family:'Cinzel', serif; font-size: 12px; font-weight: 700;
+  }
+  .curiosity-chip-text { flex: 1; line-height: 1.3; }
+  .curiosity-chip-arrow {
+    flex-shrink: 0; color: var(--gold-deep);
+    font-family:'Cinzel', serif; font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    .sokrates-orb { right: 14px; bottom: 14px; width: 54px; height: 54px; }
+    .sokrates-panel { right: 8px; bottom: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -864,6 +1050,24 @@
     <symbol id="relic-atlas-book" viewBox="0 0 100 100"><g fill="currentColor"><rect x="14" y="18" width="72" height="64" rx="3"/><path d="M50 18 L 50 82" stroke="#1a2942" strokeWidth="2"/><circle cx="32" cy="50" r="10" fill="none" stroke="#1a2942" strokeWidth="1.6"/><circle cx="68" cy="50" r="10" fill="none" stroke="#1a2942" strokeWidth="1.6"/><path d="M22 50 L 42 50 M 58 50 L 78 50" stroke="#1a2942" strokeWidth="1.2"/></g></symbol>
     <symbol id="relic-compass-rose" viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="50" r="32" fill="none" stroke="currentColor" strokeWidth="1.5"/><path d="M50 14 L 54 50 L 50 86 L 46 50 Z"/><path d="M14 50 L 50 54 L 86 50 L 50 46 Z"/><path d="M24 24 L 50 50 L 76 24 M 24 76 L 50 50 L 76 76" stroke="currentColor" strokeWidth="1.5" fill="none"/><circle cx="50" cy="50" r="4"/></g></symbol>
     <symbol id="relic-lighthouse" viewBox="0 0 100 100"><g fill="currentColor"><path d="M40 86 L 60 86 L 58 30 L 42 30 Z"/><path d="M36 30 L 64 30 L 60 22 L 40 22 Z"/><rect x="42" y="14" width="16" height="8"/><circle cx="50" cy="18" r="3" fill="#9b2226"/><path d="M30 50 L 14 46 M 30 60 L 14 64 M 70 50 L 86 46 M 70 60 L 86 64" stroke="currentColor" strokeWidth="1.6" opacity="0.7"/></g></symbol>
+    <symbol id="sokrates-lantern" viewBox="0 0 64 64">
+      <!-- Ancient Greek oil lamp seen in profile. Currentcolor inherits from parent. -->
+      <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+        <!-- handle ring at top -->
+        <circle cx="32" cy="14" r="3.5"/>
+        <line x1="32" y1="17.5" x2="32" y2="22"/>
+        <!-- lamp body (oval) -->
+        <ellipse cx="28" cy="36" rx="14" ry="9"/>
+        <!-- wick spout pointing right -->
+        <path d="M 41 35 L 50 31 L 50 38 L 41 37 Z" fill="currentColor"/>
+        <!-- wick flame -->
+        <path d="M 50 31 Q 53 27 53 24 Q 55 27 55 30 Q 54 32 52 32 Z" fill="currentColor" stroke="none"/>
+        <!-- decorative line on the body -->
+        <path d="M 18 36 Q 28 33 38 36" stroke="currentColor" strokeWidth="1" opacity="0.55"/>
+        <!-- base -->
+        <line x1="20" y1="46" x2="36" y2="46"/>
+      </g>
+    </symbol>
   </defs>
 </svg>
 
@@ -1190,9 +1394,9 @@ const STRATEGY_LESSONS = [
     cassianIntro: "Today we study Washington at the Delaware. Most generals stayed warm by their fires. This one stepped onto a frozen river. Listen close.",
     story: [
       "These were the times that tried men's souls. In the bleak December of 1776, the American Army was a broken thing — half-starved, half-frozen, half its size from desertion. The British and their hired Hessians sat warm in their winter quarters. Many in Congress had already begun to whisper that the Revolution was finished.",
-      "General Washington saw what others would not. By the New Year, three thousand of his men would be free to walk home — their enlistments expired. If the Army melted away, so would Liberty itself. Waiting was death.",
-      "So on Christmas night, in a storm so violent that no enemy would believe it, the General crossed the Delaware River. Ice ground against the boats. The wind cut through worn coats. Men without shoes wrapped their feet in rags and left blood in the snow.",
-      "Nine miles they marched in silence to the town of Trenton. There the Hessians slept — their colonel having received warning of an attack and laughed it off as impossible. He was wrong.",
+      "General Washington stood alone at the river one evening and watched the ice. He said nothing to his officers about what he was already deciding. He carried in his head a number — a date — that no one else liked to say out loud, and a calendar that gave the cause of Liberty less than a week to draw breath.",
+      "On Christmas night, in a storm so violent that the sky and the river became one howling dark, the General gave the order. Boats pushed into the Delaware between slabs of ice the size of barn doors. Horses screamed. Cannon rolled toward the bank wrapped in burlap so they would not ring. Men without shoes wrapped their feet in rags and left blood in the snow.",
+      "Nine miles they marched in silence to the town of Trenton. Smoke rose lazy from the chimneys. A Hessian sentry stamped his feet against the cold and did not look up. Above the town, a single yellow light burned in the colonel's window where, the evening before, he had laughed at a scrap of paper warning him of attack.",
       "At dawn, the Americans struck. Three-quarters of an hour later, it was over. Nine hundred Hessians surrendered. Two Americans died. The Revolution, which a week before had been near a corpse, drew breath again.",
     ],
     bodyCallout: "The small force that moves when no one expects it strikes with the weight of a great army.",
@@ -1225,6 +1429,11 @@ const STRATEGY_LESSONS = [
       { q: 'Roughly how long did the actual Battle of Trenton last once fighting started?', choices: ['Three weeks','Three days','About 45 minutes','A full day'], correct: 2, explain: 'About 45 minutes. The hard part was the river crossing and the freezing march, not the fight itself. Most battles are won before the first shot.' },
       { q: "What was Washington's biggest advantage going into Trenton?", choices: ['A bigger army','Better weapons','Doing the one thing nobody expected','Help from France'], correct: 2, explain: 'He had fewer men, worse weapons, and no French help yet. He had ONE thing: he attacked when nobody believed an attack was possible.' },
     ],
+    curiosityChips: [
+      "Why did Washington pick Christmas night of all nights?",
+      "What made the Hessians easy to surprise that morning?",
+      "Why did this one small battle change everything?",
+    ],
   },
   {
     id: 'custer',
@@ -1235,9 +1444,9 @@ const STRATEGY_LESSONS = [
     imageCredit: 'Painting: Charles Marion Russell, 1903 — public domain, via Wikimedia Commons',
     cassianIntro: "A lesson in the cost of pride. Custer was brave — and brave men get good men killed when they refuse to think. Watch his choices, not his courage.",
     story: [
-      "George Armstrong Custer was a famous American cavalry officer. He had brave hair, a brave mustache, and he believed his luck never ran out. In June 1876 he led the 7th Cavalry toward a Native American village along the Little Bighorn River in Montana.",
-      "Custer made three mistakes. First, he refused the Gatling guns offered to him — early machine guns that could have changed the battle. He said they would slow him down. Second, he did not scout properly. He thought there were maybe 800 warriors in the village. There were closer to 2,000. Third, he split his men into three pieces instead of keeping them together.",
-      "He found the village. The village found him back. Lakota and Cheyenne warriors — led by Crazy Horse and inspired by Sitting Bull — surrounded Custer's group on a hill. Every soldier in Custer's column died that afternoon. The battle is remembered not because of who won, but because of how badly a confident commander can lose when he refuses help and underestimates the other side.",
+      "George Armstrong Custer was a famous American cavalry officer. He had golden hair worn long beneath his hat, a fierce mustache, and a smile that newspaper artists loved to draw. He had ridden ahead of bigger forces before and come back a hero every time. By the spring of 1876 he believed, in the quiet part of himself, that his luck never ran out. In June he led the 7th Cavalry toward a Native American village along the Little Bighorn River in Montana.",
+      "Before he rode, a general offered him Gatling guns — early machine guns mounted on wheels. Custer looked at them, frowned, and waved them off. His scouts came back wide-eyed and tried to tell him the village was larger than anyone had imagined. He told them they were mistaken. He divided his column into three pieces and gave the smallest piece to himself, so that he would arrive at the village first.",
+      "He found the village. The village found him back. Lakota and Cheyenne warriors — led by Crazy Horse and inspired by the visions of Sitting Bull — poured out of the lodges in numbers his scouts had tried to name. They climbed the hill where Custer had taken his stand. By the time the dust settled, every soldier in his column was dead. The battle is remembered not because of who won, but because of the gap between what one man believed about himself and what was actually waiting for him on that hill.",
     ],
     principle: {
       title: 'Overconfidence Kills',
@@ -1254,6 +1463,11 @@ const STRATEGY_LESSONS = [
       { q: 'What did Custer do with his cavalry when he found the village?', choices: ['Kept them together as one strong force','Split them into three smaller pieces','Waited for reinforcements','Retreated and reported back'], correct: 1, explain: 'He split his force into three. Splitting a smaller force in front of a larger one is one of the oldest mistakes in war.' },
       { q: 'Which Native American leaders led the warriors at Little Bighorn?', choices: ['Geronimo and Cochise',"Crazy Horse, with Sitting Bull inspiring the village",'Tecumseh and Pontiac','Sequoyah and Red Cloud'], correct: 1, explain: "Crazy Horse led the fighters; Sitting Bull's vision inspired the whole village. Know who you're up against." },
       { q: 'What is the main lesson of the Little Bighorn?', choices: ['Cavalry is useless','Past wins guarantee future wins','Overconfidence + refusing help + bad scouting = disaster','Always attack first'], correct: 2, explain: "Custer was brave. Bravery wasn't the problem. He was overconfident, refused better weapons, and didn't know who he was fighting. That mix kills." },
+    ],
+    curiosityChips: [
+      "Why would a brave officer turn down better weapons?",
+      "What did Custer see when his scouts brought bad news?",
+      "What is the difference between confidence and overconfidence?",
     ],
   },
   {
@@ -1285,6 +1499,11 @@ const STRATEGY_LESSONS = [
       { q: 'What did Sun Tzu say about deception?', choices: ['"All warfare is based on deception."','"Honesty wins every war."','"Never trick your enemy."','"Trickery is dishonor."'], correct: 0, explain: '"All warfare is based on deception." Look weak when you are strong. Look near when you are far.' },
       { q: 'Sun Tzu wrote about 2,500 years ago. Why do people still read him?', choices: ['Because the book has cool pictures',"Because clear thinking about conflict and competition doesn't change",'Because it predicts the future',"Because it's short"], correct: 1, explain: "Technology changes. Human nature — fear, ego, surprise, deception — doesn't. That's why 2,500-year-old advice still works." },
     ],
+    curiosityChips: [
+      "Why does a 2,500-year-old book still work today?",
+      "What does \"winning without fighting\" really mean?",
+      "Why is knowing your opponent as important as knowing yourself?",
+    ],
   },
   {
     id: 'cannae',
@@ -1295,9 +1514,10 @@ const STRATEGY_LESSONS = [
     imageCredit: 'Painting: John Trumbull, c. 1773 — public domain, via Wikimedia Commons',
     cassianIntro: "The Romans were stronger, faster, more numerous. Hannibal wrapped them in a curve and crushed them anyway. Shape beats size — every time.",
     story: [
-      "Hannibal Barca was a Carthaginian general. Carthage was a city in North Africa at war with Rome. To attack Rome, Hannibal famously marched an army — including 37 war elephants — across the snowy Alps mountains into Italy. Most generals would have called that impossible. Hannibal didn't.",
-      "In 216 BC he met a Roman army at a place called Cannae. The Romans had about 86,000 men. Hannibal had about 50,000. The Romans figured they would just smash forward with their bigger force and win the way they usually won.",
-      "Hannibal put his weakest troops in the center, in a curved line that bulged toward the Romans. He put his best troops on the wings — the sides. When the Romans pushed forward, the weak center slowly pulled back. The Roman army poured into the middle like water into a bowl. Then Hannibal's wings swung around behind them. The Romans were surrounded on all four sides. By sundown, the Romans had lost about 50,000 soldiers. Cannae is still studied as the perfect 'double envelopment.'",
+      "Hannibal Barca was a Carthaginian general. Carthage was a city in North Africa at war with Rome. To get at Rome, Hannibal led an army — including 37 war elephants — across the snowy peaks of the Alps in winter. Men froze on the passes. Elephants slipped on ice. He arrived in Italy with half the army he had started with, but he was inside the gate no one had thought to guard.",
+      "In 216 BC he met a Roman army at a place called Cannae. The Romans had about 86,000 men. Hannibal had about 50,000. The Roman commanders looked across the field and counted, and counted again, and smiled.",
+      "Hannibal set his line in a strange shape. The center bulged forward toward the Romans like the back of a bow. His best, hardest troops he placed on the wings — out of sight, almost forgotten. The Romans crashed into the bulge. The bulge yielded. The Romans pushed harder, smelling victory, and the bulge yielded more, slowly, like cloth giving under a thumb. The legions pressed forward in a tighter and tighter mass.",
+      "Then the wings closed. The Roman army, the biggest fighting force Rome had ever put in the field, was surrounded on all four sides before most of the legionaries even understood what had happened. By sundown, almost 50,000 Romans lay on that field. The battle is still taught at every officer's academy in the world under one name: the double envelopment.",
     ],
     principle: {
       title: "Use the Enemy's Strength Against Him",
@@ -1315,6 +1535,11 @@ const STRATEGY_LESSONS = [
       { q: 'Hannibal put his WEAKEST troops where?', choices: ['On the wings','In the front center, in a curved line','In reserve at the back','Guarding the camp'], correct: 1, explain: 'Weakest in the bulged center on purpose. They slowly fell back, pulling the Romans deeper into the trap.' },
       { q: "What's the modern-life takeaway?", choices: ['Always bring elephants','A bigger force that only knows one move is beatable if you reshape the fight','Never attack uphill','Always attack the strongest part of the enemy'], correct: 1, explain: "Strength + one move = predictable. Predictable = beatable." },
     ],
+    curiosityChips: [
+      "Why did Hannibal put his weakest troops in the front?",
+      "How can a smaller army beat a much bigger one?",
+      "Why are officers still taught this 2,200-year-old battle?",
+    ],
   },
   {
     id: 'dday',
@@ -1325,9 +1550,9 @@ const STRATEGY_LESSONS = [
     imageCredit: 'Photograph: Robert F. Sargent, US Coast Guard, June 6, 1944 — public domain (US federal work), via Wikimedia Commons',
     cassianIntro: "One tool is a weapon. Five tools moving as one are an invasion. Watch Eisenhower turn the wind, the sea, the sky, and the men into a single fist.",
     story: [
-      "By 1944, Nazi Germany had taken over most of Europe. The free countries — America, Britain, Canada, and many others — had to invade France to push the Nazis back. The Germans had built giant concrete bunkers, machine-gun nests, and beach obstacles all along the French coast. They expected an invasion. They didn't know when or where.",
-      "General Dwight Eisenhower, the Allied commander, picked a 50-mile stretch of beach in Normandy, France. On June 6, 1944, before sunrise, paratroopers dropped behind German lines to cut off reinforcements. Then thousands of bombers hit the bunkers. Then warships blasted the beaches from the sea. THEN — and only then — 156,000 soldiers landed on the beaches.",
-      "It was the largest sea invasion in history. It worked because every piece — air, sea, paratroopers, infantry, fake radio messages saying the real attack was somewhere else — moved together at the right time. Military people call this 'combined arms.' One arm alone fails. All of them together, in sync, opened a hole in Hitler's wall.",
+      "By 1944, Nazi Germany had taken over most of Europe. The free countries — America, Britain, Canada, and many others — had to invade France to push the Nazis back. The Germans had built giant concrete bunkers, machine-gun nests, and miles of beach obstacles all along the French coast. They expected an invasion. They did not know when or where. So for months, the Allies fed them false clues — fake army camps with rubber tanks, fake radio chatter, even a fake general parading through southern England.",
+      "General Dwight Eisenhower, the Allied commander, picked a 50-mile stretch of beach in Normandy, France. The night before the landings, the weather over the Channel was the worst it had been in twenty years. Eisenhower spent hours alone with his weather officer, listening to wind speed and cloud cover the way another man listens to a doctor read a chart. Just past midnight, he gave a single word: go.",
+      "Hours before sunrise on June 6, 1944, paratroopers dropped behind German lines in the dark. Then thousands of bombers hit the bunkers. Then warships, lined up to the horizon, opened fire on the beaches. THEN — and only then — 156,000 soldiers in five thousand boats came across the water. It was the largest sea invasion in history. The whole plan was a clock with a hundred hands, and every hand had to turn at exactly the right minute, or the whole thing would shatter on the sand.",
     ],
     principle: {
       title: 'Combined Arms: Many Tools, One Plan',
@@ -1345,6 +1570,11 @@ const STRATEGY_LESSONS = [
       { q: 'About how many troops landed on the beaches on D-Day itself?', choices: ['15,000','50,000','156,000','1.5 million'], correct: 2, explain: 'About 156,000 troops on June 6, 1944. By the end of June, over 850,000 had crossed.' },
       { q: 'What was the role of fake radio messages and decoys before D-Day?', choices: ['Decoration','Practice for the soldiers','Deception — making Germany guard the wrong beach','They were accidents'], correct: 2, explain: 'Operation Bodyguard fooled Germany into thinking the invasion would come at Pas-de-Calais.' },
     ],
+    curiosityChips: [
+      "Why did the Allies attack from sea, sky, and behind the lines all at once?",
+      "Why bother with fake tanks and fake radio messages?",
+      "What if just one piece of the plan had failed?",
+    ],
   },
   {
     id: 'stalingrad',
@@ -1355,9 +1585,9 @@ const STRATEGY_LESSONS = [
     imageCredit: 'Photograph: Soviet ZiS-3 gun crew firing in Stalingrad, November 1942 — public domain, via Wikimedia Commons',
     cassianIntro: "Sometimes the right move is to refuse to move. To bleed. To hold. Russia held until time itself joined the fight. Pay attention — this one will save your life one day.",
     story: [
-      "In 1942, Hitler sent his strongest army to capture a Soviet city called Stalingrad. Hitler wanted it for two reasons. One, it sat on the Volga River — the main supply route. Two, it was named after Stalin, the Soviet leader, and Hitler hated Stalin. The fight became personal for both men, which made it worse for everyone fighting.",
-      "The Germans bombed Stalingrad until it was rubble. Then they sent in their soldiers. But here's the strange thing: rubble fights back. Soviet soldiers hid in the broken buildings, the sewers, the wrecked factories. They fought house to house, room to room. The Germans called it 'Rattenkrieg' — 'rat war.' Snipers shot officers from across the street. Every block cost a hundred men.",
-      "While the Germans were stuck grinding through the city, the Soviets quietly built up huge armies on the flanks — outside Stalingrad. In November 1942 those armies swung in from north and south and surrounded the entire German Sixth Army INSIDE the city. The hunters became the hunted. By February 1943 the German army inside Stalingrad surrendered. It was the turning point of World War II in Europe.",
+      "In 1942, Hitler sent his strongest army — the Sixth — to capture a Soviet city on the Volga River. The city was called Stalingrad. Hitler stood in his headquarters and stabbed the map there with one finger and would not move it. Stalin, the Soviet leader, looked at the same map from Moscow and gave a quiet order of his own: not one step back. Two men, a thousand miles apart, made the same city the place where the war would be decided. Everyone fighting in it paid for that.",
+      "The German air force bombed Stalingrad until it was rubble. Then the German infantry walked in. But here is the strange thing about rubble: it fights back. Soviet soldiers learned the city the way a fox learns a forest. They lived in the broken buildings, the sewers, the wrecked factories. They fought house to house, room to room, sometimes floor to floor in the same building, Germans on the third floor and Soviets on the fourth. The Germans gave the fighting a bitter name: Rattenkrieg. Rat war. Snipers ruled the streets. Every block cost a hundred men.",
+      "While the Germans pressed deeper and deeper into the rubble, something was happening they could not see. Out on the empty steppe, far to the north and far to the south of the city, Soviet trains arrived in the dark and unloaded. Tanks. Cavalry. Whole new armies, hidden behind the snow. In November 1942 the trap closed. From the north and from the south the Soviets swept in, met behind the German army, and slammed the door shut. The hunters were now the hunted. By February 1943 the Sixth Army surrendered, frozen and starved, in the ruins of the city they had been told they were taking. Stalingrad is remembered as the moment the war in Europe turned.",
     ],
     principle: {
       title: 'Embrace the Suck. Hold the Center.',
@@ -1374,6 +1604,11 @@ const STRATEGY_LESSONS = [
       { q: 'How did the Soviets actually win at Stalingrad?', choices: ['They won the city block by block','They surrounded the Germans by attacking the German flanks outside the city','They surrendered then took it back later','The weather alone won it'], correct: 1, explain: 'While Germany ground forward in the city, the Soviets quietly built two huge armies on the flanks and snapped the trap shut behind them.' },
       { q: 'How long did the Battle of Stalingrad last?', choices: ['About one week','About a month','About six months','About two years'], correct: 2, explain: 'August 1942 to February 1943 — about six months of urban grinding.' },
       { q: "What's the life lesson here?", choices: ['Always retreat','Pick fights you can win in one day','Hold the line. Help is coming. Time can be on your side.','Never defend, only attack'], correct: 2, explain: "Some fights are about endurance, not speed. Embrace the suck and hold." },
+    ],
+    curiosityChips: [
+      "Why did Hitler want this one city so badly?",
+      "How does a smaller defender beat a bigger attacker over time?",
+      "Why is Stalingrad called the turning point of the war?",
     ],
   },
 ];
@@ -4648,6 +4883,31 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
           <p className="mt-2 ink leading-relaxed">{lesson.modern.body}</p>
         </div>
       </div>
+      {Array.isArray(lesson.curiosityChips) && lesson.curiosityChips.length > 0 && (
+        <div className="wrap-narrow mt-6 fadeup">
+          <div className="curiosity-block">
+            <div className="curiosity-head">
+              <svg viewBox="0 0 64 64" width="18" height="18" aria-hidden="true"><use href="#sokrates-lantern"/></svg>
+              <span>Wonder with Sokrates</span>
+            </div>
+            <div className="curiosity-list">
+              {lesson.curiosityChips.map((q, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="curiosity-chip"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent('sokrates:ask', { detail: { question: q } }));
+                  }}>
+                  <span className="curiosity-chip-emoji" aria-hidden="true">?</span>
+                  <span className="curiosity-chip-text">{q}</span>
+                  <span className="curiosity-chip-arrow" aria-hidden="true">→ Ask Sokrates</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       {lesson.typeDrill && (
         <div className="wrap-narrow mt-8">
           <TypeDrillBlock drill={lesson.typeDrill} onCorrect={() => {
@@ -5060,6 +5320,213 @@ function parseHash() {
   return { name:'hub' };
 }
 
+/* ============================================================
+   SOKRATES — floating chat orb. Ask-only, never-tell.
+============================================================ */
+const SOKRATES_GREETING = "I am Sokrates. I do not give answers, only questions. What is on your mind?";
+const SOKRATES_MSG_KEY    = 'griffin-hall:sokrates:msgs:v1';
+const SOKRATES_QUOTA_KEY  = 'griffin-hall:sokrates:quota:v1';
+const SOKRATES_DAILY_CAP  = 50;
+const SOKRATES_WARN_AT    = 40;
+
+function sokLoadMsgs() {
+  try { const raw = sessionStorage.getItem(SOKRATES_MSG_KEY); return raw ? JSON.parse(raw) : []; }
+  catch { return []; }
+}
+function sokSaveMsgs(m) {
+  try { sessionStorage.setItem(SOKRATES_MSG_KEY, JSON.stringify(m)); } catch {}
+}
+function sokLoadQuota() {
+  try {
+    const raw = localStorage.getItem(SOKRATES_QUOTA_KEY);
+    const today = todayISO();
+    if (!raw) return { date: today, count: 0 };
+    const q = JSON.parse(raw);
+    if (!q || q.date !== today) return { date: today, count: 0 };
+    return q;
+  } catch { return { date: todayISO(), count: 0 }; }
+}
+function sokSaveQuota(q) {
+  try { localStorage.setItem(SOKRATES_QUOTA_KEY, JSON.stringify(q)); } catch {}
+}
+
+function getSokratesContext() {
+  const route = parseHash();
+  const ctx = {};
+  if (route.name === 'lesson' && route.questId && route.lessonId) {
+    const q = QUESTS[route.questId];
+    if (q) {
+      ctx.hall = q.hall;
+      const lesson = q.lessons.find(l => l.id === route.lessonId);
+      if (lesson) {
+        ctx.lessonTitle = lesson.title;
+        ctx.lessonSubtitle = lesson.subtitle;
+        ctx.lessonStory = lesson.story;
+        if (lesson.principle) {
+          ctx.lessonPrinciple = lesson.principle.title + ': ' + lesson.principle.body;
+        }
+      }
+    }
+  } else if (route.name === 'quest' && route.questId) {
+    const q = QUESTS[route.questId];
+    if (q) ctx.hall = q.hall;
+  } else if (route.name === 'trophies') {
+    ctx.hall = 'trophy_hall';
+  } else if (route.name === 'drill') {
+    ctx.hall = 'drilling_yard';
+  } else {
+    ctx.hall = 'hub';
+  }
+  return ctx;
+}
+
+function SokratesOrb() {
+  const [open, setOpen]         = useState(false);
+  const [messages, setMessages] = useState(sokLoadMsgs);
+  const [input, setInput]       = useState('');
+  const [busy, setBusy]         = useState(false);
+  const [quota, setQuota]       = useState(sokLoadQuota);
+  const scrollRef    = useRef(null);
+  const busyRef      = useRef(false);
+  const messagesRef  = useRef(messages);
+
+  useEffect(() => { sokSaveMsgs(messages); messagesRef.current = messages; }, [messages]);
+  useEffect(() => {
+    if (open && scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, open, busy]);
+  useEffect(() => { busyRef.current = busy; }, [busy]);
+
+  async function submitText(text) {
+    const trimmed = (text || '').trim();
+    if (!trimmed || busyRef.current) return;
+    const todaysQuota = sokLoadQuota();
+    if (todaysQuota.count >= SOKRATES_DAILY_CAP) {
+      setMessages(m => [...m,
+        { role:'user', content: trimmed },
+        { role:'assistant', content:"I must rest, friend. Return tomorrow — the questions will keep." }
+      ]);
+      setQuota(todaysQuota);
+      return;
+    }
+    const userMsg = { role:'user', content: trimmed };
+    // Capture history off the ref BEFORE the setState commits — the ref is the
+    // freshest source we have inside this turn.
+    const history = [...messagesRef.current, userMsg].slice(-20);
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setBusy(true);
+    const newQuota = { date: todayISO(), count: todaysQuota.count + 1 };
+    sokSaveQuota(newQuota);
+    setQuota(newQuota);
+
+    let reply = 'I am quiet for a moment. Try again?';
+    try {
+      const resp = await fetch('/api/sokrates', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ messages: history, context: getSokratesContext() }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (data && data.ok && typeof data.reply === 'string' && data.reply.trim()) {
+        reply = data.reply.trim();
+      } else if (data && data.error) {
+        reply = data.error;
+      }
+    } catch (e) {
+      reply = 'I cannot reach the air just now. Try again in a moment.';
+    }
+    setMessages(prev => [...prev, { role:'assistant', content: reply }]);
+    setBusy(false);
+  }
+
+  // Listen for curiosity-chip events. Each event opens the panel and
+  // submits the pre-filled question.
+  useEffect(() => {
+    function onAsk(e) {
+      const question = e && e.detail && typeof e.detail.question === 'string' ? e.detail.question : '';
+      if (!question) return;
+      setOpen(true);
+      setMessages(prev => prev.length ? prev : [{ role:'assistant', content: SOKRATES_GREETING }]);
+      // Defer to next tick so the panel mounts before we submit.
+      setTimeout(() => submitText(question), 30);
+    }
+    window.addEventListener('sokrates:ask', onAsk);
+    return () => window.removeEventListener('sokrates:ask', onAsk);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function openPanel() {
+    setOpen(true);
+    setMessages(prev => prev.length ? prev : [{ role:'assistant', content: SOKRATES_GREETING }]);
+  }
+  function closePanel() { setOpen(false); }
+  function clearChat() { setMessages([{ role:'assistant', content: SOKRATES_GREETING }]); }
+  function onSubmit(e) { e.preventDefault(); submitText(input); }
+
+  const remaining = SOKRATES_DAILY_CAP - quota.count;
+  const showWarn  = quota.count >= SOKRATES_WARN_AT && quota.count < SOKRATES_DAILY_CAP;
+  const exhausted = quota.count >= SOKRATES_DAILY_CAP;
+
+  return (
+    <>
+      {!open && (
+        <button className="sokrates-orb" onClick={openPanel} aria-label="Ask Sokrates" title="Ask Sokrates">
+          <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true">
+            <use href="#sokrates-lantern"/>
+          </svg>
+        </button>
+      )}
+      {open && (
+        <div className="sokrates-panel" role="dialog" aria-label="Sokrates chat">
+          <div className="sokrates-head">
+            <div className="sokrates-head-emblem">
+              <svg viewBox="0 0 64 64" width="20" height="20" aria-hidden="true"><use href="#sokrates-lantern"/></svg>
+            </div>
+            <div className="sokrates-head-text">
+              <div className="sokrates-head-name">SOKRATES</div>
+              <div className="sokrates-head-sub">{busy ? 'thinking…' : 'asks only questions'}</div>
+            </div>
+            <button className="sokrates-head-btn" onClick={clearChat} title="New conversation" aria-label="New conversation">⟲</button>
+            <button className="sokrates-head-btn" onClick={closePanel} title="Close" aria-label="Close">×</button>
+          </div>
+          <div className="sokrates-body" ref={scrollRef}>
+            {messages.length === 0 && (
+              <div className="sokrates-msg sokrates-msg-sokrates">{SOKRATES_GREETING}</div>
+            )}
+            {messages.map((m, i) => (
+              <div key={i} className={'sokrates-msg ' + (m.role === 'user' ? 'sokrates-msg-user' : 'sokrates-msg-sokrates')}>{m.content}</div>
+            ))}
+            {busy && (
+              <div className="sokrates-msg sokrates-msg-sokrates sokrates-typing" aria-label="Sokrates is thinking">
+                <span/><span/><span/>
+              </div>
+            )}
+          </div>
+          {showWarn && !exhausted && (
+            <div className="sokrates-warn">Sokrates grows tired. {remaining} question{remaining===1?'':'s'} left today.</div>
+          )}
+          {exhausted && (
+            <div className="sokrates-warn">Sokrates needs to rest. Return tomorrow.</div>
+          )}
+          <form className="sokrates-form" onSubmit={onSubmit}>
+            <input
+              type="text"
+              className="sokrates-input"
+              placeholder={exhausted ? "Rest, friend. Tomorrow." : "Ask Sokrates anything…"}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              disabled={busy || exhausted}
+              maxLength={500}
+              autoFocus
+            />
+            <button type="submit" className="sokrates-send" disabled={busy || exhausted || !input.trim()} aria-label="Send">➜</button>
+          </form>
+        </div>
+      )}
+    </>
+  );
+}
+
 function App() {
   const [state, setState] = useState(loadState);
   const [route, setRoute] = useState(parseHash);
@@ -5101,6 +5568,7 @@ function App() {
       <GriffinCompanion state={state} recentTick={completionTick} onStageTransition={handleStageTransition}/>
       <MasterVoiceToast message={masterVoice} onDismiss={() => setMasterVoice(null)}/>
       <RelicAwardModal relic={earnedRelic} onClose={() => setEarnedRelic(null)}/>
+      <SokratesOrb/>
       <footer className="wrap py-12 text-center">
         <div className="gold-line max-w-xs mx-auto mb-4"/>
         <div className="heraldic text-xs ink-muted uppercase tracking-[0.3em]">Griffin Hall · vol. I · MMXXVI</div>
