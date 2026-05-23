@@ -3710,9 +3710,9 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
         </div>
       )}
 
-      {lesson.videoUrl && (
-        <div className="wrap-narrow mt-5">
-          <div className="hero-frame rounded-md overflow-hidden">
+      <div className="wrap-narrow mt-5">
+        <div className="hero-frame rounded-md overflow-hidden">
+          {lesson.videoUrl ? (
             <video
               src={lesson.videoUrl}
               poster={lesson.image}
@@ -3721,12 +3721,9 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
               preload="metadata"
               className="w-full aspect-[16/10] object-cover bg-black"
             />
-          </div>
-        </div>
-      )}
-      <div className="wrap-narrow mt-5">
-        <div className="hero-frame rounded-md overflow-hidden">
-          <img src={lesson.image} alt={lesson.title} className="w-full aspect-[16/10] object-cover" loading="eager"/>
+          ) : (
+            <img src={lesson.image} alt={lesson.title} className="w-full aspect-[16/10] object-cover" loading="eager"/>
+          )}
         </div>
         <div className="text-xs ink-muted mt-2 italic">{lesson.imageCredit}</div>
       </div>
