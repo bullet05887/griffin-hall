@@ -18,6 +18,8 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3/dist/d3-geo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <style>
   :root {
     --parchment: #f4ecd8;
@@ -3126,12 +3128,80 @@ const US_MAP_DATA = {
 };
 
 function projectLatLng(lat, lng, imgW, imgH) {
+  // Equirectangular fallback for non-d3 callers / images that still use it.
   const x = ((lng + 180) / 360) * imgW;
   const y = ((90 - lat) / 180) * imgH;
   return { x, y };
 }
 function projectStateCell(s, cellSize) {
   return { x: s.col * cellSize, y: s.row * cellSize };
+}
+
+/* ---------- Real geographic map plumbing ----------
+   Loads Natural-Earth-derived TopoJSON once per session, converts to GeoJSON,
+   tags each country with a continent bucket, and exposes a d3 projection
+   so the rest of the component can keep its lat/lng-based centerOn() logic. */
+
+const FIPS_TO_POSTAL = {
+  '01':'AL','02':'AK','04':'AZ','05':'AR','06':'CA','08':'CO','09':'CT','10':'DE','11':'DC',
+  '12':'FL','13':'GA','15':'HI','16':'ID','17':'IL','18':'IN','19':'IA','20':'KS','21':'KY',
+  '22':'LA','23':'ME','24':'MD','25':'MA','26':'MI','27':'MN','28':'MS','29':'MO','30':'MT',
+  '31':'NE','32':'NV','33':'NH','34':'NJ','35':'NM','36':'NY','37':'NC','38':'ND','39':'OH',
+  '40':'OK','41':'OR','42':'PA','44':'RI','45':'SC','46':'SD','47':'TN','48':'TX','49':'UT',
+  '50':'VT','51':'VA','53':'WA','54':'WV','55':'WI','56':'WY',
+};
+
+function continentForCentroid(lng, lat) {
+  if (lat < -60) return 'antarctica';
+  if (lat > 12 && lng < -52 && lng > -180) return 'northamerica';
+  if (lat <= 12 && lng > -85 && lng < -34) return 'southamerica';
+  if (lat > 35 && lng >= -25 && lng < 45) return 'europe';
+  if (lat > 55 && lng >= -25 && lng < 60) return 'europe';
+  if (lat < -10 && lng > 110) return 'australia';
+  if (lat <= 0 && lng > 130) return 'australia';
+  if (lat < 38 && lng >= -20 && lng < 52) return 'africa';
+  return 'asia';
+}
+
+const GEO_CACHE = { world: null, usa: null, worldPromise: null, usaPromise: null };
+function loadGeo(type) {
+  if (type === 'world') {
+    if (GEO_CACHE.world) return Promise.resolve(GEO_CACHE.world);
+    if (!GEO_CACHE.worldPromise) {
+      GEO_CACHE.worldPromise = fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+        .then(r => r.json())
+        .then(topo => {
+          const fc = window.topojson.feature(topo, topo.objects.countries);
+          const features = fc.features.map(f => {
+            const c = window.d3.geoCentroid(f);
+            const cont = continentForCentroid(c[0], c[1]);
+            return { ...f, properties: { ...f.properties, _continent: cont, _centroid: c } };
+          });
+          GEO_CACHE.world = features;
+          return features;
+        })
+        .catch(err => { console.error('world topo load failed', err); return []; });
+    }
+    return GEO_CACHE.worldPromise;
+  } else {
+    if (GEO_CACHE.usa) return Promise.resolve(GEO_CACHE.usa);
+    if (!GEO_CACHE.usaPromise) {
+      GEO_CACHE.usaPromise = fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
+        .then(r => r.json())
+        .then(topo => {
+          const fc = window.topojson.feature(topo, topo.objects.states);
+          const features = fc.features.map(f => {
+            const fips = String(f.id).padStart(2, '0');
+            const postal = FIPS_TO_POSTAL[fips] || null;
+            return { ...f, properties: { ...f.properties, _postal: postal } };
+          });
+          GEO_CACHE.usa = features;
+          return features;
+        })
+        .catch(err => { console.error('usa topo load failed', err); return []; });
+    }
+    return GEO_CACHE.usaPromise;
+  }
 }
 
 const CONT_COLORS = {
@@ -3163,9 +3233,56 @@ function InteractiveMap({ type, masterKey }) {
   const [capitalInput, setCapitalInput] = useState('');
   const [capitalFeedback, setCapitalFeedback] = useState(null);
   const [diff, setDiff] = useState('continents');
+  const [geoFeatures, setGeoFeatures] = useState(null);
 
-  const mapW = isWorld ? data.imageWidth : data.gridCols * data.cellSize;
-  const mapH = isWorld ? data.imageHeight : data.gridRows * data.cellSize;
+  // World uses Equal Earth on a 1000x500 canvas. USA uses d3.geoAlbersUsa on 960x600.
+  const mapW = isWorld ? 1000 : 960;
+  const mapH = isWorld ? 500  : 600;
+
+  // d3 projection + path generator. Built once per (type, mapW, mapH).
+  const { projection, pathFn } = useMemo(() => {
+    if (!window.d3) return { projection: null, pathFn: null };
+    if (isWorld) {
+      const proj = window.d3.geoEqualEarth().scale(195).translate([mapW/2, mapH/2]);
+      return { projection: proj, pathFn: window.d3.geoPath(proj) };
+    } else {
+      const proj = window.d3.geoAlbersUsa().scale(1200).translate([mapW/2, mapH/2]);
+      return { projection: proj, pathFn: window.d3.geoPath(proj) };
+    }
+  }, [isWorld, mapW, mapH]);
+
+  // Project a lat/lng (or state grid cell) to canvas x/y for centerOn().
+  function projectFeature(f) {
+    if (isWorld) {
+      if (!projection) return { x: mapW/2, y: mapH/2 };
+      const p = projection([f.lng, f.lat]);
+      return p ? { x: p[0], y: p[1] } : { x: mapW/2, y: mapH/2 };
+    }
+    // USA: project state by capital lat/lng if available, else fall back to geo bbox center
+    if (projection && f && f.id && geoFeatures) {
+      const match = geoFeatures.find(g => g.properties._postal === f.id);
+      if (match) {
+        const c = window.d3.geoCentroid(match);
+        const p = projection(c);
+        if (p) return { x: p[0], y: p[1] };
+      }
+    }
+    return { x: mapW/2, y: mapH/2 };
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    loadGeo(isWorld ? 'world' : 'usa').then(features => {
+      if (!cancelled) setGeoFeatures(features);
+    });
+    return () => { cancelled = true; };
+  }, [isWorld]);
+
+  // Precompute SVG path strings once per feature set (cheap, but useMemo guards re-renders).
+  const geoPaths = useMemo(() => {
+    if (!geoFeatures || !pathFn) return [];
+    return geoFeatures.map(f => ({ feature: f, d: pathFn(f) }));
+  }, [geoFeatures, pathFn]);
 
   const allFeatures = useMemo(() => {
     if (isWorld) return [...data.continents, ...data.oceans, ...data.countries];
@@ -3288,14 +3405,8 @@ function InteractiveMap({ type, masterKey }) {
   function centerOn(feature, targetScale) {
     const wrap = wrapRef.current; if (!wrap) return;
     const ww = wrap.clientWidth, wh = wrap.clientHeight;
-    let imgX, imgY;
-    if (isWorld) {
-      const p = projectLatLng(feature.lat, feature.lng, mapW, mapH);
-      imgX = p.x; imgY = p.y;
-    } else {
-      const p = projectStateCell(feature, data.cellSize);
-      imgX = p.x + data.cellSize/2; imgY = p.y + data.cellSize/2;
-    }
+    const p = projectFeature(feature);
+    const imgX = p.x, imgY = p.y;
     const scale = targetScale || scaleForKind(feature.kind);
     const sx = (imgX / mapW) * ww * scale;
     const sy = (imgY / mapH) * wh * scale;
@@ -3469,7 +3580,7 @@ function InteractiveMap({ type, masterKey }) {
       <div
         ref={wrapRef}
         className="mt-3 relative overflow-hidden rounded-md border border-gold/40 select-none touch-none"
-        style={{ aspectRatio: isWorld ? '2058 / 1024' : '780 / 480', background: isWorld ? '#cfe3f3' : '#f4ecd8', cursor: 'grab' }}
+        style={{ aspectRatio: isWorld ? '1000 / 500' : '960 / 600', background: isWorld ? '#a8c8e2' : '#a8c8e2', cursor: 'grab' }}
         onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -3491,69 +3602,206 @@ function InteractiveMap({ type, masterKey }) {
         >
           {isWorld ? (
             <svg viewBox={"0 0 " + mapW + " " + mapH} width="100%" height="100%" style={{ display:'block' }}>
-              <image href={data.imageUrl} x="0" y="0" width={mapW} height={mapH} preserveAspectRatio="none" />
-              {[...data.continents, ...data.oceans].map(c => {
-                const p = projectLatLng(c.lat, c.lng, mapW, mapH);
-                const isH = highlightId === c.id;
-                const isQuest = quest && quest.targetId === c.id;
-                const dim = highlightId && !isH && !isQuest ? 0.35 : 1;
+              {/* Ocean background */}
+              <rect x="0" y="0" width={mapW} height={mapH} fill="#a8c8e2" />
+              {/* Faint graticule (lat/lng grid) */}
+              {projection && (() => {
+                const graticule = window.d3.geoGraticule().step([20,20])();
+                return <path d={pathFn(graticule)} fill="none" stroke="rgba(26,41,66,0.10)" strokeWidth="0.4" />;
+              })()}
+              {/* Country polygons */}
+              {geoPaths.map(({ feature, d }, i) => {
+                if (!d) return null;
+                const cont = feature.properties._continent;
+                const name = feature.properties.name;
+                // Match country in our curated list (by name, case-insensitive contains)
+                const country = data.countries.find(c =>
+                  c.name.toLowerCase() === (name||'').toLowerCase()
+                  || (name||'').toLowerCase().includes(c.name.toLowerCase())
+                  || c.name.toLowerCase().includes((name||'').toLowerCase())
+                );
+                const contRecord = data.continents.find(c => c.id === cont);
+                const isCountryHighlight = country && highlightId === country.id;
+                const isContHighlight = highlightId && contRecord && contRecord.id === highlightId;
+                const isQuestCountry = country && quest && quest.targetId === country.id;
+                const isQuestCont = contRecord && quest && quest.targetId === contRecord.id;
+                const isAnyHighlight = isCountryHighlight || isContHighlight || isQuestCountry || isQuestCont;
+                // Dim policy: if there is a highlight, dim everything not on the highlighted continent
+                let dim = 1;
+                if (highlightId) {
+                  if (isCountryHighlight || isQuestCountry) dim = 1;
+                  else if (isContHighlight || isQuestCont || (contRecord && cont === highlightId)) dim = 0.85;
+                  else dim = 0.4;
+                }
+                // Fill: highlighted country = gold, continent-grouped highlight = continent tint, default = parchment
+                let fill = '#f4ecd8'; // parchment
+                if (isCountryHighlight || isQuestCountry) fill = '#e0bd6a'; // gold-light
+                else if (isContHighlight || (contRecord && cont === highlightId)) fill = CONT_COLORS[cont] || '#e6d8a9';
+                else if (diff === 'countries' && country) fill = '#ece2c4'; // parchment-warm tint for known countries
+                const stroke = (isCountryHighlight || isQuestCountry) ? '#9b2226' : 'rgba(26,41,66,0.55)';
+                const strokeWidth = (isCountryHighlight || isQuestCountry) ? 1.8 : 0.5;
                 return (
-                  <g key={c.id} className="map-hit" opacity={dim} style={{ cursor:'pointer', transition:'opacity 350ms ease' }} onClick={(e)=>{ e.stopPropagation(); handleFeatureClick(c); }}>
-                    <circle cx={p.x} cy={p.y} r={c.r}
-                      fill={CONT_COLORS[c.id] || '#888'}
-                      fillOpacity={isH ? 0.55 : 0.18}
-                      stroke={isH ? '#c9a44c' : (isQuest ? '#9b2226' : 'rgba(26,41,66,0.6)')}
-                      strokeWidth={isH ? 6 : 2}
-                    />
-                    <text x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle"
-                      style={{ fontFamily:'Cinzel, Georgia, serif', fontWeight:700, fontSize: c.kind==='continent' ? 38 : 26, fill:'#0f1a2c', letterSpacing:'0.05em', pointerEvents:'none', paintOrder:'stroke', stroke:'#f4ecd8', strokeWidth:4 }}
-                    >{c.name.toUpperCase()}</text>
-                  </g>
+                  <path
+                    key={i}
+                    d={d}
+                    className="map-hit"
+                    fill={fill}
+                    fillOpacity={dim}
+                    stroke={stroke}
+                    strokeWidth={strokeWidth}
+                    style={{ cursor:'pointer', transition:'fill-opacity 300ms ease, fill 300ms ease' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (country) { handleFeatureClick(country); return; }
+                      if (contRecord) { handleFeatureClick(contRecord); return; }
+                    }}
+                  >
+                    <title>{name}</title>
+                  </path>
                 );
               })}
-              {diff === 'countries' && data.countries.map(c => {
-                const p = projectLatLng(c.lat, c.lng, mapW, mapH);
+              {/* Continent labels overlay (clickable) */}
+              {projection && data.continents.map(c => {
+                const p = projection([c.lng, c.lat]);
+                if (!p) return null;
                 const isH = highlightId === c.id;
                 const isQuest = quest && quest.targetId === c.id;
-                const dim = highlightId && !isH && !isQuest ? 0.4 : 1;
                 return (
-                  <g key={c.id} className="map-hit" opacity={dim} style={{ cursor:'pointer', transition:'opacity 350ms ease' }} onClick={(e)=>{ e.stopPropagation(); handleFeatureClick(c); }}>
-                    <circle cx={p.x} cy={p.y} r={isH || isQuest ? 16 : 10} fill={isH ? '#c9a44c' : '#9b2226'} stroke="#f4ecd8" strokeWidth="2" />
-                    {(isH || isQuest) && (
-                      <text x={p.x} y={p.y - 22} textAnchor="middle"
-                        style={{ fontFamily:'Cinzel, Georgia, serif', fontWeight:700, fontSize:22, fill:'#0f1a2c', paintOrder:'stroke', stroke:'#f4ecd8', strokeWidth:5 }}>
-                        {c.name}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
-            </svg>
-          ) : (
-            <svg viewBox={"0 0 " + mapW + " " + mapH} width="100%" height="100%" style={{ display:'block' }}>
-              <rect x="0" y="0" width={mapW} height={mapH} fill="#f4ecd8" />
-              {data.states.map(s => {
-                const x = s.col * data.cellSize;
-                const y = s.row * data.cellSize;
-                const isH = highlightId === s.id;
-                const isQuest = quest && quest.kind==='capital' && quest.targetId === s.id;
-                const dim = highlightId && !isH && !isQuest ? 0.4 : 1;
-                return (
-                  <g key={s.id} className="map-hit" opacity={dim} style={{ cursor:'pointer', transition:'opacity 350ms ease' }} onClick={(e)=>{ e.stopPropagation(); handleFeatureClick(s); }}>
-                    <rect x={x+2} y={y+2} width={data.cellSize-4} height={data.cellSize-4} rx="6"
-                      fill={REGION_COLORS[s.region] || '#ccc'}
-                      fillOpacity={isH || isQuest ? 0.9 : 0.55}
-                      stroke={isH ? '#c9a44c' : (isQuest ? '#9b2226' : 'rgba(26,41,66,0.65)')}
-                      strokeWidth={isH || isQuest ? 4 : 1.5}
-                    />
-                    <text x={x + data.cellSize/2} y={y + data.cellSize/2}
-                      textAnchor="middle" dominantBaseline="middle"
-                      style={{ fontFamily:'Cinzel, Georgia, serif', fontWeight:700, fontSize:18, fill:'#0f1a2c', pointerEvents:'none' }}>
-                      {s.id}
+                  <g key={c.id} className="map-hit" style={{ cursor:'pointer' }}
+                     onClick={(e) => { e.stopPropagation(); handleFeatureClick(c); }}>
+                    <text x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="middle"
+                      style={{
+                        fontFamily:'Cinzel, Georgia, serif',
+                        fontWeight: 700,
+                        fontSize: 18,
+                        fill: isH ? '#9b2226' : '#1a2942',
+                        letterSpacing:'0.12em',
+                        paintOrder:'stroke',
+                        stroke:'#f4ecd8',
+                        strokeWidth: 3,
+                        opacity: isQuest ? 1 : 0.85,
+                      }}>
+                      {c.name.toUpperCase()}
                     </text>
                   </g>
                 );
               })}
+              {/* Ocean labels overlay (clickable) */}
+              {projection && data.oceans.map(o => {
+                const p = projection([o.lng, o.lat]);
+                if (!p) return null;
+                const isH = highlightId === o.id;
+                return (
+                  <g key={o.id} className="map-hit" style={{ cursor:'pointer' }}
+                     onClick={(e) => { e.stopPropagation(); handleFeatureClick(o); }}>
+                    <text x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="middle"
+                      style={{
+                        fontFamily:'Cinzel, Georgia, serif',
+                        fontStyle:'italic',
+                        fontWeight: 500,
+                        fontSize: 13,
+                        fill: isH ? '#9b2226' : '#1a2942',
+                        letterSpacing:'0.18em',
+                        opacity: 0.65,
+                      }}>
+                      {o.name}
+                    </text>
+                  </g>
+                );
+              })}
+              {/* Major-country pins (only in countries mode) */}
+              {diff === 'countries' && projection && data.countries.map(c => {
+                const p = projection([c.lng, c.lat]);
+                if (!p) return null;
+                const isH = highlightId === c.id;
+                const isQuest = quest && quest.targetId === c.id;
+                if (!isH && !isQuest) return null;
+                return (
+                  <g key={'pin-'+c.id} style={{ pointerEvents:'none' }}>
+                    <circle cx={p[0]} cy={p[1]} r={4} fill="#9b2226" stroke="#f4ecd8" strokeWidth="1.5" />
+                    <text x={p[0]} y={p[1] - 10} textAnchor="middle"
+                      style={{
+                        fontFamily:'Cinzel, Georgia, serif',
+                        fontWeight:700,
+                        fontSize: 14,
+                        fill:'#0f1a2c',
+                        paintOrder:'stroke',
+                        stroke:'#f4ecd8',
+                        strokeWidth: 4,
+                      }}>
+                      {c.name}
+                    </text>
+                  </g>
+                );
+              })}
+              {!geoFeatures && (
+                <text x={mapW/2} y={mapH/2} textAnchor="middle" dominantBaseline="middle"
+                  style={{ fontFamily:'Cinzel, Georgia, serif', fontSize:18, fill:'#1a2942' }}>
+                  Loading world map…
+                </text>
+              )}
+            </svg>
+          ) : (
+            <svg viewBox={"0 0 " + mapW + " " + mapH} width="100%" height="100%" style={{ display:'block' }}>
+              <rect x="0" y="0" width={mapW} height={mapH} fill="#a8c8e2" />
+              {/* State polygons */}
+              {geoPaths.map(({ feature, d }, i) => {
+                if (!d) return null;
+                const postal = feature.properties._postal;
+                const stateRec = postal ? data.states.find(s => s.id === postal) : null;
+                const isH = stateRec && highlightId === stateRec.id;
+                const isQuest = stateRec && quest && quest.kind==='capital' && quest.targetId === stateRec.id;
+                let dim = highlightId && !isH && !isQuest ? 0.45 : 1;
+                let fill = stateRec ? (REGION_COLORS[stateRec.region] || '#e6d8a9') : '#f4ecd8';
+                if (isH || isQuest) fill = '#e0bd6a';
+                return (
+                  <path
+                    key={i}
+                    d={d}
+                    className="map-hit"
+                    fill={fill}
+                    fillOpacity={dim * 0.85}
+                    stroke={(isH || isQuest) ? '#9b2226' : 'rgba(26,41,66,0.55)'}
+                    strokeWidth={(isH || isQuest) ? 2 : 0.6}
+                    style={{ cursor:'pointer', transition:'fill-opacity 300ms ease, fill 300ms ease' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (stateRec) handleFeatureClick({ ...stateRec, kind: 'state' });
+                    }}
+                  >
+                    <title>{feature.properties.name}</title>
+                  </path>
+                );
+              })}
+              {/* State postal-code labels */}
+              {projection && geoPaths.map(({ feature }, i) => {
+                const postal = feature.properties._postal;
+                if (!postal) return null;
+                const c = window.d3.geoCentroid(feature);
+                const p = projection(c);
+                if (!p) return null;
+                return (
+                  <text key={'lbl-'+i} x={p[0]} y={p[1]} textAnchor="middle" dominantBaseline="middle"
+                    style={{
+                      fontFamily:'Cinzel, Georgia, serif',
+                      fontWeight: 700,
+                      fontSize: 11,
+                      fill:'#0f1a2c',
+                      pointerEvents:'none',
+                      paintOrder:'stroke',
+                      stroke:'#f4ecd8',
+                      strokeWidth: 2.5,
+                    }}>
+                    {postal}
+                  </text>
+                );
+              })}
+              {!geoFeatures && (
+                <text x={mapW/2} y={mapH/2} textAnchor="middle" dominantBaseline="middle"
+                  style={{ fontFamily:'Cinzel, Georgia, serif', fontSize:18, fill:'#1a2942' }}>
+                  Loading US map…
+                </text>
+              )}
             </svg>
           )}
         </div>
