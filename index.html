@@ -612,9 +612,118 @@
     font-family:'Cinzel', serif; font-size: 13px;
   }
 
+  /* ============================================================
+     INTERACTIVE WORDS (tappable inline triggers in Marshal's Hall)
+     ============================================================ */
+  .interactive-word {
+    display: inline;
+    color: var(--gold-deep);
+    border-bottom: 1px solid var(--gold);
+    cursor: pointer;
+    padding: 0 1px;
+    background-color: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    user-select: none;
+    text-decoration: none;
+  }
+  .interactive-word:hover,
+  .interactive-word:focus-visible {
+    background-color: rgba(201, 164, 76, 0.22);
+    color: #6b4a14;
+    outline: none;
+  }
+  .interactive-word:active {
+    background-color: rgba(201, 164, 76, 0.35);
+  }
+  .interactive-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(20, 14, 6, 0.62);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    padding: 1rem;
+    animation: interactive-fadein 0.18s ease;
+  }
+  .interactive-modal {
+    background: var(--parchment);
+    color: var(--ink);
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    max-width: 520px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    padding: 1.25rem 1.4rem 1.4rem;
+    position: relative;
+    box-shadow: 0 14px 44px rgba(0,0,0,0.55), 0 0 0 4px rgba(201,164,76,0.18);
+    font-family: 'Instrument Serif', Georgia, serif;
+    animation: interactive-popin 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  }
+  .interactive-modal-close {
+    position: absolute; top: 0.4rem; right: 0.6rem;
+    background: transparent; border: none;
+    font-size: 1.7rem; line-height: 1;
+    color: var(--gold-deep); cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    font-family: Georgia, serif;
+  }
+  .interactive-modal-close:hover { color: #6b3a14; }
+  .interactive-modal-img {
+    width: 100%; height: auto;
+    max-height: 320px; object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--gold);
+    margin-bottom: 0.95rem; display: block;
+    background: var(--parchment-warm);
+  }
+  .interactive-modal-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 1.35rem; font-weight: 700;
+    margin: 0 0 0.6rem;
+    color: var(--gold-deep);
+    letter-spacing: 0.03em;
+  }
+  .interactive-modal-caption {
+    font-size: 1.02rem; line-height: 1.55;
+    margin: 0 0 1.1rem;
+    color: var(--ink);
+  }
+  .interactive-modal-ask {
+    background: #1a2942;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 0.55rem 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-family: 'Cinzel', Georgia, serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .interactive-modal-ask:hover {
+    background: #0f1d33;
+    color: var(--gold-light);
+  }
+  .interactive-modal-credit {
+    font-size: 0.72rem;
+    color: rgba(58, 40, 10, 0.6);
+    margin-top: 0.7rem;
+    font-style: italic;
+  }
+  @keyframes interactive-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes interactive-popin {
+    from { opacity: 0; transform: translateY(10px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+  }
+
   @media (max-width: 480px) {
     .sokrates-orb { right: 14px; bottom: 14px; width: 54px; height: 54px; }
     .sokrates-panel { right: 8px; bottom: 8px; }
+    .interactive-modal { padding: 1rem 1.1rem 1.2rem; }
+    .interactive-modal-img { max-height: 240px; }
   }
 </style>
 </head>
@@ -1381,6 +1490,357 @@ function HubWelcomeOnce() {
   }, []);
   return null;
 }
+
+/* ============================================================
+   INTERACTIVE WORDS — Marshal's Hall tappable inline triggers.
+   Tap/click → modal with image + 1-3 sentence caption.
+   Long-press (mobile) or right-click (desktop) → fires the
+   existing `sokrates:ask` event so Sokrates opens pre-loaded.
+   ============================================================ */
+function Interactive({ word, data, children }) {
+  const [open, setOpen] = React.useState(false);
+  const timerRef = React.useRef(null);
+  const longFiredRef = React.useRef(false);
+  const startRef = React.useRef(null);
+
+  function askSokrates() {
+    if (!data || !data.sokrates_prompt) return;
+    window.dispatchEvent(new CustomEvent('sokrates:ask', {
+      detail: { question: data.sokrates_prompt }
+    }));
+  }
+
+  function clearTimer() {
+    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+  }
+
+  function onTouchStart(e) {
+    longFiredRef.current = false;
+    const t = e.touches && e.touches[0];
+    startRef.current = t ? { x: t.clientX, y: t.clientY } : null;
+    clearTimer();
+    timerRef.current = setTimeout(() => {
+      longFiredRef.current = true;
+      timerRef.current = null;
+      askSokrates();
+    }, 500);
+  }
+  function onTouchMove(e) {
+    if (!startRef.current) return;
+    const t = e.touches && e.touches[0]; if (!t) return;
+    const dx = t.clientX - startRef.current.x;
+    const dy = t.clientY - startRef.current.y;
+    if ((dx*dx + dy*dy) > 100) clearTimer();
+  }
+  function onTouchEnd(e) {
+    clearTimer();
+    if (longFiredRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      longFiredRef.current = false;
+      return;
+    }
+    // short tap → open modal (also call preventDefault to avoid synthetic
+    // click double-fire on iOS)
+    e.preventDefault();
+    setOpen(true);
+  }
+  function onTouchCancel() { clearTimer(); longFiredRef.current = false; }
+  function onContextMenu(e) {
+    e.preventDefault();
+    askSokrates();
+  }
+  function onClick(e) {
+    // Touch path already handled in onTouchEnd; this is for mouse.
+    if (longFiredRef.current) { longFiredRef.current = false; return; }
+    e.preventDefault();
+    setOpen(true);
+  }
+  function onKeyDown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOpen(true);
+    }
+  }
+
+  const hasData = !!(data && (data.image_url || data.caption));
+
+  return (
+    <React.Fragment>
+      <span
+        className="interactive-word"
+        role="button"
+        tabIndex={0}
+        aria-label={'Learn more about ' + word + '. Long-press or right-click to ask Sokrates.'}
+        onClick={onClick}
+        onContextMenu={onContextMenu}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onTouchCancel={onTouchCancel}
+        onKeyDown={onKeyDown}
+      >{children || word}</span>
+      {open && hasData && (
+        <div
+          className="interactive-modal-backdrop"
+          onClick={() => setOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={word}
+        >
+          <div className="interactive-modal" onClick={e => e.stopPropagation()}>
+            <button
+              className="interactive-modal-close"
+              onClick={() => setOpen(false)}
+              aria-label="Close"
+            >×</button>
+            {data.image_url && (
+              <img
+                src={data.image_url}
+                alt={data.image_alt || word}
+                className="interactive-modal-img"
+                loading="lazy"
+                onError={(ev) => { ev.currentTarget.style.display = 'none'; }}
+              />
+            )}
+            <h3 className="interactive-modal-title">{word}</h3>
+            <p className="interactive-modal-caption">{data.caption}</p>
+            <button
+              className="interactive-modal-ask"
+              onClick={() => { setOpen(false); askSokrates(); }}
+            >Ask Sokrates about {word}</button>
+            {data.credit && (
+              <div className="interactive-modal-credit">{data.credit}</div>
+            )}
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+/* Renders one paragraph string and wraps any matched trigger words
+   from `interactiveMap` in <Interactive> components. Match is
+   case-sensitive, longest-first, and respects word boundaries that
+   aren't alphanumeric so we don't underline parts of larger words. */
+function renderStoryParagraph(text, interactiveMap) {
+  if (!text || typeof text !== 'string') return text;
+  if (!interactiveMap || !Object.keys(interactiveMap).length) return text;
+  const words = Object.keys(interactiveMap).sort((a, b) => b.length - a.length);
+  const escape = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Wrap in a capture group so split keeps the matches.
+  const pattern = new RegExp('(' + words.map(escape).join('|') + ')', 'g');
+  const parts = text.split(pattern);
+  const out = [];
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (interactiveMap[part]) {
+      out.push(
+        React.createElement(Interactive, {
+          key: 'iw-' + i,
+          word: part,
+          data: interactiveMap[part],
+        }, part)
+      );
+    } else if (part) {
+      out.push(part);
+    }
+  }
+  return out;
+}
+
+/* Per-lesson interactive vocabulary for Marshal's Hall.
+   Keys are case-sensitive substrings that appear naturally in the
+   lesson story prose; values include the popup image, caption,
+   and the prompt fed to Sokrates on long-press / right-click. */
+const INTERACTIVE_DATA = {
+  delaware: {
+    'Delaware': {
+      image_url: 'assets/interactive/marshal/delaware-river.jpg',
+      caption: "The Delaware River runs 282 miles from the Catskills to the Atlantic, marking the border between Pennsylvania and New Jersey. In December 1776 it was choked with ice floes the size of barn doors — the storm that hid Washington also nearly drowned his army.",
+      sokrates_prompt: "Tell me about the Delaware River and why crossing it in 1776 mattered so much.",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Hessians': {
+      image_url: 'assets/interactive/marshal/hessians.jpg',
+      caption: "Hessians were professional German soldiers from the principality of Hesse-Kassel, rented out by their prince to fight for Britain. Roughly 30,000 served in America. They were not lazy or drunk as legend tells it — they were elite troops, exhausted from constant patrols.",
+      sokrates_prompt: "Who were the Hessians, and why were they fighting for the British in America?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Trenton': {
+      image_url: 'assets/interactive/marshal/trenton.jpg',
+      caption: "Trenton, New Jersey was a small river town garrisoned by about 1,400 Hessians under Colonel Johann Rall. After Washington's surprise dawn attack on December 26, 1776, the battle was over in about 45 minutes — 900 Hessians captured, only two Americans killed in action.",
+      sokrates_prompt: "Tell me about the Battle of Trenton — what made it so important?",
+      credit: "Image: John Trumbull, public domain, via Wikimedia Commons",
+    },
+    "McConkey's Ferry": {
+      image_url: 'assets/interactive/marshal/mcconkeys-ferry.jpg',
+      caption: "McConkey's Ferry was a small inn and crossing point on the Pennsylvania side of the Delaware, about 9 miles upriver from Trenton. Washington picked it because the river was narrowest there. The inn still stands today, inside Washington Crossing Historic Park.",
+      sokrates_prompt: "Where is McConkey's Ferry, and why did Washington choose to cross there?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Christmas night': {
+      image_url: 'assets/interactive/marshal/christmas-night.jpg',
+      caption: "Washington picked Christmas night, December 25-26, 1776, because the Hessians celebrated heavily and stayed up late drinking. He counted on holiday rhythm plus a violent nor'easter to mask his crossing. The temperature was around 25°F with sleet and snow.",
+      sokrates_prompt: "Why did Washington pick Christmas night specifically for the attack on Trenton?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+  },
+  custer: {
+    'Little Bighorn': {
+      image_url: 'assets/interactive/marshal/little-bighorn.jpg',
+      caption: "The Little Bighorn River winds through southeastern Montana. On June 25-26, 1876, on the bluffs above this river, about 210 men of Custer's immediate command were killed in less than an hour by Lakota, Cheyenne, and Arapaho warriors.",
+      sokrates_prompt: "Tell me about the Battle of the Little Bighorn and where it happened.",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Lakota': {
+      image_url: 'assets/interactive/marshal/lakota.jpg',
+      caption: "The Lakota are one of the seven Sioux nations, traditionally living across the northern Plains. By 1876 they had been pushed off their sacred Black Hills after gold was discovered there. The Little Bighorn was the largest gathering of Lakota and allied warriors in living memory.",
+      sokrates_prompt: "Who are the Lakota people, and why were they at war with the U.S. Army in 1876?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Sitting Bull': {
+      image_url: 'assets/interactive/marshal/sitting-bull.jpg',
+      caption: "Sitting Bull (Tȟatȟáŋka Íyotake, c. 1831-1890) was a Hunkpapa Lakota holy man and chief. Before the battle he danced for three days and had a vision of soldiers falling into camp like grasshoppers from the sky. He did not fight that day — his vision did.",
+      sokrates_prompt: "Tell me about Sitting Bull and the vision he had before the Little Bighorn.",
+      credit: "Image: D.F. Barry, c. 1883, public domain, via Wikimedia Commons",
+    },
+    'Crazy Horse': {
+      image_url: 'assets/interactive/marshal/crazy-horse.jpg',
+      caption: "Crazy Horse (Tȟašúŋke Witkó, c. 1840-1877) was an Oglala Lakota war leader who refused to ever be photographed. He led the charge that closed Custer's flank at the Little Bighorn. Famous for fighting from the front and never wearing a war-shirt.",
+      sokrates_prompt: "Who was Crazy Horse, and what did he do at the Little Bighorn?",
+      credit: "Image: public domain depiction, via Wikimedia Commons",
+    },
+    '7th Cavalry': {
+      image_url: 'assets/interactive/marshal/7th-cavalry.jpg',
+      caption: "The 7th U.S. Cavalry Regiment was formed in 1866. Custer commanded it from 1867 until his death. The regiment lost five of its twelve companies — about 268 men — at the Little Bighorn on June 25-26, 1876.",
+      sokrates_prompt: "What was the 7th Cavalry, and what happened to it at the Little Bighorn?",
+      credit: "Image: public domain (U.S. federal work), via Wikimedia Commons",
+    },
+  },
+  suntzu: {
+    'Sun Tzu': {
+      image_url: 'assets/interactive/marshal/sun-tzu.jpg',
+      caption: "Sun Tzu (孫子, c. 544-496 BC) was a Chinese general and military philosopher. He served the Wu Kingdom during the Spring and Autumn period. Most of what we know about him is legend — but the thirteen chapters of his book have survived 2,500 years intact.",
+      sokrates_prompt: "Who was Sun Tzu, and why is he still read today?",
+      credit: "Image: traditional portrait, public domain, via Wikimedia Commons",
+    },
+    'Art of War': {
+      image_url: 'assets/interactive/marshal/art-of-war.jpg',
+      caption: "The Art of War (孫子兵法) is the oldest known book on military strategy. Just 13 short chapters — about 6,000 Chinese characters. It has shaped commanders from Mao Zedong to General Patton, and is required reading at West Point and most military academies today.",
+      sokrates_prompt: "What is the Art of War, and why is it still studied in military academies?",
+      credit: "Image: Bamboo edition of Sunzi Bingfa, public domain, via Wikimedia Commons",
+    },
+    'ancient China': {
+      image_url: 'assets/interactive/marshal/ancient-china.jpg',
+      caption: "In Sun Tzu's time, what we call 'China' was not one country but a patchwork of rival kingdoms — Wu, Yue, Chu, Qin, and many more — constantly at war. This was the Spring and Autumn period, an age that gave the world Confucius, Lao Tzu, and Sun Tzu, all within about a century of each other.",
+      sokrates_prompt: "What was ancient China like in Sun Tzu's time, around 500 BC?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'deception': {
+      image_url: 'assets/interactive/marshal/deception.jpg',
+      caption: "Sun Tzu's most quoted line: 'All warfare is based on deception.' Look weak when you are strong. Look near when you are far. The point isn't lying for its own sake — it's controlling what the other side thinks they know about you.",
+      sokrates_prompt: "What does Sun Tzu mean when he says 'all warfare is based on deception'?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+  },
+  cannae: {
+    'Cannae': {
+      image_url: 'assets/interactive/marshal/cannae.jpg',
+      caption: "Cannae was a small village on the Aufidus River in southern Italy. On August 2, 216 BC, about 86,000 Romans met 50,000 Carthaginians here. Rome lost more soldiers in a single afternoon than the United States lost in twenty years of the Vietnam War.",
+      sokrates_prompt: "Tell me about Cannae and why this one battle was so devastating for Rome.",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Hannibal': {
+      image_url: 'assets/interactive/marshal/hannibal.jpg',
+      caption: "Hannibal Barca (247-c. 183 BC) was a Carthaginian general and one of the greatest military commanders in history. He swore as a child to be Rome's eternal enemy. He marched elephants across the Alps and tied Rome in knots for sixteen years — but his city, in the end, would not back him.",
+      sokrates_prompt: "Tell me about Hannibal — who was he and why did he hate Rome?",
+      credit: "Image: bust thought to depict Hannibal, public domain, via Wikimedia Commons",
+    },
+    'Carthage': {
+      image_url: 'assets/interactive/marshal/carthage.jpg',
+      caption: "Carthage was a Phoenician trading city on the coast of modern Tunisia. By Hannibal's time it ruled a Mediterranean trade empire that rivaled Rome. Rome eventually destroyed it utterly in 146 BC — the Romans even salted the ground, according to legend.",
+      sokrates_prompt: "What was Carthage, and what happened to it after Hannibal's wars?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Alps': {
+      image_url: 'assets/interactive/marshal/alps.jpg',
+      caption: "The Alps form an 800-mile arc of mountains across Europe, with peaks above 15,000 feet. Hannibal crossed them in autumn 218 BC with about 50,000 soldiers and 37 war elephants. He arrived in Italy with roughly half his army — but inside the gate no one had thought to guard.",
+      sokrates_prompt: "How did Hannibal cross the Alps with elephants, and why did he attempt it?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'legions': {
+      image_url: 'assets/interactive/marshal/legions.jpg',
+      caption: "A Roman legion was a heavy infantry unit of about 4,800 soldiers, organized into cohorts and centuries. The legionary carried a short sword (gladius), two javelins (pila), and a curved shield (scutum). At Cannae, Rome fielded around 16 legions — the largest army it had ever assembled.",
+      sokrates_prompt: "What was a Roman legion, and how was it organized?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+  },
+  dday: {
+    'Normandy': {
+      image_url: 'assets/interactive/marshal/normandy.jpg',
+      caption: "Normandy is a region on France's northern coast facing the English Channel. The Allies picked it precisely because Germany expected the invasion farther east, at Pas-de-Calais. The five landing beaches stretched about 50 miles between Cherbourg and Caen.",
+      sokrates_prompt: "Tell me about Normandy and why the Allies chose it for D-Day.",
+      credit: "Image: public domain (U.S. federal work), via Wikimedia Commons",
+    },
+    'Eisenhower': {
+      image_url: 'assets/interactive/marshal/eisenhower.jpg',
+      caption: "General Dwight D. Eisenhower (1890-1969) was Supreme Allied Commander in Europe. He spent the night before D-Day writing a note accepting all blame if the landings failed — and kept it in his pocket. He later became the 34th President of the United States.",
+      sokrates_prompt: "Who was Eisenhower, and what was the note he carried on D-Day?",
+      credit: "Image: U.S. Army, public domain, via Wikimedia Commons",
+    },
+    'paratroopers': {
+      image_url: 'assets/interactive/marshal/paratroopers.jpg',
+      caption: "Hours before the beach landings, about 24,000 American, British, and Canadian paratroopers dropped behind German lines in the dark. Their job: seize bridges, knock out artillery, and cut roads so German reinforcements couldn't reach the beaches.",
+      sokrates_prompt: "What did the paratroopers do on D-Day, and why did they jump first?",
+      credit: "Image: U.S. Army, public domain, via Wikimedia Commons",
+    },
+    'Pas-de-Calais': {
+      image_url: 'assets/interactive/marshal/pas-de-calais.jpg',
+      caption: "Pas-de-Calais is the narrowest stretch of the English Channel — only 21 miles from England. The Allies built fake army camps in southeast England, with rubber tanks and fake radio chatter, to convince Hitler the invasion would come here. He kept his strongest divisions guarding the wrong beach for weeks.",
+      sokrates_prompt: "What was the deception about Pas-de-Calais, and how did it help D-Day succeed?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'June 6, 1944': {
+      image_url: 'assets/interactive/marshal/june-6-1944.jpg',
+      caption: "June 6, 1944 — D-Day. About 156,000 Allied troops crossed the English Channel in 5,000 ships, supported by 11,000 aircraft. It remains the largest seaborne invasion in history. By nightfall, all five beaches were held, though Omaha Beach had cost over 2,000 American casualties.",
+      sokrates_prompt: "What happened on June 6, 1944, and why is the date so famous?",
+      credit: "Image: U.S. Coast Guard photo by Robert F. Sargent, public domain, via Wikimedia Commons",
+    },
+  },
+  stalingrad: {
+    'Stalingrad': {
+      image_url: 'assets/interactive/marshal/stalingrad.jpg',
+      caption: "Stalingrad (today called Volgograd) sits on the western bank of the Volga River in southern Russia. A long, narrow industrial city built around tractor and steel factories. About 1.1 million Soviet soldiers and 800,000 Axis soldiers were killed, wounded, or captured here — more than any battle in history.",
+      sokrates_prompt: "Tell me about Stalingrad and why so many people died fighting for it.",
+      credit: "Image: Soviet ZiS-3 gun crew, November 1942, public domain, via Wikimedia Commons",
+    },
+    'Volga': {
+      image_url: 'assets/interactive/marshal/volga.jpg',
+      caption: "The Volga is Europe's longest river — 2,294 miles, draining most of European Russia into the Caspian Sea. It was the Soviet Union's main supply artery. If Germany cut the Volga at Stalingrad, oil from the Caucasus stopped flowing north — and Stalin's war effort suffocated.",
+      sokrates_prompt: "Why was the Volga River so important in World War II?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Sixth Army': {
+      image_url: 'assets/interactive/marshal/sixth-army.jpg',
+      caption: "The German Sixth Army was Hitler's strongest field force in 1942 — roughly 285,000 men under General Friedrich Paulus. Surrounded at Stalingrad in November, ordered by Hitler not to break out, it starved through the winter. Paulus surrendered on January 31, 1943. Only about 6,000 of his men ever saw home again.",
+      sokrates_prompt: "What was the German Sixth Army, and what happened to it at Stalingrad?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Rattenkrieg': {
+      image_url: 'assets/interactive/marshal/rattenkrieg.jpg',
+      caption: "Rattenkrieg — German for 'rat war' — was the bitter name German soldiers gave to the urban fighting in Stalingrad. Germans on one floor, Soviets on the floor above. Snipers in collapsed walls. The famous Soviet sniper Vasily Zaitsev claimed 225 kills during the battle.",
+      sokrates_prompt: "What was Rattenkrieg, and how did soldiers actually fight in Stalingrad's ruins?",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+    'Stalin': {
+      image_url: 'assets/interactive/marshal/stalin.jpg',
+      caption: "Joseph Stalin (1878-1953) led the Soviet Union from 1924 until his death. The city was renamed for him in 1925 — losing it would have humiliated him personally. He gave his Order No. 227 in July 1942: 'Not one step back.' Soldiers who retreated could be shot by their own side.",
+      sokrates_prompt: "Tell me about Stalin, and why he refused to give up Stalingrad.",
+      credit: "Image: public domain, via Wikimedia Commons",
+    },
+  },
+};
 
 const STRATEGY_LESSONS = [
   {
@@ -4814,7 +5274,9 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
       )}
       <div className="wrap-narrow mt-10 space-y-5">
         {lesson.story.map((p, i) => (
-          <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>{p}</p>
+          <p key={i} className="text-lg leading-relaxed ink fadeup" style={{ animationDelay:(i*80)+'ms' }}>
+            {renderStoryParagraph(p, INTERACTIVE_DATA[lesson.id])}
+          </p>
         ))}
       </div>
       {lesson.bodyCallout && (
@@ -4850,7 +5312,7 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
               </div>
               <div className="dispatch-date">{lesson.dispatch.date}</div>
               {lesson.dispatch.paragraphs.map((p, i) => (
-                <p key={i} className="dispatch-p">{p}</p>
+                <p key={i} className="dispatch-p">{renderStoryParagraph(p, INTERACTIVE_DATA[lesson.id])}</p>
               ))}
               {lesson.dispatch.closingQuote && (
                 <p className="dispatch-quote">{lesson.dispatch.closingQuote}</p>
