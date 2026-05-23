@@ -729,6 +729,170 @@
     .interactive-modal { padding: 1rem 1.1rem 1.2rem; }
     .interactive-modal-img { max-height: 240px; }
   }
+
+  /* ============================================================
+     ANIMATED HERALDIC ICONS (added 2026-05-23)
+     Subtle motion on flag/lantern/sword/compass/scroll/griffin/relic
+     symbols. Targets the rendered <use href="#..."/> via :has().
+     All gated by prefers-reduced-motion at bottom.
+  ============================================================ */
+  @keyframes flag-wave {
+    0%, 100% { transform: skewX(0deg) translateX(0); }
+    50%      { transform: skewX(-3deg) translateX(2px); }
+  }
+  @keyframes lantern-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(201,164,76,0.6)); opacity: 0.95; }
+    30%      { filter: drop-shadow(0 0 8px rgba(201,164,76,0.9)); opacity: 1; }
+    60%      { filter: drop-shadow(0 0 5px rgba(201,164,76,0.7)); opacity: 0.97; }
+  }
+  @keyframes sword-glint {
+    0%, 100% { transform: rotate(0deg);  filter: brightness(1); }
+    50%      { transform: rotate(2deg);  filter: brightness(1.2); }
+  }
+  @keyframes compass-needle {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes griffin-idle {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-2px) rotate(0.5deg); }
+  }
+  @keyframes relic-shine {
+    0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+    50%      { filter: drop-shadow(0 0 12px rgba(201,164,76,0.5)); }
+  }
+  @keyframes scroll-write {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+  }
+  @keyframes hall-enter {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- flag wave (flag relic + any element tagged .flag-icon / [data-icon="flag"]) --- */
+  .flag-icon, [data-icon="flag"],
+  .relic-tile.earned svg:has(> use[href="#relic-flag"]) {
+    animation: flag-wave 4s ease-in-out infinite;
+    transform-origin: top left;
+  }
+
+  /* --- lantern flicker (skip Sokrates orb — that already pulses) --- */
+  .lantern-icon,
+  .relic-tile.earned svg:has(> use[href="#relic-lantern"]),
+  .relic-tile.earned svg:has(> use[href="#relic-lighthouse"]) {
+    animation: lantern-glow 3s ease-in-out infinite;
+  }
+
+  /* --- sword glint --- */
+  .sword-icon,
+  .relic-tile.earned svg:has(> use[href="#relic-saber"]),
+  .relic-tile.earned svg:has(> use[href="#relic-stiletto"]) {
+    animation: sword-glint 6s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  /* --- compass slow rotation (whole compass; needle isn't separately addressable) --- */
+  .compass-needle,
+  .relic-tile.earned svg:has(> use[href="#relic-compass"]),
+  .relic-tile.earned svg:has(> use[href="#relic-compass-rose"]),
+  .relic-tile.earned svg:has(> use[href="#relic-sextant"]) {
+    animation: compass-needle 30s linear infinite;
+    transform-origin: center;
+  }
+
+  /* --- scroll / parchment / quill shine (use shine instead of stroke-write
+        because the relic paths aren't stroked) --- */
+  .scroll-icon,
+  .relic-tile.earned svg:has(> use[href="#relic-scroll"]),
+  .relic-tile.earned svg:has(> use[href="#relic-parchment"]),
+  .relic-tile.earned svg:has(> use[href="#relic-quill"]) {
+    animation: relic-shine 5s ease-in-out infinite;
+  }
+  /* keep the original spec's stroke-write available for any explicitly tagged path */
+  .scroll-icon path[data-write] {
+    stroke-dasharray: 1000; stroke-dashoffset: 1000;
+    animation: scroll-write 2.5s ease-out forwards;
+  }
+
+  /* --- griffin companion idle flutter --- */
+  .griffin-companion svg { animation: griffin-idle 3s ease-in-out infinite; transform-origin: center; }
+
+  /* --- relic shine for ALL earned tiles (gentle background pulse) --- */
+  .relic-tile.earned .relic-icon svg { animation: relic-shine 4s ease-in-out infinite; }
+
+  /* --- hall-enter fade-in for elements tagged .hall-icon --- */
+  .hall-icon { animation: hall-enter 0.8s ease-out forwards; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flag-icon, [data-icon="flag"],
+    .lantern-icon, .sword-icon, .compass-needle, .scroll-icon,
+    .griffin-companion svg,
+    .relic-tile.earned svg,
+    .relic-tile.earned .relic-icon svg,
+    .hall-icon {
+      animation: none !important;
+    }
+  }
+
+  /* ============================================================
+     FEEDBACK WIDGET (added 2026-05-23)
+     Floating chat-style button bottom-LEFT (no overlap with Sokrates).
+  ============================================================ */
+  .feedback-btn {
+    position: fixed; left: 20px; bottom: 20px; z-index: 60;
+    width: 54px; height: 54px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--parchment-warm) 0%, var(--parchment-deep) 100%);
+    border: 2px solid var(--gold); color: var(--gold-deep);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; pointer-events: auto;
+    box-shadow: 0 6px 18px -6px rgba(15,26,44,0.45);
+    transition: transform .15s ease, box-shadow .2s ease;
+    font-size: 22px; line-height: 1;
+  }
+  .feedback-btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 10px 24px -8px rgba(15,26,44,0.55); }
+  .feedback-btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(201,164,76,0.4), 0 8px 22px -6px rgba(15,26,44,0.55); }
+  .feedback-panel {
+    position: fixed; left: 16px; bottom: 82px; z-index: 65;
+    width: min(360px, calc(100vw - 32px));
+    background: var(--parchment);
+    border: 1px solid var(--gold); border-radius: 14px;
+    box-shadow: 0 24px 60px -18px rgba(15,26,44,0.6);
+    padding: 14px 14px 12px;
+    animation: interactive-popin 0.18s ease-out both;
+  }
+  .feedback-panel h4 {
+    font-family:'Cinzel', serif; font-size: 12px; font-weight: 700;
+    color: var(--gold-deep); letter-spacing: 0.25em; text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+  .feedback-panel textarea {
+    width: 100%; min-height: 90px; resize: vertical;
+    border: 1px solid rgba(26,41,66,0.25); border-radius: 8px;
+    padding: 8px 10px; font-family:'Manrope', system-ui, sans-serif; font-size: 14px;
+    background: var(--parchment-warm); color: var(--ink);
+    outline: none;
+  }
+  .feedback-panel textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,164,76,0.25); }
+  .feedback-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+  .feedback-actions button {
+    font-family:'Cinzel', serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--gold); background: var(--parchment-warm); color: var(--ink);
+    transition: filter .15s ease, transform .1s ease;
+  }
+  .feedback-actions button.primary { background: var(--navy); color: var(--parchment); border-color: var(--navy); }
+  .feedback-actions button:hover:not(:disabled) { filter: brightness(1.08); }
+  .feedback-actions button:disabled { opacity: 0.55; cursor: not-allowed; }
+  .feedback-confirm {
+    font-family:'Cinzel', serif; font-size: 12px; color: var(--gold-deep);
+    text-align: center; padding: 18px 8px; letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  @media (max-width: 480px) {
+    .feedback-btn { left: 14px; bottom: 14px; width: 48px; height: 48px; }
+    .feedback-panel { left: 8px; bottom: 70px; }
+  }
 </style>
 </head>
 <body>
@@ -6006,6 +6170,80 @@ function SokratesOrb() {
   );
 }
 
+/* ============================================================
+   FEEDBACK ORB — floating bottom-left chat-style button.
+   POSTs to /api/feedback with route + viewport metadata.
+============================================================ */
+function FeedbackOrb() {
+  const [open, setOpen]       = useState(false);
+  const [text, setText]       = useState('');
+  const [status, setStatus]   = useState('idle'); // idle | sending | done | error
+
+  async function submit() {
+    const t = text.trim();
+    if (!t || status === 'sending') return;
+    setStatus('sending');
+    try {
+      const r = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          text: t,
+          url: window.location.href,
+          hash: window.location.hash,
+          viewport: { w: window.innerWidth, h: window.innerHeight },
+          userAgent: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      setStatus('done');
+      setText('');
+      setTimeout(() => { setOpen(false); setStatus('idle'); }, 1400);
+    } catch (e) {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 2500);
+    }
+  }
+
+  return (
+    <>
+      <button
+        className="feedback-btn"
+        onClick={() => setOpen(o => !o)}
+        aria-label="Send feedback"
+        title="Send feedback to John"
+      >💬</button>
+      {open && (
+        <div className="feedback-panel" role="dialog" aria-label="Feedback">
+          {status === 'done' ? (
+            <div className="feedback-confirm">Thanks — logged.</div>
+          ) : (
+            <>
+              <h4>Send Feedback</h4>
+              <textarea
+                placeholder="What's on your mind?"
+                value={text}
+                onChange={e => setText(e.target.value)}
+                disabled={status === 'sending'}
+                autoFocus
+              />
+              <div className="feedback-actions">
+                <button onClick={() => { setOpen(false); setText(''); setStatus('idle'); }}>Close</button>
+                <button
+                  className="primary"
+                  onClick={submit}
+                  disabled={!text.trim() || status === 'sending'}
+                >{status === 'sending' ? 'Sending…' : (status === 'error' ? 'Retry' : 'Submit')}</button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
 function App() {
   const [state, setState] = useState(loadState);
   const [route, setRoute] = useState(parseHash);
@@ -6048,6 +6286,7 @@ function App() {
       <MasterVoiceToast message={masterVoice} onDismiss={() => setMasterVoice(null)}/>
       <RelicAwardModal relic={earnedRelic} onClose={() => setEarnedRelic(null)}/>
       <SokratesOrb/>
+      <FeedbackOrb/>
       <footer className="wrap py-12 text-center">
         <div className="gold-line max-w-xs mx-auto mb-4"/>
         <div className="heraldic text-xs ink-muted uppercase tracking-[0.3em]">Griffin Hall · vol. I · MMXXVI</div>
