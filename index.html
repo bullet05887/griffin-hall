@@ -308,6 +308,128 @@
   }
   @media (min-width: 640px) { .griffin-emblem { max-width: 440px; } }
   @media (min-width: 1024px) { .griffin-emblem { max-width: 520px; } }
+
+  /* ============================================================
+     REWARD SYSTEM CSS (flames, trophy hall, modal, toast)
+  ============================================================ */
+  /* ============================================================
+     STREAK FLAME — torch held by Griffin. Scales with streak.
+  ============================================================ */
+  .flame-wrap {
+    position: absolute; right: -6px; top: 18%;
+    width: 28px; height: 38px; pointer-events: none;
+  }
+  @media (max-width: 640px) { .flame-wrap { width: 20px; height: 28px; right: -4px; } }
+  .flame {
+    width: 100%; height: 100%;
+    transform-origin: 50% 100%;
+    animation: flame-flicker 1.6s ease-in-out infinite;
+  }
+  @keyframes flame-flicker {
+    0%, 100% { transform: scaleY(1) scaleX(1); }
+    25% { transform: scaleY(1.08) scaleX(0.94); }
+    50% { transform: scaleY(0.96) scaleX(1.06); }
+    75% { transform: scaleY(1.05) scaleX(0.97); }
+  }
+  .flame.flame-tiny .flame-outer { fill: #f0a040; opacity: 0.85; }
+  .flame.flame-tiny .flame-inner { fill: #ffd070; }
+  .flame.flame-tiny { transform: scale(0.55); transform-origin: 50% 100%; }
+  .flame.flame-strong .flame-outer { fill: #e8742c; opacity: 0.95; }
+  .flame.flame-strong .flame-inner { fill: #ffd86b; }
+  .flame.flame-strong { transform: scale(0.85); transform-origin: 50% 100%; }
+  .flame.flame-blazing .flame-outer { fill: #e54a1a; opacity: 1; }
+  .flame.flame-blazing .flame-inner { fill: #ffe080; }
+  .flame.flame-blazing .flame-core { fill: #fff5c4; }
+  .flame.flame-blazing { transform: scale(1.05); transform-origin: 50% 100%; }
+  .flame.flame-mythic .flame-outer { fill: #4ba6ff; opacity: 0.95; }
+  .flame.flame-mythic .flame-inner { fill: #c9a44c; }
+  .flame.flame-mythic .flame-core { fill: #ffffff; }
+  .flame.flame-mythic { transform: scale(1.15); transform-origin: 50% 100%; filter: drop-shadow(0 0 6px #4ba6ff); }
+  .flame.flame-dim .flame-outer { fill: #d18840; opacity: 0.55; }
+  .flame.flame-dim .flame-inner { fill: #e8b85a; opacity: 0.8; }
+  .flame.flame-dim { transform: scale(0.5); transform-origin: 50% 100%; }
+  .flame.flame-out { display: none; }
+
+  /* ============================================================
+     TROPHY HALL — relic grid + slots + modal
+  ============================================================ */
+  .relic-tile {
+    position: relative; aspect-ratio: 1;
+    background: var(--parchment-warm);
+    border: 1px solid rgba(26,41,66,0.16);
+    border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px; cursor: pointer; transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+  }
+  .relic-tile.earned {
+    background: linear-gradient(135deg, var(--parchment-warm) 0%, #f3dca8 100%);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px rgba(201,164,76,0.6), 0 10px 28px -14px rgba(201,164,76,0.5);
+  }
+  .relic-tile.earned:hover { transform: translateY(-3px); box-shadow: 0 0 0 2px var(--gold), 0 18px 38px -16px rgba(201,164,76,0.65); }
+  .relic-tile.locked { opacity: 0.42; filter: grayscale(0.85); cursor: pointer; }
+  .relic-tile.locked .relic-icon { color: var(--ink-muted); }
+  .relic-tile .relic-icon { width: 58%; height: 58%; display: flex; align-items: center; justify-content: center; }
+  .relic-tile .relic-icon svg { width: 100%; height: 100%; }
+  .relic-tile .relic-name {
+    margin-top: 6px;
+    font-family:'Cinzel', serif; font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--navy-deep); text-align: center; line-height: 1.15;
+  }
+  .relic-tile.locked .relic-name { opacity: 0.5; }
+  .relic-tile.earned::after {
+    content: '★'; position: absolute; top: 6px; right: 8px;
+    color: var(--gold); font-size: 12px;
+  }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15,26,44,0.75);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 60; padding: 1rem; backdrop-filter: blur(4px);
+    animation: fadeup .25s ease-out both;
+  }
+  .modal-card {
+    background: var(--parchment); border: 1px solid var(--gold);
+    border-radius: 18px; padding: 1.75rem;
+    max-width: 540px; width: 100%; max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.6);
+  }
+  .relic-modal-icon {
+    width: 110px; height: 110px; margin: 0 auto;
+    background: var(--navy);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 6px var(--parchment), 0 0 0 7px var(--gold);
+  }
+  .relic-modal-icon svg { width: 60%; height: 60%; color: var(--gold); }
+
+  @keyframes relic-burst {
+    0% { transform: scale(.3) rotate(-30deg); opacity: 0; }
+    40% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+    70% { transform: scale(1.05) rotate(-2deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  .relic-burst { animation: relic-burst .9s cubic-bezier(.4,1.6,.5,1) both; }
+
+  .toast-master {
+    position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%);
+    z-index: 55; max-width: 480px; width: calc(100% - 2rem);
+    background: var(--navy); color: var(--parchment);
+    padding: 1rem 1.25rem; border-radius: 14px;
+    border: 1px solid var(--gold); border-left: 4px solid var(--gold);
+    box-shadow: 0 14px 36px -10px rgba(15,26,44,0.55);
+    font-family:'Instrument Serif', Georgia, serif;
+    animation: fadeup .35s ease-out both;
+    pointer-events: auto;
+  }
+  .toast-master .tm-label {
+    font-family:'Cinzel', serif; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.25em;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .toast-master .tm-body { font-size: 17px; line-height: 1.35; font-style: italic; }
 </style>
 </head>
 <body>
@@ -517,6 +639,231 @@
         <text x="86" y="53" textAnchor="middle" fontFamily="Cinzel, serif" fontSize="7" fontWeight="700">E</text>
       </g>
     </symbol>
+
+    <!-- Griffin growth stages (6 stages, reward system) -->
+    <symbol id="griffin-stage-1" viewBox="0 0 120 130">
+      <!-- HATCHLING: tiny chick form, big eyes, downy feathers, eggshell base -->
+      <g>
+        <!-- eggshell bottom -->
+        <path d="M30 116 Q 20 110 30 102 L 90 102 Q 100 110 90 116 Q 76 122 60 122 Q 44 122 30 116 Z" fill="#f4ecd8" stroke="#1a2942" strokeWidth="1.5"/>
+        <path d="M32 105 L 38 100 L 42 108 L 50 102 L 56 110 L 64 102 L 70 110 L 78 102 L 84 108 L 88 105" fill="none" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- body fluffy -->
+        <ellipse cx="60" cy="80" rx="26" ry="22" fill="#c9a44c"/>
+        <path d="M40 72 Q 45 64 50 72 M 50 66 Q 55 60 60 66 M 60 64 Q 65 58 70 64 M 70 68 Q 75 62 80 68" stroke="#a8852f" strokeWidth="1" fill="none"/>
+        <!-- head big eyes -->
+        <circle cx="60" cy="48" r="20" fill="#c9a44c"/>
+        <circle cx="52" cy="46" r="5" fill="#fff"/>
+        <circle cx="68" cy="46" r="5" fill="#fff"/>
+        <circle cx="52" cy="47" r="2.6" fill="#1a2942"/>
+        <circle cx="68" cy="47" r="2.6" fill="#1a2942"/>
+        <circle cx="53" cy="46" r="0.8" fill="#fff"/>
+        <circle cx="69" cy="46" r="0.8" fill="#fff"/>
+        <!-- tiny beak -->
+        <path d="M58 55 L 60 60 L 62 55 Z" fill="#a8852f"/>
+        <!-- nub wings -->
+        <path d="M38 80 Q 30 78 32 88 Q 36 86 40 84 Z" fill="#a8852f"/>
+        <path d="M82 80 Q 90 78 88 88 Q 84 86 80 84 Z" fill="#a8852f"/>
+        <!-- tiny feet -->
+        <path d="M52 100 L 50 106 M 54 100 L 56 106 M 66 100 L 64 106 M 68 100 L 70 106" stroke="#1a2942" strokeWidth="1.5"/>
+        <!-- topknot tufts -->
+        <path d="M55 28 L 56 22 M 60 26 L 60 18 M 65 28 L 64 22" stroke="#a8852f" strokeWidth="2" strokeLinecap="round"/>
+      </g>
+    </symbol>
+
+    <symbol id="griffin-stage-2" viewBox="0 0 120 130">
+      <!-- FLEDGLING: short feathers, learning posture, small wings -->
+      <g>
+        <!-- body -->
+        <ellipse cx="60" cy="82" rx="26" ry="24" fill="#c9a44c"/>
+        <path d="M38 78 Q 44 70 48 78 M 50 74 Q 56 66 60 74 M 62 72 Q 68 64 72 72 M 76 78 Q 82 70 84 78" stroke="#a8852f" strokeWidth="1.2" fill="none"/>
+        <!-- lion legs forming -->
+        <path d="M44 102 Q 42 110 46 116 L 52 116 L 50 108 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1"/>
+        <path d="M76 102 Q 78 110 74 116 L 68 116 L 70 108 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1"/>
+        <!-- head -->
+        <circle cx="60" cy="44" r="18" fill="#c9a44c"/>
+        <circle cx="53" cy="42" r="3.6" fill="#fff"/>
+        <circle cx="67" cy="42" r="3.6" fill="#fff"/>
+        <circle cx="53" cy="43" r="1.8" fill="#1a2942"/>
+        <circle cx="67" cy="43" r="1.8" fill="#1a2942"/>
+        <!-- short beak -->
+        <path d="M57 52 L 60 58 L 63 52 L 60 54 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="0.8"/>
+        <!-- small wing -->
+        <path d="M34 80 Q 22 70 24 88 Q 30 84 38 86 Q 36 80 34 80 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1"/>
+        <path d="M86 80 Q 98 70 96 88 Q 90 84 82 86 Q 84 80 86 80 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1"/>
+        <!-- short head feathers -->
+        <path d="M54 26 L 56 20 M 60 24 L 60 16 M 66 26 L 64 20" stroke="#1a2942" strokeWidth="1.5" strokeLinecap="round"/>
+        <!-- tail nub -->
+        <path d="M84 96 Q 92 94 92 102 Q 90 106 84 102 Z" fill="#a8852f"/>
+      </g>
+    </symbol>
+
+    <symbol id="griffin-stage-3" viewBox="0 0 120 130">
+      <!-- YOUNG GRIFFIN: full juvenile, alert, proper wing+tail -->
+      <g>
+        <!-- body lion -->
+        <path d="M40 60 Q 32 78 36 100 L 44 116 L 52 116 L 50 100 Q 56 92 64 92 Q 76 92 80 100 L 78 116 L 86 116 L 88 96 Q 92 78 84 60 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- belly fur lines -->
+        <path d="M46 80 L 50 84 M 54 78 L 58 82 M 64 78 L 68 82 M 72 80 L 76 84" stroke="#a8852f" strokeWidth="1" fill="none"/>
+        <!-- head eagle -->
+        <path d="M44 38 Q 40 28 48 22 Q 58 16 70 22 Q 80 28 78 42 L 76 52 Q 70 58 60 58 Q 50 58 46 52 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.2"/>
+        <circle cx="58" cy="34" r="3" fill="#fff"/>
+        <circle cx="58" cy="35" r="1.6" fill="#1a2942"/>
+        <!-- proper beak -->
+        <path d="M70 38 L 80 42 L 76 46 L 70 44 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1"/>
+        <!-- wing folded -->
+        <path d="M40 58 Q 22 62 22 82 Q 30 78 38 80 Q 32 72 40 58 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.2"/>
+        <path d="M28 70 L 34 74 M 30 76 L 36 78" stroke="#1a2942" strokeWidth="0.8"/>
+        <!-- tail with tuft -->
+        <path d="M88 70 Q 102 64 104 80 Q 106 92 96 92 Q 100 86 94 84 Q 88 82 90 76 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- head crest -->
+        <path d="M54 18 L 56 12 L 60 14 L 62 8 L 66 14 L 68 12 L 70 18" fill="#c9a44c" stroke="#1a2942" strokeWidth="1"/>
+      </g>
+    </symbol>
+
+    <symbol id="griffin-stage-4" viewBox="0 0 120 130">
+      <!-- WARRIOR GRIFFIN: battle-ready, scars, broader chest -->
+      <g>
+        <!-- body broader -->
+        <path d="M36 58 Q 28 78 32 102 L 42 118 L 52 118 L 50 100 Q 56 90 64 90 Q 76 90 80 100 L 78 118 L 88 118 L 90 96 Q 96 78 86 58 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <!-- chest fur -->
+        <path d="M50 64 Q 55 70 60 64 Q 65 70 70 64" stroke="#1a2942" strokeWidth="1.2" fill="none"/>
+        <!-- scar across shoulder -->
+        <path d="M30 70 L 42 76" stroke="#9b2226" strokeWidth="1.8"/>
+        <path d="M28 72 L 32 70 M 36 74 L 40 76" stroke="#1a2942" strokeWidth="0.8"/>
+        <!-- head fierce -->
+        <path d="M42 36 Q 38 24 50 18 Q 60 14 72 20 Q 82 26 80 42 L 78 54 Q 70 60 60 60 Q 50 60 46 54 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <circle cx="56" cy="32" r="3.4" fill="#fff"/>
+        <circle cx="56" cy="33" r="2" fill="#1a2942"/>
+        <!-- angry brow -->
+        <path d="M50 26 L 60 30" stroke="#1a2942" strokeWidth="1.6"/>
+        <!-- battle beak -->
+        <path d="M70 40 L 84 46 L 80 50 L 70 48 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- wing raised -->
+        <path d="M38 56 Q 14 50 14 76 Q 22 74 30 76 Q 36 78 40 80 Q 32 72 38 56 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.5"/>
+        <path d="M22 60 L 32 64 M 20 68 L 32 70 M 24 74 L 34 76" stroke="#1a2942" strokeWidth="0.8"/>
+        <!-- tail with strong tuft -->
+        <path d="M88 64 Q 108 56 110 76 Q 112 96 98 96 Q 104 90 96 86 Q 88 82 92 72 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.5"/>
+        <!-- head crest spiky -->
+        <path d="M50 14 L 52 6 L 58 12 L 60 4 L 66 12 L 70 6 L 72 14" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- claws -->
+        <path d="M40 118 L 38 122 M 44 118 L 44 122 M 48 118 L 50 122" stroke="#1a2942" strokeWidth="1.4"/>
+        <path d="M78 118 L 76 122 M 82 118 L 82 122 M 86 118 L 88 122" stroke="#1a2942" strokeWidth="1.4"/>
+      </g>
+    </symbol>
+
+    <symbol id="griffin-stage-5" viewBox="0 0 120 130">
+      <!-- MASTER GRIFFIN: golden feather tips, regal posture, ornament -->
+      <g>
+        <!-- aura -->
+        <circle cx="60" cy="65" r="55" fill="none" stroke="#c9a44c" strokeWidth="0.6" opacity="0.4"/>
+        <!-- body -->
+        <path d="M36 58 Q 28 78 32 102 L 42 118 L 52 118 L 50 100 Q 56 90 64 90 Q 76 90 80 100 L 78 118 L 88 118 L 90 96 Q 96 78 86 58 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <!-- chest medallion -->
+        <circle cx="60" cy="78" r="6" fill="#9b2226" stroke="#1a2942" strokeWidth="1.2"/>
+        <circle cx="60" cy="78" r="2.5" fill="#c9a44c"/>
+        <!-- gold feather tips on tail and wing -->
+        <!-- head regal -->
+        <path d="M42 36 Q 38 22 50 16 Q 60 12 72 18 Q 82 24 80 42 L 78 54 Q 70 60 60 60 Q 50 60 46 54 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <circle cx="56" cy="32" r="3.4" fill="#fff"/>
+        <circle cx="56" cy="33" r="2" fill="#c9a44c"/>
+        <circle cx="56" cy="33" r="1" fill="#1a2942"/>
+        <!-- golden beak with ring -->
+        <path d="M70 40 L 86 44 L 82 50 L 70 48 Z" fill="#e0bd6a" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- wing -->
+        <path d="M38 56 Q 14 48 12 78 Q 22 74 30 76 Q 36 78 40 80 Q 30 70 38 56 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.5"/>
+        <path d="M18 58 L 26 62 L 20 68 L 30 70 L 22 76 L 32 78" stroke="#e0bd6a" strokeWidth="1.2" fill="none"/>
+        <!-- tail w/ gold tips -->
+        <path d="M88 64 Q 110 54 112 76 Q 114 96 98 98 Q 106 92 96 86 Q 88 80 92 70 Z" fill="#a8852f" stroke="#1a2942" strokeWidth="1.5"/>
+        <path d="M100 60 L 108 56 M 104 76 L 112 76 M 100 90 L 108 92" stroke="#e0bd6a" strokeWidth="1.2"/>
+        <!-- regal head crest with gold band -->
+        <path d="M48 14 L 50 4 L 58 10 L 60 2 L 66 10 L 70 4 L 72 14" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.2"/>
+        <path d="M48 14 L 72 14" stroke="#e0bd6a" strokeWidth="2"/>
+        <!-- gemstone -->
+        <circle cx="60" cy="14" r="2.2" fill="#9b2226" stroke="#e0bd6a" strokeWidth="1"/>
+      </g>
+    </symbol>
+
+    <symbol id="griffin-stage-6" viewBox="0 0 120 130">
+      <!-- MYTHIC GRIFFIN: crown, halo, glowing details -->
+      <g>
+        <!-- halo ring -->
+        <ellipse cx="60" cy="22" rx="32" ry="10" fill="none" stroke="#e0bd6a" strokeWidth="2" opacity="0.85"/>
+        <ellipse cx="60" cy="22" rx="32" ry="10" fill="none" stroke="#fff5c4" strokeWidth="0.8" opacity="0.7"/>
+        <!-- radiating light -->
+        <g stroke="#e0bd6a" strokeWidth="1" opacity="0.5">
+          <line x1="60" y1="0" x2="60" y2="6"/>
+          <line x1="30" y1="6" x2="34" y2="12"/>
+          <line x1="90" y1="6" x2="86" y2="12"/>
+          <line x1="14" y1="22" x2="20" y2="22"/>
+          <line x1="100" y1="22" x2="106" y2="22"/>
+        </g>
+        <!-- aura -->
+        <circle cx="60" cy="65" r="58" fill="none" stroke="#e0bd6a" strokeWidth="0.8" opacity="0.5"/>
+        <circle cx="60" cy="65" r="52" fill="none" stroke="#fff5c4" strokeWidth="0.5" opacity="0.6"/>
+        <!-- body -->
+        <path d="M36 58 Q 28 78 32 102 L 42 118 L 52 118 L 50 100 Q 56 90 64 90 Q 76 90 80 100 L 78 118 L 88 118 L 90 96 Q 96 78 86 58 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <!-- chest gem -->
+        <path d="M55 76 L 60 70 L 65 76 L 60 84 Z" fill="#9b2226" stroke="#e0bd6a" strokeWidth="1.5"/>
+        <circle cx="60" cy="76" r="1.5" fill="#fff"/>
+        <!-- head -->
+        <path d="M42 36 Q 38 22 50 16 Q 60 10 72 18 Q 82 24 80 42 L 78 54 Q 70 60 60 60 Q 50 60 46 54 Z" fill="#e0bd6a" stroke="#1a2942" strokeWidth="1.5"/>
+        <!-- glowing eye -->
+        <circle cx="56" cy="32" r="4.5" fill="#fff5c4"/>
+        <circle cx="56" cy="32" r="2.6" fill="#e0bd6a"/>
+        <circle cx="56" cy="32" r="1.2" fill="#1a2942"/>
+        <!-- golden beak -->
+        <path d="M70 40 L 88 42 L 86 50 L 70 48 Z" fill="#e0bd6a" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- wing fully extended -->
+        <path d="M38 58 Q 6 44 4 78 Q 16 76 26 78 Q 34 80 40 82 Q 26 68 38 58 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <path d="M10 56 L 22 60 L 14 66 L 26 70 L 16 74 L 28 78" stroke="#e0bd6a" strokeWidth="1.4" fill="none"/>
+        <path d="M14 60 L 18 58 M 18 68 L 22 66 M 22 76 L 26 74" stroke="#fff5c4" strokeWidth="0.8"/>
+        <!-- tail glowing -->
+        <path d="M88 60 Q 114 50 116 76 Q 118 100 100 100 Q 110 92 98 86 Q 88 80 92 68 Z" fill="#c9a44c" stroke="#1a2942" strokeWidth="1.5"/>
+        <path d="M102 58 L 112 54 M 106 76 L 116 76 M 104 92 L 114 94" stroke="#e0bd6a" strokeWidth="1.4"/>
+        <!-- crown -->
+        <path d="M40 16 L 44 4 L 50 12 L 54 0 L 60 10 L 66 0 L 70 12 L 76 4 L 80 16 Z" fill="#e0bd6a" stroke="#1a2942" strokeWidth="1.5"/>
+        <circle cx="48" cy="10" r="1.6" fill="#9b2226"/>
+        <circle cx="60" cy="6" r="2" fill="#9b2226" stroke="#fff5c4" strokeWidth="0.6"/>
+        <circle cx="72" cy="10" r="1.6" fill="#9b2226"/>
+        <path d="M40 16 L 80 16" stroke="#1a2942" strokeWidth="1.2"/>
+        <!-- claws gold -->
+        <path d="M40 118 L 38 122 M 44 118 L 44 122 M 48 118 L 50 122" stroke="#e0bd6a" strokeWidth="1.4"/>
+        <path d="M78 118 L 76 122 M 82 118 L 82 122 M 86 118 L 88 122" stroke="#e0bd6a" strokeWidth="1.4"/>
+      </g>
+    </symbol>
+
+    <!-- Relic icons (reward system, 30+ relics) -->
+    <symbol id="relic-flag" viewBox="0 0 100 100"><g fill="currentColor"><rect x="18" y="20" width="3" height="68"/><path d="M21 22 L 78 22 L 70 36 L 78 50 L 21 50 Z"/><path d="M30 28 L 32 34 L 38 34 L 33 38 L 35 44 L 30 40 L 25 44 L 27 38 L 22 34 L 28 34 Z" fill="#1a2942"/></g></symbol>
+    <symbol id="relic-saber" viewBox="0 0 100 100"><g fill="currentColor" stroke="currentColor"><path d="M18 78 Q 30 60 50 50 Q 70 40 88 28 L 84 22 Q 64 32 46 44 Q 28 56 14 74 Z" strokeWidth="0.5"/><rect x="14" y="76" width="14" height="6" rx="1"/><path d="M22 70 L 30 78 L 24 84 L 16 76 Z"/></g></symbol>
+    <symbol id="relic-scroll" viewBox="0 0 100 100"><g fill="currentColor"><rect x="22" y="22" width="56" height="56" rx="3"/><circle cx="22" cy="22" r="6" stroke="#1a2942" strokeWidth="2" fill="currentColor"/><circle cx="78" cy="78" r="6" stroke="#1a2942" strokeWidth="2" fill="currentColor"/><path d="M30 36 L 70 36 M 30 44 L 70 44 M 30 52 L 70 52 M 30 60 L 60 60" stroke="#1a2942" strokeWidth="1.5"/></g></symbol>
+    <symbol id="relic-tooth" viewBox="0 0 100 100"><g fill="currentColor"><path d="M30 18 Q 40 14 50 16 Q 60 14 70 18 Q 74 30 70 50 Q 66 70 58 84 Q 50 90 42 84 Q 34 70 30 50 Q 26 30 30 18 Z"/><path d="M40 30 L 38 60 M 50 28 L 50 70 M 60 30 L 62 60" stroke="#1a2942" strokeWidth="1.2" fill="none"/></g></symbol>
+    <symbol id="relic-order" viewBox="0 0 100 100"><g fill="currentColor"><rect x="22" y="14" width="56" height="72" rx="2"/><path d="M30 26 L 70 26 M 30 36 L 70 36 M 30 46 L 70 46 M 30 56 L 70 56 M 30 66 L 70 66 M 30 76 L 56 76" stroke="#1a2942" strokeWidth="1.6"/><circle cx="68" cy="78" r="5" stroke="#1a2942" strokeWidth="1.5" fill="currentColor"/></g></symbol>
+    <symbol id="relic-rifle" viewBox="0 0 100 100"><g fill="currentColor"><rect x="14" y="48" width="72" height="6"/><path d="M84 44 L 92 44 L 92 58 L 84 58 Z"/><path d="M14 48 L 8 56 L 14 56 Z"/><rect x="32" y="54" width="18" height="14"/><rect x="46" y="68" width="6" height="12"/></g></symbol>
+    <symbol id="relic-quill" viewBox="0 0 100 100"><g fill="currentColor"><path d="M76 14 Q 84 16 88 26 Q 80 42 64 56 Q 50 68 36 78 L 28 88 L 22 82 L 32 72 Q 44 56 58 42 Q 70 28 76 14 Z"/><path d="M76 14 L 64 22 M 76 14 L 72 26 M 76 14 L 80 28 M 76 14 L 86 22" stroke="#1a2942" strokeWidth="1"/><rect x="14" y="78" width="22" height="6" rx="1"/></g></symbol>
+    <symbol id="relic-cup" viewBox="0 0 100 100"><g fill="currentColor"><path d="M26 22 L 74 22 L 70 60 Q 68 70 50 72 Q 32 70 30 60 Z"/><rect x="42" y="76" width="16" height="4"/><rect x="34" y="80" width="32" height="6" rx="1"/><path d="M32 32 L 68 32" stroke="#1a2942" strokeWidth="1.5"/></g></symbol>
+    <symbol id="relic-lantern" viewBox="0 0 100 100"><g fill="currentColor"><rect x="36" y="16" width="28" height="4"/><path d="M44 20 L 36 28 L 36 70 L 64 70 L 64 28 L 56 20 Z"/><rect x="42" y="32" width="16" height="32" fill="#1a2942"/><circle cx="50" cy="48" r="5" fill="#ffd86b"/><path d="M50 8 L 50 16 M 38 12 L 44 18 M 62 12 L 56 18" stroke="currentColor" strokeWidth="2" fill="none"/><rect x="32" y="70" width="36" height="6"/><rect x="48" y="80" width="4" height="8"/></g></symbol>
+    <symbol id="relic-compass" viewBox="0 0 100 100"><g><circle cx="50" cy="50" r="34" fill="currentColor"/><circle cx="50" cy="50" r="28" fill="#1a2942"/><path d="M50 24 L 56 50 L 50 76 L 44 50 Z" fill="currentColor"/><path d="M50 24 L 56 50 L 44 50 Z" fill="#9b2226"/><circle cx="50" cy="50" r="3" fill="currentColor"/></g></symbol>
+    <symbol id="relic-toga" viewBox="0 0 100 100"><g fill="currentColor"><path d="M24 28 L 50 16 L 76 28 L 70 84 L 30 84 Z"/><path d="M30 36 L 42 84 M 50 22 L 50 84 M 70 36 L 58 84" stroke="#1a2942" strokeWidth="1.2" fill="none"/><circle cx="50" cy="28" r="4" fill="#9b2226" stroke="#1a2942" strokeWidth="1"/></g></symbol>
+    <symbol id="relic-pin" viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="38" r="20"/><circle cx="50" cy="38" r="10" fill="#1a2942"/><circle cx="50" cy="38" r="4" fill="currentColor"/><rect x="48" y="56" width="4" height="32"/></g></symbol>
+    <symbol id="relic-stiletto" viewBox="0 0 100 100"><g fill="currentColor"><path d="M50 8 L 56 22 L 50 80 L 44 22 Z"/><rect x="34" y="78" width="32" height="6" rx="1"/><rect x="42" y="82" width="16" height="10"/></g></symbol>
+    <symbol id="relic-helmet" viewBox="0 0 100 100"><g fill="currentColor"><path d="M22 50 Q 22 24 50 22 Q 78 24 78 50 L 78 64 L 22 64 Z"/><path d="M50 22 L 50 12 L 60 12 Q 70 8 80 14 L 78 30" fill="currentColor"/><rect x="22" y="58" width="56" height="6" fill="#1a2942"/><path d="M40 40 L 60 40 L 56 52 L 44 52 Z" fill="#1a2942"/></g></symbol>
+    <symbol id="relic-crown" viewBox="0 0 100 100"><g fill="currentColor"><path d="M16 36 L 26 60 L 38 40 L 50 64 L 62 40 L 74 60 L 84 36 L 82 76 L 18 76 Z"/><circle cx="26" cy="38" r="3" fill="#9b2226"/><circle cx="50" cy="42" r="4" fill="#9b2226"/><circle cx="74" cy="38" r="3" fill="#9b2226"/><rect x="18" y="76" width="64" height="6" fill="#1a2942"/></g></symbol>
+    <symbol id="relic-laurel" viewBox="0 0 100 100"><g fill="currentColor"><path d="M20 60 Q 20 30 50 20 Q 80 30 80 60" stroke="currentColor" strokeWidth="4" fill="none"/><g><ellipse cx="28" cy="42" rx="6" ry="3" transform="rotate(-50 28 42)"/><ellipse cx="22" cy="56" rx="6" ry="3" transform="rotate(-90 22 56)"/><ellipse cx="34" cy="30" rx="6" ry="3" transform="rotate(-30 34 30)"/><ellipse cx="46" cy="22" rx="6" ry="3" transform="rotate(-10 46 22)"/><ellipse cx="54" cy="22" rx="6" ry="3" transform="rotate(10 54 22)"/><ellipse cx="66" cy="30" rx="6" ry="3" transform="rotate(30 66 30)"/><ellipse cx="72" cy="42" rx="6" ry="3" transform="rotate(50 72 42)"/><ellipse cx="78" cy="56" rx="6" ry="3" transform="rotate(90 78 56)"/></g><path d="M40 64 L 60 64 L 56 80 L 44 80 Z" fill="#9b2226"/></g></symbol>
+    <symbol id="relic-hat" viewBox="0 0 100 100"><g fill="currentColor"><rect x="32" y="18" width="36" height="56"/><rect x="20" y="74" width="60" height="8"/><rect x="32" y="36" width="36" height="6" fill="#9b2226"/></g></symbol>
+    <symbol id="relic-purse" viewBox="0 0 100 100"><g fill="currentColor"><path d="M20 36 L 30 36 Q 30 24 50 24 Q 70 24 70 36 L 80 36 L 84 84 L 16 84 Z"/><path d="M38 36 Q 38 30 50 30 Q 62 30 62 36" fill="none" stroke="#1a2942" strokeWidth="2"/><text x="50" y="68" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="22" fill="#1a2942" fontWeight="700">$</text></g></symbol>
+    <symbol id="relic-scale" viewBox="0 0 100 100"><g fill="currentColor"><rect x="48" y="14" width="4" height="68"/><rect x="36" y="80" width="28" height="6"/><path d="M14 36 L 50 30 L 86 36 L 50 42 Z"/><path d="M14 36 L 22 56 L 6 56 Z"/><path d="M86 36 L 94 56 L 78 56 Z"/></g></symbol>
+    <symbol id="relic-cylinder" viewBox="0 0 100 100"><g fill="currentColor"><ellipse cx="50" cy="22" rx="22" ry="6"/><rect x="28" y="22" width="44" height="56"/><ellipse cx="50" cy="78" rx="22" ry="6"/><path d="M34 32 L 66 32 M 34 42 L 66 42 M 34 52 L 66 52 M 34 62 L 66 62" stroke="#1a2942" strokeWidth="1.2" fill="none"/></g></symbol>
+    <symbol id="relic-abacus" viewBox="0 0 100 100"><g fill="currentColor"><rect x="14" y="20" width="72" height="60" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M20 32 L 80 32 M 20 50 L 80 50 M 20 68 L 80 68" stroke="currentColor" strokeWidth="1.5"/><g><circle cx="30" cy="32" r="3"/><circle cx="42" cy="32" r="3"/><circle cx="58" cy="32" r="3"/><circle cx="70" cy="32" r="3"/><circle cx="26" cy="50" r="3"/><circle cx="38" cy="50" r="3"/><circle cx="50" cy="50" r="3"/><circle cx="62" cy="50" r="3"/><circle cx="74" cy="50" r="3"/><circle cx="34" cy="68" r="3"/><circle cx="46" cy="68" r="3"/><circle cx="58" cy="68" r="3"/></g></g></symbol>
+    <symbol id="relic-golden-ratio" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" strokeWidth="2.2"><rect x="14" y="14" width="72" height="44"/><rect x="14" y="58" width="44" height="28"/><rect x="58" y="58" width="28" height="20"/><rect x="58" y="78" width="20" height="8"/><path d="M14 58 Q 86 58 86 14" strokeWidth="2.5"/></g></symbol>
+    <symbol id="relic-dice" viewBox="0 0 100 100"><g fill="currentColor"><path d="M14 30 L 50 12 L 86 30 L 86 70 L 50 88 L 14 70 Z"/><path d="M14 30 L 50 48 L 86 30 M 50 48 L 50 88" stroke="#1a2942" strokeWidth="2" fill="none"/><circle cx="34" cy="44" r="2.4" fill="#1a2942"/><circle cx="50" cy="34" r="2.4" fill="#1a2942"/><circle cx="66" cy="44" r="2.4" fill="#1a2942"/><circle cx="34" cy="64" r="2.4" fill="#1a2942"/><circle cx="66" cy="64" r="2.4" fill="#1a2942"/><circle cx="60" cy="68" r="2.4" fill="#1a2942"/><circle cx="40" cy="68" r="2.4" fill="#1a2942"/></g></symbol>
+    <symbol id="relic-fibonacci" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M86 50 Q 86 14 50 14 Q 14 14 14 50 Q 14 78 38 78 Q 60 78 60 56 Q 60 38 46 38 Q 36 38 36 50 Q 36 58 44 58 Q 50 58 50 52"/><circle cx="50" cy="52" r="1.5" fill="currentColor"/></g></symbol>
+    <symbol id="relic-infinity" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round"><path d="M30 50 C 30 30, 50 30, 50 50 C 50 70, 70 70, 70 50 C 70 30, 50 30, 50 50 C 50 70, 30 70, 30 50 Z"/></g></symbol>
+    <symbol id="relic-globe" viewBox="0 0 100 100"><g><circle cx="50" cy="50" r="34" fill="currentColor"/><g stroke="#1a2942" strokeWidth="1.6" fill="none"><ellipse cx="50" cy="50" rx="34" ry="14"/><ellipse cx="50" cy="50" rx="14" ry="34"/><line x1="16" y1="50" x2="84" y2="50"/></g><rect x="44" y="84" width="12" height="6" fill="currentColor"/><rect x="36" y="86" width="28" height="4" fill="currentColor"/></g></symbol>
+    <symbol id="relic-sextant" viewBox="0 0 100 100"><g fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M14 78 L 86 78 Q 86 32 50 14 Z" fill="currentColor"/><path d="M22 78 L 50 22 L 78 78" stroke="#1a2942" strokeWidth="2" fill="none"/><circle cx="50" cy="78" r="3" fill="#1a2942"/><path d="M50 78 L 64 50" stroke="#1a2942" strokeWidth="2"/></g></symbol>
+    <symbol id="relic-parchment" viewBox="0 0 100 100"><g fill="currentColor"><path d="M14 22 Q 18 16 26 22 L 80 22 Q 86 18 84 30 L 84 72 Q 86 80 78 78 L 24 78 Q 14 82 14 70 Z"/><path d="M26 32 L 72 32 M 26 42 L 72 42 M 26 52 L 72 52 M 26 62 L 60 62" stroke="#1a2942" strokeWidth="1.4"/></g></symbol>
+    <symbol id="relic-atlas-book" viewBox="0 0 100 100"><g fill="currentColor"><rect x="14" y="18" width="72" height="64" rx="3"/><path d="M50 18 L 50 82" stroke="#1a2942" strokeWidth="2"/><circle cx="32" cy="50" r="10" fill="none" stroke="#1a2942" strokeWidth="1.6"/><circle cx="68" cy="50" r="10" fill="none" stroke="#1a2942" strokeWidth="1.6"/><path d="M22 50 L 42 50 M 58 50 L 78 50" stroke="#1a2942" strokeWidth="1.2"/></g></symbol>
+    <symbol id="relic-compass-rose" viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="50" r="32" fill="none" stroke="currentColor" strokeWidth="1.5"/><path d="M50 14 L 54 50 L 50 86 L 46 50 Z"/><path d="M14 50 L 50 54 L 86 50 L 50 46 Z"/><path d="M24 24 L 50 50 L 76 24 M 24 76 L 50 50 L 76 76" stroke="currentColor" strokeWidth="1.5" fill="none"/><circle cx="50" cy="50" r="4"/></g></symbol>
+    <symbol id="relic-lighthouse" viewBox="0 0 100 100"><g fill="currentColor"><path d="M40 86 L 60 86 L 58 30 L 42 30 Z"/><path d="M36 30 L 64 30 L 60 22 L 40 22 Z"/><rect x="42" y="14" width="16" height="8"/><circle cx="50" cy="18" r="3" fill="#9b2226"/><path d="M30 50 L 14 46 M 30 60 L 14 64 M 70 50 L 86 46 M 70 60 L 86 64" stroke="currentColor" strokeWidth="1.6" opacity="0.7"/></g></symbol>
   </defs>
 </svg>
 
@@ -2125,6 +2472,141 @@ const QUESTS = {
    HALLS (rows) — each Hall has a Master and a list of Quests.
    Marshal's Hall is open tonight; all others are sealed.
 ============================================================ */
+
+/* ============================================================
+   REWARD SYSTEM — Griffin stages, stageFromXP, relics, halls
+============================================================ */
+const GRIFFIN_STAGES = [
+  { stage:1, name:'Hatchling',       xp:0,    voice:"A small egg. A bigger one inside. Begin."                                          },
+  { stage:2, name:'Fledgling',       xp:100,  voice:"Your Griffin has hatched. Stretch your wings, young one."                          },
+  { stage:3, name:'Young Griffin',   xp:300,  voice:"Your Griffin has matured. You stand taller."                                       },
+  { stage:4, name:'Warrior Griffin', xp:700,  voice:"Your Griffin is battle-tested. Scars are proof you returned."                       },
+  { stage:5, name:'Master Griffin',  xp:1500, voice:"Your Griffin has reached mastery. The Hall bows in your direction tonight."        },
+  { stage:6, name:'Mythic Griffin',  xp:3000, voice:"Your Griffin is mythic. Whispered of in halls you have never entered."             },
+];
+function stageFromXP(xp) {
+  let s = 1;
+  for (const g of GRIFFIN_STAGES) { if ((xp||0) >= g.xp) s = g.stage; }
+  return s;
+}
+
+/* ============================================================
+   RELICS — 30 unique relics, one per planned lesson.
+   Earned ones glow. Locked ones are silhouetted.
+============================================================ */
+const RELICS = [
+  // === Marshal's Hall — Cassian (6) ===
+  { id:'washingtons_flag', name:"Washington's Flag", lesson_id:'delaware', hall:'marshal', master:'cassian', icon:'relic-flag',
+    lore:"Frozen Christmas night, 1776. Washington crossed the ice-choked Delaware with this flag furled in the boat and surprised the Hessian garrison at Trenton at dawn. The Revolution caught fire again from the spark of a single, impossible river crossing.\n\nThe flag is stained with sleet, river mud, and the breath of men who chose to step onto ice that should not have held them. It hangs in this hall as a reminder that the right moment is rarely the comfortable one.",
+    master_oneliner:"While they sang carols by their fires, he was on a river of ice. That's when you go." },
+  { id:'custers_saber', name:"Custer's Saber", lesson_id:'custer', hall:'marshal', master:'cassian', icon:'relic-saber',
+    lore:"A cavalry saber, hilt warm with overconfidence. Custer carried it into Little Bighorn after refusing the Gatling guns, after dismissing the scouts who told him the village was larger than he believed.\n\nThe blade is bright. It was never the blade's fault.",
+    master_oneliner:"Brave. Foolish. Brave does not pay for foolish. Pay attention." },
+  { id:'suntzu_scroll', name:"Sun Tzu's Bamboo Scroll", lesson_id:'suntzu', hall:'marshal', master:'cassian', icon:'relic-scroll',
+    lore:"Thirteen short chapters carved on bamboo about 2,500 years ago. The Art of War. Most of it is not really about war — it is about thinking clearly while others panic.\n\n'The greatest victory is the battle not fought.' Read it before you ever swing.",
+    master_oneliner:"The book is small. The lesson is enormous. Carry both lightly." },
+  { id:'hannibals_tooth', name:"Hannibal's Elephant Tooth", lesson_id:'cannae', hall:'marshal', master:'cassian', icon:'relic-tooth',
+    lore:"From one of the 37 war elephants that crossed the Alps. Hannibal then trapped a Roman army nearly twice his size in the perfect double envelopment at Cannae — letting the strongest Roman push become the trap that swallowed them.\n\nA tooth, gold-capped, kept as proof that shape beats size.",
+    master_oneliner:"Strong men with one move are easiest to beat. Reshape the fight." },
+  { id:'eisenhower_order', name:"Eisenhower's Order of the Day", lesson_id:'dday', hall:'marshal', master:'cassian', icon:'relic-order',
+    lore:"The folded paper Eisenhower handed to every soldier on June 6, 1944. Combined arms — paratroopers, bombers, warships, infantry, and deception — all hitting at once, in sync, opened a hole in Hitler's wall.\n\nOne tool is a weapon. Five tools moving as one are an invasion.",
+    master_oneliner:"Unity of effort. Read those three words a hundred times until they stop sounding small." },
+  { id:'soviet_rifle', name:"Soviet Rifle of Stalingrad", lesson_id:'stalingrad', hall:'marshal', master:'cassian', icon:'relic-rifle',
+    lore:"A Mosin-Nagant from the rubble of Stalingrad, 1942–43. The hunters became the hunted: while Germany ground forward through the city, the Soviets quietly built two huge armies on the flanks and snapped the trap shut.\n\nEmbrace the suck. Hold the line. Help is coming.",
+    master_oneliner:"Some fights are not won by speed. They are won by refusing to fall down." },
+
+  // === Sage's Hall — Aurelian (6) ===
+  { id:'aurelius_quill', name:"Marcus Aurelius's Quill", lesson_id:'stoicism', hall:'sage', master:'aurelian', icon:'relic-quill',
+    lore:"The quill of the philosopher-emperor, used by lamplight in a soldier's tent on the Danube. With it he wrote the Meditations — notes to himself, not for publication — about temper, fear, mortality, and duty.\n\nStoicism does not ask you to feel nothing. It asks you to act well anyway.",
+    master_oneliner:"You cannot control the wind. You can trim your sail." },
+  { id:'socrates_cup', name:"Socrates' Cup", lesson_id:'socrates', hall:'sage', master:'aurelian', icon:'relic-cup',
+    lore:"The hemlock cup. Athens condemned the old questioner for corrupting the youth — meaning, for teaching them to question authority. He drank without flinching, still asking questions of his friends as the cold climbed his legs.\n\nSome answers are not worth the cowardice of avoiding them.",
+    master_oneliner:"The unexamined life, he said. Examine yours tonight." },
+  { id:'aristotle_scroll', name:"Aristotle's Scroll", lesson_id:'aristotle', hall:'sage', master:'aurelian', icon:'relic-scroll',
+    lore:"A scroll from the Lyceum, where Aristotle walked with his students and named the categories of thought, the parts of a play, the virtues of a good life. Tutor to Alexander, founder of logic itself.\n\nVirtue is a habit, not a feeling. Excellence is what we do repeatedly.",
+    master_oneliner:"We are what we repeat. So choose what you repeat with care." },
+  { id:'aurelian_lantern', name:"Aurelian's Lantern", lesson_id:'individualism', hall:'sage', master:'aurelian', icon:'relic-lantern',
+    lore:"A small bronze lantern carried by night. Individualism — the bold idea that one mind, alone, can be a light for many — is not loud. It is patient.\n\nThe lantern is not a crown. It is permission to think your own thought.",
+    master_oneliner:"A single lit lantern in a sleeping city is worth more than a hundred sleeping torches." },
+  { id:'aurelian_compass', name:"Aurelian's Crossing Compass", lesson_id:'eastwest', hall:'sage', master:'aurelian', icon:'relic-compass',
+    lore:"A compass that points to neither East nor West, but to the wisdom found in crossing between them. Confucius and Marcus Aurelius did not meet — but their lessons rhyme. The Buddha and the Stoics do not contradict.\n\nDo not pick a tribe. Pick the truths.",
+    master_oneliner:"East and West are the same wind, blowing from different rooms." },
+  { id:'aurelian_pin', name:"Aurelian's Toga Pin", lesson_id:'romans', hall:'sage', master:'aurelian', icon:'relic-pin',
+    lore:"A fibula of Roman silver. Rome built roads, laws, aqueducts, and a republic — then a slow, sad slide into emperors. Every civilization rhymes with Rome eventually.\n\nThe pin held the toga. The toga held the citizen. The citizen held the republic.",
+    master_oneliner:"Republics fall when citizens stop being citizens. Stay one." },
+
+  // === Merchant's Hall (Statesman) — Octavian (6) ===
+  { id:'machiavelli_stiletto', name:"Machiavelli's Stiletto", lesson_id:'machiavelli', hall:'merchant', master:'octavian', icon:'relic-stiletto',
+    lore:"A Florentine stiletto, narrow and deadly. Machiavelli wrote The Prince in exile, advising rulers to be loved if possible, feared if necessary, and never to be both careless and powerful.\n\nNot a guide to evil. A guide to seeing power without flinching.",
+    master_oneliner:"It is better to be feared than to be despised. Earn neither casually." },
+  { id:'alexander_helmet', name:"Alexander's Helmet", lesson_id:'alexander', hall:'merchant', master:'octavian', icon:'relic-helmet',
+    lore:"The helmet of Alexander the Great. By thirty he had conquered the known world from Greece to India. He never lost a battle. He died young — and his empire shattered the moment he was gone.\n\nA helmet that conquered everything except the question, 'and then what?'",
+    master_oneliner:"He took the world and never decided what to do with it. Decide first." },
+  { id:'augustus_crown', name:"Augustus's Crown", lesson_id:'augustus', hall:'merchant', master:'octavian', icon:'relic-crown',
+    lore:"The civic crown of Augustus, first emperor of Rome. He turned the chaos of civil war into 200 years of stability — the Pax Romana — by being patient, polite, and absolutely ruthless about timing.\n\nQuiet power. The kind that lasts.",
+    master_oneliner:"He wore no crown in public. The crown wore him in private." },
+  { id:'caesar_laurel', name:"Caesar's Laurel Wreath", lesson_id:'caesar', hall:'merchant', master:'octavian', icon:'relic-laurel',
+    lore:"The laurel wreath Caesar wore to hide his thinning hair and to claim Rome itself. He crossed the Rubicon, defeated Pompey, and was murdered by friends who feared his crown more than his sword.\n\nThe laurel is honor. The laurel is target.",
+    master_oneliner:"Honor draws eyes. Eyes draw daggers. Walk softly with a wreath." },
+  { id:'lincoln_hat', name:"Lincoln's Stovepipe Hat", lesson_id:'lincoln', hall:'merchant', master:'octavian', icon:'relic-hat',
+    lore:"Tall, plain, black. Inside the band, Lincoln kept letters and notes. He won a civil war, freed four million people, and never lost his sense of humor while doing it.\n\nThe hat was higher than the man. The man was taller than the hat.",
+    master_oneliner:"He told jokes to keep from breaking. Keep yours sharpened." },
+  { id:'medici_purse', name:"The Medici Purse", lesson_id:'medici', hall:'merchant', master:'octavian', icon:'relic-purse',
+    lore:"A leather purse of the Medici bank, Florence. They funded the Renaissance — Michelangelo, Leonardo, Botticelli — because they understood that the best return on money is a civilization worth living in.\n\nA coin is small. A choice about a coin can be enormous.",
+    master_oneliner:"Wealth is not what you keep. It is what you build with what you keep." },
+
+  // === Reckoner's Hall — Atlas (6) ===
+  { id:'reckoner_scale', name:"Solomon's Scale", lesson_id:'solomon_scale', hall:'reckoner', master:'atlas', icon:'relic-scale',
+    lore:"The scale of even measure. Wisdom is not knowing more than others — it is weighing better. Solomon, with the two mothers, did not invent a new fact. He invented a better question.\n\nMeasure twice. Cut once. Apologize never.",
+    master_oneliner:"The wise are not faster. They are calibrated." },
+  { id:'cyrus_cylinder', name:"The Cyrus Cylinder", lesson_id:'cyrus', hall:'reckoner', master:'atlas', icon:'relic-cylinder',
+    lore:"A clay cylinder from ancient Persia, 539 BC. Cyrus the Great let conquered peoples keep their gods and their laws. It is sometimes called the first declaration of human rights.\n\nNumbers govern nations. Conscience governs Cyrus.",
+    master_oneliner:"You can count subjects. You cannot count consent. Govern accordingly." },
+  { id:'ancient_abacus', name:"The Ancient Abacus", lesson_id:'abacus', hall:'reckoner', master:'atlas', icon:'relic-abacus',
+    lore:"Beads on wires, older than the alphabet. Babylonians, Romans, Chinese, every civilization has had one. Two hands and a rack of beads still beat most pocket calculators for speed in the right hands.\n\nArithmetic is the spine of every other math.",
+    master_oneliner:"You will never outgrow counting. You will only learn what counts." },
+  { id:'golden_ratio', name:"The Golden Ratio", lesson_id:'golden_ratio', hall:'reckoner', master:'atlas', icon:'relic-golden-ratio',
+    lore:"Phi. 1.618. The proportion that hides inside seashells, sunflowers, the Parthenon, and your own forearm. Geometry is the language the universe speaks fluently.\n\nThe rectangle is plain. The ratio is divine.",
+    master_oneliner:"Beauty is not subjective. It is just a math you have not noticed yet." },
+  { id:'pascals_dice', name:"Pascal's Dice", lesson_id:'pascal_dice', hall:'reckoner', master:'atlas', icon:'relic-dice',
+    lore:"Two ivory cubes from Blaise Pascal's table. The Chevalier de Méré asked him about a gambling problem; Pascal and Fermat exchanged letters; probability was born.\n\nThe future is not unknown. It is a distribution.",
+    master_oneliner:"Chance has rules. Learn the rules and you can rob the casino with paper." },
+  { id:'fibonacci_spiral', name:"The Fibonacci Spiral", lesson_id:'fibonacci', hall:'reckoner', master:'atlas', icon:'relic-fibonacci',
+    lore:"1, 1, 2, 3, 5, 8, 13. Each number is the sum of the two before it. The sequence is everywhere — in pinecones, hurricanes, galaxy arms, and the breeding rates of rabbits Fibonacci was actually asked about in 1202.\n\nNature is repetitive. Repetition is power.",
+    master_oneliner:"Add yesterday and today. That is the shape of tomorrow." },
+
+  // === Cartographer's Hall — Mercator (6, virtual) ===
+  { id:'first_globe', name:"The First Globe", lesson_id:'first_globe', hall:'cartographer', master:'mercator', icon:'relic-globe',
+    lore:"The Erdapfel — 'earth apple' — built by Martin Behaim in Nuremberg, 1492. The first surviving terrestrial globe. The Americas are missing, because Columbus had not yet returned.\n\nA map of what you know is always a map of what you don't.",
+    master_oneliner:"The blank parts of the map are not lies. They are invitations." },
+  { id:'mercator_sextant', name:"Mercator's Sextant", lesson_id:'sextant', hall:'cartographer', master:'mercator', icon:'relic-sextant',
+    lore:"A brass sextant, used to fix a ship's position by the angle between the horizon and a star. Out of sight of land, the sextant was the only honest answer to the question 'where am I?'\n\nMeasurement is freedom. Without it, you drift.",
+    master_oneliner:"You cannot steer until you know where you are. Look up. Measure." },
+  { id:'magellan_map', name:"The Map of Magellan", lesson_id:'magellan', hall:'cartographer', master:'mercator', icon:'relic-parchment',
+    lore:"Magellan never finished his voyage — he died in the Philippines — but one of his ships completed the first circumnavigation of the world. The map was drawn from the survivors' notes.\n\nMost of what we know was paid for by someone who did not come home.",
+    master_oneliner:"The map is the price of the journey. Honor the cost when you read it." },
+  { id:'mercator_atlas', name:"Mercator's Atlas", lesson_id:'atlas_book', hall:'cartographer', master:'mercator', icon:'relic-atlas-book',
+    lore:"Gerardus Mercator gave us the projection that bears his name — and the word 'atlas' itself, after the Titan who held up the sky. His maps let sailors plot a straight course across a curved world.\n\nA distortion that helps you arrive is worth more than a truth that strands you.",
+    master_oneliner:"All maps lie a little. The best ones lie usefully." },
+  { id:'compass_rose', name:"The Compass Rose", lesson_id:'compass_rose', hall:'cartographer', master:'mercator', icon:'relic-compass-rose',
+    lore:"The rose at the corner of every old map. N, E, S, W — and then NE, SE, SW, NW — and then the fine sub-points used by sailors before satellites.\n\nDirections are simple. Choosing one is not.",
+    master_oneliner:"Pick a direction. The wind will judge whether it was the right one." },
+  { id:'lighthouse_beacon', name:"The Lighthouse Beacon", lesson_id:'lighthouse', hall:'cartographer', master:'mercator', icon:'relic-lighthouse',
+    lore:"A lens from the Pharos of Alexandria — by legend, one of the Seven Wonders. A lighthouse is a map that walks toward you when you are lost.\n\nBe a lighthouse where you can. Find one where you cannot.",
+    master_oneliner:"In a storm, you don't follow a compass. You follow a light." },
+];
+
+const RELIC_BY_LESSON = Object.fromEntries(RELICS.map(r => [r.lesson_id, r]));
+const RELIC_BY_ID = Object.fromEntries(RELICS.map(r => [r.id, r]));
+
+const HALLS_OF_GLORY = [
+  { id:'marshal',       title:"Marshal's Hall",       master:'cassian',   masterName:'Marshal Cassian' },
+  { id:'sage',          title:"Sage's Hall",          master:'aurelian',  masterName:'Sage Aurelian' },
+  { id:'merchant',      title:"Statesman's Hall",     master:'octavian',  masterName:'Merchant Octavian' },
+  { id:'reckoner',      title:"Reckoner's Hall",      master:'atlas',     masterName:'Reckoner Atlas' },
+  { id:'cartographer',  title:"Cartographer's Hall",  master:'mercator',  masterName:'Cartographer Mercator' },
+];
+
 const ROWS = [
   { id:'marshal',  hall:"Marshal's Hall",  master:'cassian',  motto:'How smart people win.',
     subjects:[
@@ -2212,29 +2694,57 @@ function defaultState() {
     name: 'E',
     xp: 0,
     streak: { last: null, count: 0 },
-    quests: { strategy: { lessons: {} }, cartography: { lessons: {} }, philosophy: { lessons: {} }, statecraft: { lessons: {} }, reckoning: { lessons: {} } },
+    quests: { strategy: { lessons: {} } },
     reviewQueue: [],
+    // === Phase 1 reward system fields ===
+    griffinStage: 1,
+    trophiesUnlocked: [],
+    currentStreak: 0,
+    longestStreak: 0,
+    lastActiveDate: null,
   };
 }
 function loadState() {
   try {
     const raw = localStorage.getItem(STATE_KEY);
+    let base = null;
     if (!raw) {
       const old = localStorage.getItem('learning-hub:state:v2');
       if (old) {
         const o = JSON.parse(old);
-        return {
+        base = {
           name: o.name || 'E',
           xp: o.xp || 0,
           streak: o.streak || { last:null, count:0 },
-          quests: { strategy: o.subjects?.strategy || { lessons: {} }, cartography: { lessons: {} } },
+          quests: { strategy: o.subjects?.strategy || { lessons: {} } },
           reviewQueue: (o.reviewQueue || []).map(r => ({ ...r, quest: r.subject || 'strategy' })),
         };
       }
-      return defaultState();
+    } else {
+      base = JSON.parse(raw);
     }
-    const parsed = JSON.parse(raw);
-    return { ...defaultState(), ...parsed, quests: { ...defaultState().quests, ...(parsed.quests||{}) } };
+    const d = defaultState();
+    const merged = base
+      ? { ...d, ...base, quests: { ...d.quests, ...(base.quests||{}) } }
+      : d;
+    // Migrate older states missing reward fields — derive from existing data.
+    if (merged.griffinStage == null) merged.griffinStage = stageFromXP(merged.xp || 0);
+    if (!Array.isArray(merged.trophiesUnlocked)) merged.trophiesUnlocked = [];
+    if (merged.currentStreak == null) merged.currentStreak = merged.streak?.count || 0;
+    if (merged.longestStreak == null) merged.longestStreak = merged.streak?.count || 0;
+    if (merged.lastActiveDate == null) merged.lastActiveDate = merged.streak?.last || null;
+    // Backfill trophiesUnlocked from any lessons already mastered.
+    Object.entries(merged.quests || {}).forEach(([qid, q]) => {
+      Object.entries(q.lessons || {}).forEach(([lid, ls]) => {
+        if ((ls.bestMastery || 0) >= MASTERY_THRESHOLD) {
+          const relic = RELIC_BY_LESSON[lid];
+          if (relic && !merged.trophiesUnlocked.includes(lid)) merged.trophiesUnlocked.push(lid);
+        }
+      });
+    });
+    // Keep griffinStage in sync with current XP on load.
+    merged.griffinStage = Math.max(merged.griffinStage, stageFromXP(merged.xp || 0));
+    return merged;
   } catch (e) { return defaultState(); }
 }
 function saveState(s) {
@@ -2245,16 +2755,51 @@ function yesterdayISO() { return new Date(Date.now() - 86400000).toISOString().s
 function daysBetween(isoA, isoB) {
   return Math.floor((new Date(isoB).getTime() - new Date(isoA).getTime()) / 86400000);
 }
+
+/* ===== REWARD SYSTEM — streak helpers ===== */
+function daysSinceLast(s) {
+  if (!s.lastActiveDate) return Infinity;
+  return daysBetween(s.lastActiveDate, todayISO());
+}
+
+function flameState(s) {
+  const streak = s.currentStreak || 0;
+  if (streak <= 0) return { tier:'out', label:'Out' };
+  const gap = daysSinceLast(s);
+  if (gap >= 3) return { tier:'out', label:'Out' };
+  if (gap === 2) return { tier:'dim', label:'Dim' };
+  // gap 0 or 1 — full brightness, sized by streak
+  if (streak >= 100) return { tier:'mythic', label:'Mythic' };
+  if (streak >= 30)  return { tier:'blazing', label:'Blazing' };
+  if (streak >= 7)   return { tier:'strong', label:'Strong' };
+  return { tier:'tiny', label:'Flicker' };
+}
 function tickStreak(s) {
   const today = todayISO();
-  if (s.streak.last === today) return s;
-  const count = (s.streak.last === yesterdayISO()) ? (s.streak.count + 1) : 1;
-  return { ...s, streak: { last: today, count } };
+  if (s.lastActiveDate === today) return s;
+  const gap = daysSinceLast(s);
+  let nextCurrent;
+  if (gap === Infinity || gap >= 3) {
+    // Relight — count this as day 1.
+    nextCurrent = 1;
+  } else {
+    // gap 1 or 2 — preserve and continue.
+    nextCurrent = (s.currentStreak || 0) + 1;
+  }
+  const longest = Math.max(s.longestStreak || 0, nextCurrent);
+  return {
+    ...s,
+    lastActiveDate: today,
+    currentStreak: nextCurrent,
+    longestStreak: longest,
+    // Keep legacy streak object in lock-step for back-compat (top bar).
+    streak: { last: today, count: nextCurrent },
+  };
 }
 function activeStreak(s) {
-  const today = todayISO(); const yest = yesterdayISO();
-  if (s.streak.last === today || s.streak.last === yest) return s.streak.count;
-  return 0;
+  const gap = daysSinceLast(s);
+  if (gap >= 3) return 0;
+  return s.currentStreak || 0;
 }
 function getLessonState(state, questId, lessonId) {
   return state.quests?.[questId]?.lessons?.[lessonId] || { attempts:{}, firstTryCorrect:0, totalQ:0, completedAt:null, bestMastery:0, replays:0 };
@@ -2311,6 +2856,8 @@ function showXpToast(amount) {
 
 function TopBar({ state, route, goHub }) {
   const streak = activeStreak(state);
+  const flame = flameState(state);
+  const stage = state.griffinStage || stageFromXP(state.xp || 0);
   return (
     <div className="sticky top-0 z-30 bg-navy text-parchment border-b" style={{ borderColor:'var(--gold)' }}>
       <div className="wrap flex items-center justify-between py-3 gap-3">
@@ -2322,12 +2869,16 @@ function TopBar({ state, route, goHub }) {
             <div className="text-[10px] uppercase tracking-[0.25em] opacity-70">A Learning Hall</div>
           </div>
         </button>
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title="Day streak">
+        <div className="flex items-center gap-3 sm:gap-4 text-sm">
+          <a href="#trophies" className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title="Hall of Glory">
+            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M5 3v3H2v3a4 4 0 0 0 4 4 6 6 0 0 0 5 4.9V20H8v2h8v-2h-3v-2.1A6 6 0 0 0 18 13a4 4 0 0 0 4-4V6h-3V3H5zm2 2h10v6a5 5 0 0 1-10 0V5zm-3 3h1v3a4 4 0 0 0 .2 1.2A2 2 0 0 1 4 9V8zm15 0h1v1a2 2 0 0 1-1.2 1.8A4 4 0 0 0 19 11V8z"/></svg>
+            <span className="font-bold heraldic">{(state.trophiesUnlocked||[]).length}</span>
+          </a>
+          <div className={"flex items-center gap-1.5 " + (flame.tier === 'out' ? 'opacity-50' : '')} style={{ color: flame.tier === 'mythic' ? '#7dc4ff' : 'var(--gold)' }} title={"Day streak · flame: " + flame.label}>
             <Icon.Flame className="w-4 h-4"/>
             <span className="font-bold heraldic">{streak}</span>
           </div>
-          <div className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title="Total XP">
+          <div className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title={"Total XP · Stage " + stage}>
             <Icon.Coin className="w-4 h-4"/>
             <span className="font-bold heraldic">{state.xp}</span>
           </div>
@@ -2382,6 +2933,36 @@ function StrategyCallout({ state }) {
       </div>
       <div className="mt-5 h-1.5 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
         <div className="h-full progress-bar transition-all duration-700" style={{ width: pct + '%' }}/>
+      </div>
+    </button>
+  );
+}
+
+function TrophyCallout({ state }) {
+  const earned = (state.trophiesUnlocked || []).length;
+  const total = RELICS.length;
+  const empty = earned === 0;
+  return (
+    <button onClick={() => window.location.hash = '#trophies'}
+      className={"block w-full text-left mt-4 rounded-2xl p-5 border transition card card-hover " + (empty ? "opacity-95" : "")}
+      style={{ boxShadow: '0 14px 36px -16px rgba(201,164,76,0.45)', borderColor:'rgba(201,164,76,0.65)' }}>
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-navy text-gold" style={{ border:'1.5px solid var(--gold)' }}>
+          <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor"><path d="M5 3v3H2v3a4 4 0 0 0 4 4 6 6 0 0 0 5 4.9V20H8v2h8v-2h-3v-2.1A6 6 0 0 0 18 13a4 4 0 0 0 4-4V6h-3V3H5zm2 2h10v6a5 5 0 0 1-10 0V5zm-3 3h1v3a4 4 0 0 0 .2 1.2A2 2 0 0 1 4 9V8zm15 0h1v1a2 2 0 0 1-1.2 1.8A4 4 0 0 0 19 11V8z"/></svg>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="heraldic text-[10px] font-bold uppercase tracking-[0.25em] text-gold-deep">The Hall of Glory</div>
+          <div className="font-display text-2xl mt-0.5 ink">
+            {empty ? "Your trophy hall awaits its first relic" : `${earned} of ${total} relics earned`}
+          </div>
+          <div className="text-sm mt-0.5 ink-soft">
+            {empty ? "Master a lesson — your first relic will land here." : "Tap a relic for its lore and the Master's word on it."}
+          </div>
+        </div>
+        <div className="hidden sm:block text-right shrink-0">
+          <div className="heraldic text-xs uppercase text-gold-deep tracking-widest">Relics</div>
+          <div className="font-display text-4xl ink">{earned}<span className="ink-muted text-xl">/{total}</span></div>
+        </div>
       </div>
     </button>
   );
@@ -2609,6 +3190,7 @@ function Hub({ state, setState }) {
         </div>
         <div className="mt-8 gold-line-strong"/>
         <StrategyCallout state={state}/>
+        <TrophyCallout state={state}/>
         <CartographyCallout state={state}/>
         <PhilosophyCallout state={state}/>
         <StatecraftCallout state={state}/>
@@ -3838,7 +4420,7 @@ function InteractiveMap({ type, masterKey }) {
   );
 }
 
-function LessonView({ questId, lessonId, state, setState, goQuest }) {
+function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned, onCompletionTick }) {
   const quest = QUESTS[questId];
   const lesson = quest?.lessons.find(l => l.id === lessonId);
   if (!quest || !lesson) {
@@ -3883,6 +4465,7 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
 
   useEffect(() => {
     if (!completedAll) return;
+    let earnedRelic = null;
     setState(prev => {
       const quests = { ...prev.quests };
       quests[questId] = quests[questId] || { lessons: {} };
@@ -3911,10 +4494,21 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
       const newXP = prev.xp + xpBonus + masteryBonus;
       const tickedStreak = tickStreak(prev);
       showXpToast(xpBonus + masteryBonus);
-      const ns = { ...prev, ...tickedStreak, quests, reviewQueue: nextReview, xp: newXP };
+      // === Reward system wiring ===
+      const prevTrophies = prev.trophiesUnlocked || [];
+      let nextTrophies = prevTrophies;
+      const relic = (typeof RELIC_BY_LESSON !== 'undefined') ? RELIC_BY_LESSON[lessonId] : null;
+      if (relic && mastery >= MASTERY_THRESHOLD && !prevTrophies.includes(lessonId)) {
+        nextTrophies = [...prevTrophies, lessonId];
+        earnedRelic = relic;
+      }
+      const nextStage = (typeof stageFromXP === 'function') ? stageFromXP(newXP) : 1;
+      const ns = { ...prev, ...tickedStreak, quests, reviewQueue: nextReview, xp: newXP, trophiesUnlocked: nextTrophies, griffinStage: nextStage };
       saveState(ns);
       return ns;
     });
+    if (onCompletionTick) onCompletionTick();
+    if (earnedRelic && onRelicEarned) onRelicEarned(earnedRelic);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [completedAll]);
 
@@ -4202,11 +4796,265 @@ function DrillView({ state, setState }) {
   );
 }
 
+
+/* ===== REWARD SYSTEM — companion, modals, hall view ===== */
+const STAGE_VOICE_KEY = 'griffin-hall:stage-voice-seen:v1';
+
+function GriffinCompanion({ state, recentTick, onStageTransition }) {
+  const stage = state.griffinStage || stageFromXP(state.xp || 0);
+  const meta = GRIFFIN_STAGES.find(g => g.stage === stage) || GRIFFIN_STAGES[0];
+  const flame = flameState(state);
+  const symbolId = 'griffin-stage-' + stage;
+
+  const wrapRef = React.useRef(null);
+  const haloRef = React.useRef(null);
+  const lastTick = React.useRef(0);
+  const lastStage = React.useRef(stage);
+
+  // Per-completion small nod animation
+  React.useEffect(() => {
+    if (recentTick && recentTick !== lastTick.current && wrapRef.current) {
+      lastTick.current = recentTick;
+      const el = wrapRef.current;
+      el.classList.remove('gc-nod');
+      // eslint-disable-next-line no-unused-expressions
+      void el.offsetWidth;
+      el.classList.add('gc-nod');
+    }
+  }, [recentTick]);
+
+  // Stage transition celebration
+  React.useEffect(() => {
+    if (stage !== lastStage.current) {
+      lastStage.current = stage;
+      if (wrapRef.current) {
+        const el = wrapRef.current;
+        el.classList.remove('gc-evolve');
+        // eslint-disable-next-line no-unused-expressions
+        void el.offsetWidth;
+        el.classList.add('gc-evolve');
+      }
+      if (haloRef.current) {
+        haloRef.current.classList.remove('show');
+        // eslint-disable-next-line no-unused-expressions
+        void haloRef.current.offsetWidth;
+        haloRef.current.classList.add('show');
+      }
+      // chime
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator(); const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'sine';
+        o.frequency.setValueAtTime(660, ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(990, ctx.currentTime + 0.18);
+        g.gain.setValueAtTime(0, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.04);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+        o.start();
+        o.stop(ctx.currentTime + 1.0);
+      } catch(e) {}
+      if (onStageTransition) onStageTransition(meta);
+    }
+  }, [stage]);
+
+  return (
+    <div className="griffin-companion" aria-label={"Your " + meta.name}>
+      <div className="gc-wrap" ref={wrapRef}>
+        <div className="gc-halo" ref={haloRef}></div>
+        <svg viewBox="0 0 120 130" role="img" aria-label={meta.name}>
+          <use href={"#" + symbolId}/>
+        </svg>
+        <div className="flame-wrap">
+          <svg className={"flame flame-" + flame.tier} viewBox="0 0 40 50" aria-label={"Streak flame: " + flame.label}>
+            <use href="#flame-torch"/>
+          </svg>
+        </div>
+        <div className="gc-badge">Lv {stage}</div>
+        <div className="gc-stagename">{meta.name}</div>
+      </div>
+    </div>
+  );
+}
+
+function MasterVoiceToast({ message, onDismiss }) {
+  React.useEffect(() => {
+    if (!message) return;
+    const t = setTimeout(onDismiss, 6500);
+    return () => clearTimeout(t);
+  }, [message]);
+  if (!message) return null;
+  return (
+    <div className="toast-master" onClick={onDismiss} role="status">
+      <div className="tm-label">A Master Speaks</div>
+      <div className="tm-body">"{message}"</div>
+    </div>
+  );
+}
+
+function RelicAwardModal({ relic, onClose }) {
+  if (!relic) return null;
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-card text-center" onClick={(e) => e.stopPropagation()}>
+        <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">Relic Earned</div>
+        <h2 className="font-display text-4xl ink mt-1">{relic.name}</h2>
+        <div className="gold-line my-4 max-w-xs mx-auto"/>
+        <div className="relic-modal-icon relic-burst">
+          <svg viewBox="0 0 100 100"><use href={"#" + relic.icon}/></svg>
+        </div>
+        <div className="mt-5 ink leading-relaxed text-left whitespace-pre-line">
+          {relic.lore}
+        </div>
+        {relic.master_oneliner && (
+          <div className="mt-5 principle-box p-4 text-left">
+            <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em]">
+              {MASTERS[relic.master]?.name || 'Master'} says
+            </div>
+            <div className="ink italic mt-1">"{relic.master_oneliner}"</div>
+          </div>
+        )}
+        <div className="mt-6 flex gap-2 justify-center flex-wrap">
+          <button onClick={() => { onClose(); window.location.hash = '#trophies'; }}
+            className="bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:brightness-110">
+            View Hall of Glory
+          </button>
+          <button onClick={onClose}
+            className="card heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg ink">
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RelicDetailModal({ relic, earned, onClose }) {
+  if (!relic) return null;
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-card text-center" onClick={(e) => e.stopPropagation()}>
+        <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">
+          {earned ? 'A Relic Of The Hall' : 'Sealed Relic'}
+        </div>
+        <h2 className="font-display text-4xl ink mt-1">
+          {earned ? relic.name : '???'}
+        </h2>
+        <div className="gold-line my-4 max-w-xs mx-auto"/>
+        <div className={"relic-modal-icon " + (earned ? '' : 'opacity-40')} style={earned ? {} : { filter: 'grayscale(1) brightness(0.7)' }}>
+          <svg viewBox="0 0 100 100"><use href={"#" + relic.icon}/></svg>
+        </div>
+        {earned ? (
+          <>
+            <div className="mt-5 ink leading-relaxed text-left whitespace-pre-line">{relic.lore}</div>
+            {relic.master_oneliner && (
+              <div className="mt-5 principle-box p-4 text-left">
+                <div className="heraldic text-[10px] font-bold text-gold-deep uppercase tracking-[0.25em]">
+                  {MASTERS[relic.master]?.name || 'Master'} says
+                </div>
+                <div className="ink italic mt-1">"{relic.master_oneliner}"</div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="mt-5 ink-soft italic">
+            This relic has not yet been earned. Master a lesson in the {HALLS_OF_GLORY.find(h => h.id === relic.hall)?.title || "right"} to unseal it.
+          </div>
+        )}
+        <button onClick={onClose}
+          className="mt-6 bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-2.5 rounded-lg hover:brightness-110">
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function HallOfGlory({ state }) {
+  const [selectedId, setSelectedId] = React.useState(null);
+  const earned = new Set(
+    RELICS
+      .filter(r => (state.trophiesUnlocked || []).includes(r.lesson_id))
+      .map(r => r.id)
+  );
+  const total = RELICS.length;
+  const earnedCount = earned.size;
+
+  const selected = selectedId ? RELIC_BY_ID[selectedId] : null;
+
+  return (
+    <div className="pb-safe">
+      <div className="wrap pt-8 sm:pt-10">
+        <button onClick={() => window.location.hash = ''} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold">
+          <Icon.Back className="w-4 h-4"/> Return to Hall
+        </button>
+        <div className="text-center max-w-2xl mx-auto mt-4">
+          <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">The Trophy Hall</div>
+          <h1 className="font-display text-5xl sm:text-6xl ink mt-2 leading-[1.05]">Hall of Glory</h1>
+          <div className="font-display italic ink-soft mt-2 text-xl">"What you have earned, the Hall remembers."</div>
+          <div className="mt-5 gold-line-strong"/>
+          <p className="ink-soft mt-5 text-lg">
+            Every lesson you master places one relic in this hall. {earnedCount} of {total} relics shine. The rest wait, sealed, for your hand.
+          </p>
+          <div className="mt-5 max-w-md mx-auto">
+            <div className="h-2 bg-parchment-deep rounded-full overflow-hidden border border-ink-soft/30">
+              <div className="h-full progress-bar transition-all duration-700" style={{ width: ((earnedCount/total)*100) + '%' }}/>
+            </div>
+            <div className="text-center text-xs ink-soft mt-2 heraldic uppercase tracking-widest">
+              {earnedCount} of {total} relics earned
+            </div>
+          </div>
+        </div>
+
+        {HALLS_OF_GLORY.map((hall, hIdx) => {
+          const hallRelics = RELICS.filter(r => r.hall === hall.id);
+          const master = MASTERS[hall.master];
+          return (
+            <section key={hall.id} className="mt-14 fadeup" style={{ animationDelay: (hIdx*40) + 'ms' }}>
+              <div className="flex items-center gap-4 mb-4 flex-wrap">
+                <div className="shrink-0">
+                  {master
+                    ? <MasterEmblem masterKey={hall.master} cls="sigil-md"/>
+                    : <Sigil cls="sigil-md" use="griffin-mark"/>}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-3">
+                    <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">{hall.title}</div>
+                    <div className="h-px flex-1 min-w-[40px] bg-gold opacity-50"/>
+                  </div>
+                  <div className="font-display text-2xl ink leading-tight mt-0.5">{hall.masterName}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+                {hallRelics.map(r => {
+                  const isEarned = earned.has(r.id);
+                  return (
+                    <button key={r.id} onClick={() => setSelectedId(r.id)}
+                      className={"relic-tile " + (isEarned ? 'earned' : 'locked')}
+                      aria-label={isEarned ? r.name : 'Sealed relic'}>
+                      <div className="relic-icon" style={{ color: isEarned ? 'var(--gold-deep)' : 'var(--navy)' }}>
+                        <svg viewBox="0 0 100 100"><use href={"#" + r.icon}/></svg>
+                      </div>
+                      <div className="relic-name">{isEarned ? r.name : '— sealed —'}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+      <RelicDetailModal relic={selected} earned={selected ? earned.has(selected.id) : false} onClose={() => setSelectedId(null)}/>
+    </div>
+  );
+}
+
 function parseHash() {
   const raw = (window.location.hash || '').replace(/^#/, '');
   if (!raw) return { name: 'hub' };
   const parts = raw.split('/');
   if (parts[0] === 'drill') return { name:'drill' };
+  if (parts[0] === 'trophies') return { name:'trophies' };
   if (parts[0] === 'quest' && parts[1]) return { name:'quest', questId: parts[1] };
   if (parts[0] === 'lesson' && parts[1] && parts[2]) return { name:'lesson', questId: parts[1], lessonId: parts[2] };
   return { name:'hub' };
@@ -4215,21 +5063,44 @@ function parseHash() {
 function App() {
   const [state, setState] = useState(loadState);
   const [route, setRoute] = useState(parseHash);
+  const [earnedRelic, setEarnedRelic] = useState(null);
+  const [masterVoice, setMasterVoice] = useState(null);
+  const [completionTick, setCompletionTick] = useState(0);
   useEffect(() => {
     const onHash = () => { setRoute(parseHash()); window.scrollTo({ top:0, behavior:'instant' }); };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
   function goHub() { window.location.hash = ''; }
+  function handleStageTransition(stageMeta) {
+    if (!stageMeta) return;
+    // Don't fire the voiceover on initial mount for an existing user — only on changes during a session.
+    const seenRaw = localStorage.getItem(STAGE_VOICE_KEY);
+    const seen = seenRaw ? JSON.parse(seenRaw) : [];
+    if (!seen.includes(stageMeta.stage)) {
+      setMasterVoice(stageMeta.voice);
+      seen.push(stageMeta.stage);
+      localStorage.setItem(STAGE_VOICE_KEY, JSON.stringify(seen));
+    }
+  }
   let body = null;
   if (route.name === 'hub') body = <Hub state={state} setState={setState}/>;
   else if (route.name === 'quest') body = <QuestView questId={route.questId} state={state}/>;
-  else if (route.name === 'lesson') body = <LessonView questId={route.questId} lessonId={route.lessonId} state={state} setState={setState} goQuest={() => window.location.hash = '#quest/' + route.questId}/>;
+  else if (route.name === 'lesson') body = <LessonView
+      questId={route.questId} lessonId={route.lessonId}
+      state={state} setState={setState}
+      goQuest={() => window.location.hash = '#quest/' + route.questId}
+      onRelicEarned={(r) => setEarnedRelic(r)}
+      onCompletionTick={() => setCompletionTick(t => t + 1)}/>;
   else if (route.name === 'drill') body = <DrillView state={state} setState={setState}/>;
+  else if (route.name === 'trophies') body = <HallOfGlory state={state}/>;
   return (
     <div>
       <TopBar state={state} route={route} goHub={goHub}/>
       {body}
+      <GriffinCompanion state={state} recentTick={completionTick} onStageTransition={handleStageTransition}/>
+      <MasterVoiceToast message={masterVoice} onDismiss={() => setMasterVoice(null)}/>
+      <RelicAwardModal relic={earnedRelic} onClose={() => setEarnedRelic(null)}/>
       <footer className="wrap py-12 text-center">
         <div className="gold-line max-w-xs mx-auto mb-4"/>
         <div className="heraldic text-xs ink-muted uppercase tracking-[0.3em]">Griffin Hall · vol. I · MMXXVI</div>
