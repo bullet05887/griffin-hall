@@ -3715,10 +3715,11 @@ function LessonView({ questId, lessonId, state, setState, goQuest }) {
           {lesson.videoUrl ? (
             <video
               src={lesson.videoUrl}
-              poster={lesson.image}
-              controls
+              autoPlay
+              loop
+              muted
               playsInline
-              preload="metadata"
+              preload="auto"
               className="w-full aspect-[16/10] object-cover bg-black"
             />
           ) : (
