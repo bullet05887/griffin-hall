@@ -230,6 +230,10 @@
   }
   .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem); }
 
+  /* Mobile safety belt — kills the 2-7px transient horizontal overflow from
+     fadeup entrance animations on small viewports. Vertical scroll unaffected. */
+  html, body { overflow-x: hidden; }
+
   @keyframes fadeup { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;}}
   .fadeup { animation: fadeup .35s ease-out both; }
 
@@ -249,6 +253,10 @@
   }
   .map-btn-mini:hover { background: var(--gold-light); }
   .map-btn-mini:active { transform: translateY(1px); }
+  /* On phone/tablet bump tap targets to 44px (Apple HIG / WCAG 2.5.5) */
+  @media (max-width: 767px) {
+    .map-btn-mini { min-height: 44px; min-width: 44px; padding: 8px 14px; font-size: 12px; }
+  }
   .map-btn-quest {
     font-family:'Cinzel', Georgia, serif;
     font-weight:700;
@@ -3762,7 +3770,7 @@ function TopBar({ state, route, goHub }) {
   return (
     <div className="sticky top-0 z-30 bg-navy text-parchment border-b" style={{ borderColor:'var(--gold)' }}>
       <div className="wrap flex items-center justify-between py-3 gap-3">
-        <button onClick={goHub} className="flex items-center gap-3 min-w-0 group">
+        <button onClick={goHub} className="flex items-center gap-3 min-w-0 group min-h-[44px] py-1">
           {route.name !== 'hub' && <Icon.Back className="w-5 h-5" style={{ color:'var(--gold)' }}/>}
           <Sigil cls="sigil-sm" use="griffin-mark"/>
           <div className="text-left leading-tight">
@@ -3771,7 +3779,7 @@ function TopBar({ state, route, goHub }) {
           </div>
         </button>
         <div className="flex items-center gap-3 sm:gap-4 text-sm">
-          <a href="#trophies" className="flex items-center gap-1.5" style={{ color:'var(--gold)' }} title="Hall of Glory">
+          <a href="#trophies" className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] justify-center px-1" style={{ color:'var(--gold)' }} title="Hall of Glory">
             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor"><path d="M5 3v3H2v3a4 4 0 0 0 4 4 6 6 0 0 0 5 4.9V20H8v2h8v-2h-3v-2.1A6 6 0 0 0 18 13a4 4 0 0 0 4-4V6h-3V3H5zm2 2h10v6a5 5 0 0 1-10 0V5zm-3 3h1v3a4 4 0 0 0 .2 1.2A2 2 0 0 1 4 9V8zm15 0h1v1a2 2 0 0 1-1.2 1.8A4 4 0 0 0 19 11V8z"/></svg>
             <span className="font-bold heraldic">{(state.trophiesUnlocked||[]).length}</span>
           </a>
@@ -3803,7 +3811,7 @@ function NameLine({ name, onChange }) {
   ) : (
     <h1 className="font-display text-5xl sm:text-6xl leading-[1.05] ink flex items-center gap-2 flex-wrap">
       Hey <span className="text-crimson">{name}.</span>
-      <button onClick={() => setEditing(true)} className="ink-soft hover:text-crimson transition opacity-50 hover:opacity-100" aria-label="Change name">
+      <button onClick={() => setEditing(true)} className="ink-soft hover:text-crimson transition opacity-50 hover:opacity-100 inline-flex items-center justify-center min-h-[44px] min-w-[44px] -mx-2" aria-label="Change name">
         <Icon.Edit className="w-4 h-4"/>
       </button>
     </h1>
@@ -4390,7 +4398,7 @@ function TypeDrillBlock({ drill, onCorrect }) {
               className={"flex-1 min-w-[200px] px-4 py-3 rounded-lg border bg-parchment ink text-lg outline-none transition " + (status==='wrong' ? "border-crimson" : status==='right' ? "border-green-700" : "border-ink-soft/40 focus:border-navy")}
             />
             <button type="submit" className="bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-sm px-5 py-3 rounded-lg hover:brightness-110">Check</button>
-            <button type="button" onClick={reveal} className="card heraldic font-bold uppercase tracking-widest text-xs px-4 py-3 rounded-lg ink hover:bg-parchment-deep">Show answer</button>
+            <button type="button" onClick={reveal} className="card heraldic font-bold uppercase tracking-widest text-sm px-4 py-3 rounded-lg ink hover:bg-parchment-deep min-h-[44px]">Show answer</button>
           </div>
           {status === 'wrong' && (
             <div className="mt-3 text-sm text-crimson border-l-2 border-crimson pl-3 italic fadeup">
@@ -5421,7 +5429,7 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
   return (
     <article className="pb-safe">
       <div className="wrap-narrow pt-6">
-        <button onClick={goQuest} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold">
+        <button onClick={goQuest} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold min-h-[44px] py-2 -my-1">
           <Icon.Back className="w-4 h-4"/> {quest.formalTitle.toUpperCase()}
         </button>
         <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.25em] mt-4">{lesson.subtitle}</div>
@@ -5695,7 +5703,7 @@ function DrillView({ state, setState }) {
 
   return (
     <div className="wrap-narrow pt-6 pb-safe">
-      <button onClick={() => window.location.hash = ''} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold">
+      <button onClick={() => window.location.hash = ''} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold min-h-[44px] py-2 -my-1">
         <Icon.Back className="w-4 h-4"/> Return to Hall
       </button>
       <div className="mt-4 text-center">
@@ -5913,7 +5921,7 @@ function HallOfGlory({ state }) {
   return (
     <div className="pb-safe">
       <div className="wrap pt-8 sm:pt-10">
-        <button onClick={() => window.location.hash = ''} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold">
+        <button onClick={() => window.location.hash = ''} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold min-h-[44px] py-2 -my-1">
           <Icon.Back className="w-4 h-4"/> Return to Hall
         </button>
         <div className="text-center max-w-2xl mx-auto mt-4">
