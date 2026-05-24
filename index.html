@@ -844,8 +844,13 @@
   /* --- griffin companion idle flutter (only the FIRST stage SVG, leave flame alone) --- */
   .griffin-companion > .gc-wrap > svg:first-of-type { animation: griffin-idle 3s ease-in-out infinite; transform-origin: center; }
 
-  /* --- main hero emblem on home page floats gently --- */
-  .griffin-emblem { animation: emblem-float 5s ease-in-out infinite; transform-origin: center; will-change: transform; }
+  /* --- main hero emblem on home page floats gently (static PNG fallback only) --- */
+  .griffin-emblem { transform-origin: center; will-change: transform; }
+  img.griffin-emblem-poster { animation: emblem-float 5s ease-in-out infinite; display: none; }
+  video.griffin-emblem-video { display: block; }
+  /* if the <video> is hidden (reduced motion / no JS), show the static PNG */
+  video.griffin-emblem-video[hidden] + img.griffin-emblem-poster,
+  video.griffin-emblem-video:not([src]) + img.griffin-emblem-poster { display: block; }
 
   /* --- relic shine for ALL relic tiles (gentle background pulse). Locked tiles get
         a separate opacity breath so fresh visitors see the wall of relics breathing. --- */
@@ -870,6 +875,9 @@
     .hall-icon {
       animation: none !important;
     }
+    /* swap the flying-griffin video for the static PNG when user opts out */
+    video.griffin-emblem-video { display: none !important; }
+    img.griffin-emblem-poster { display: block !important; }
   }
 
   /* ============================================================
@@ -4088,7 +4096,22 @@ function Hub({ state, setState }) {
     <div className="pb-safe">
       <div className="wrap pt-8 sm:pt-10">
         <div className="fadeup">
-          <img src="/griffin-hall-emblem.png" alt="Griffin Hall" className="griffin-emblem"/>
+          <video
+            className="griffin-emblem griffin-emblem-video"
+            src="/video/griffin-emblem-flying.mp4"
+            poster="/griffin-hall-emblem.png"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label="Griffin Hall"
+          />
+          <img
+            src="/griffin-hall-emblem.png"
+            alt="Griffin Hall"
+            className="griffin-emblem griffin-emblem-poster"
+          />
         </div>
         <div className="mt-8 sm:mt-10 max-w-2xl mx-auto text-center">
           <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">
