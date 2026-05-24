@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#1a2942" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Griffin Hall &mdash; Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%231a2942'/><text x='50%25' y='62%25' text-anchor='middle' font-family='serif' font-size='34' font-weight='700' fill='%23c9a44c'>G</text></svg>" />
+<style>
+  :root{--navy:#0c1729;--navy2:#1a2942;--gold:#c9a44c;--gold-bright:#e6c068;--parchment:#f4ecd8;--muted:#9aa4b4;--danger:#e87878}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--navy);color:var(--parchment);font-family:'Manrope',sans-serif;line-height:1.5;min-height:100%}
+  body{background:linear-gradient(180deg,#0a1322,#0c1729 30%,#0a1322 100%)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  header{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:1px solid rgba(201,164,76,.2)}
+  .brand{display:flex;align-items:center;gap:14px}
+  .crest{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,#243757,#0c1729 80%);font-family:'Cinzel',serif;font-weight:900;color:var(--gold);font-size:20px}
+  .brand-text{font-family:'Cinzel',serif;font-weight:700;font-size:20px;letter-spacing:.16em;color:var(--gold)}
+  .badge{padding:4px 10px;border:1px solid var(--gold);border-radius:999px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+  h1{font-family:'Cinzel',serif;color:var(--gold);font-size:24px;letter-spacing:.08em;margin:32px 0 8px;text-transform:uppercase}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+
+  /* PIN gate */
+  .gate-wrap{display:flex;align-items:center;justify-content:center;min-height:60vh}
+  .gate-card{max-width:380px;width:100%;padding:36px;background:var(--navy2);border:2px solid var(--gold);border-radius:6px;text-align:center}
+  .gate-card h3{font-family:'Cinzel',serif;color:var(--gold);font-size:18px;letter-spacing:.1em;margin-bottom:18px;text-transform:uppercase}
+  .pin-input{width:100%;padding:14px;background:rgba(244,236,216,.05);border:1px solid rgba(201,164,76,.4);border-radius:4px;color:var(--parchment);font-family:'Cinzel',serif;letter-spacing:.4em;font-size:20px;text-align:center;margin-bottom:14px;outline:none}
+  .pin-input:focus{border-color:var(--gold)}
+  .err{color:var(--danger);font-size:13px;min-height:18px;margin-bottom:10px}
+
+  /* buttons */
+  .btn{padding:10px 20px;border:2px solid var(--gold);border-radius:4px;font-family:'Cinzel',serif;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:11px;cursor:pointer;transition:all .2s;background:transparent;color:var(--gold)}
+  .btn:hover{background:var(--gold);color:var(--navy)}
+  .btn-primary{background:var(--gold);color:var(--navy)}
+  .btn-primary:hover{background:var(--gold-bright)}
+  .btn-danger{border-color:rgba(232,120,120,.6);color:var(--danger)}
+  .btn-danger:hover{background:var(--danger);color:var(--navy)}
+  .btn-sm{padding:6px 12px;font-size:10px}
+
+  /* create card */
+  .panel{background:rgba(244,236,216,.03);border:1px solid rgba(201,164,76,.2);border-radius:6px;padding:24px;margin-bottom:24px}
+  .panel h3{font-family:'Cinzel',serif;color:var(--gold);font-size:14px;letter-spacing:.18em;margin-bottom:14px;text-transform:uppercase}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .input{flex:1;min-width:200px;padding:10px 12px;background:rgba(244,236,216,.05);border:1px solid rgba(201,164,76,.3);border-radius:4px;color:var(--parchment);font-family:'Manrope',sans-serif;font-size:14px;outline:none}
+  .input:focus{border-color:var(--gold)}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:12px 10px;text-align:left;border-bottom:1px solid rgba(201,164,76,.1)}
+  th{font-family:'Cinzel',serif;color:var(--gold);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600}
+  tr:hover td{background:rgba(244,236,216,.02)}
+  .code-mono{font-family:'SF Mono','Consolas',monospace;color:var(--gold-bright);font-weight:700;font-size:14px;letter-spacing:.08em}
+  .label-cell{color:var(--parchment)}
+  .small{color:var(--muted);font-size:11px}
+  .revoked{opacity:.5;text-decoration:line-through}
+  .status-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+  .status-active{background:rgba(120,200,120,.18);color:#a3e4a3;border:1px solid rgba(120,200,120,.4)}
+  .status-revoked{background:rgba(232,120,120,.18);color:var(--danger);border:1px solid rgba(232,120,120,.4)}
+
+  .empty{padding:40px;text-align:center;color:var(--muted);font-style:italic}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 20px;background:var(--navy2);border:1px solid var(--gold);border-radius:4px;color:var(--gold-bright);font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+  .toast.show{opacity:1}
+
+  footer{padding:32px 0;text-align:center;color:var(--muted);font-size:11px;letter-spacing:.1em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="crest">G</div>
+      <div class="brand-text">Griffin Hall</div>
+      <span class="badge">Admin</span>
+    </div>
+    <a class="btn btn-sm" href="/">&larr; Site</a>
+  </header>
+
+  <!-- PIN gate -->
+  <section id="gate" class="gate-wrap">
+    <div class="gate-card">
+      <h3>Admin PIN</h3>
+      <input id="pinInput" class="pin-input" type="password" maxlength="12" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="off" />
+      <div class="err" id="pinErr"></div>
+      <button class="btn btn-primary" id="pinSubmit" style="width:100%">Unlock</button>
+    </div>
+  </section>
+
+  <!-- Admin app -->
+  <section id="app" style="display:none">
+    <h1>Beta Access Codes</h1>
+    <div class="sub">Generate, list, and revoke codes for the Griffin Hall closed beta.</div>
+
+    <div class="panel">
+      <h3>Generate New Code</h3>
+      <div class="row">
+        <input id="newLabel" class="input" placeholder='Label (e.g. "dad-friend-james")' maxlength="80" />
+        <input id="newCode"  class="input" style="max-width:200px" placeholder="Optional custom code" maxlength="32" />
+        <button class="btn btn-primary" id="createBtn">Create Code</button>
+      </div>
+      <div class="err" id="createErr"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Active Codes <span class="small" id="countLabel"></span></h3>
+      <div id="codesTable"></div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer class="wrap">Griffin Hall admin &middot; PIN-gated &middot; no logs of the PIN are kept</footer>
+
+<script>
+(function(){
+  const GATE   = document.getElementById('gate');
+  const APP    = document.getElementById('app');
+  const PIN    = document.getElementById('pinInput');
+  const PINERR = document.getElementById('pinErr');
+  const TOAST  = document.getElementById('toast');
+  let currentPin = '';
+
+  function toast(msg){
+    TOAST.textContent = msg;
+    TOAST.classList.add('show');
+    setTimeout(function(){ TOAST.classList.remove('show'); }, 2200);
+  }
+
+  function api(method, params, body){
+    const qs = new URLSearchParams(Object.assign({ pin: currentPin }, params || {})).toString();
+    return fetch('/api/admin/beta-codes?' + qs, {
+      method:  method,
+      headers: body ? { 'content-type': 'application/json' } : {},
+      body:    body ? JSON.stringify(body) : undefined,
+    }).then(function(r){
+      return r.json().catch(function(){ return { ok:false, error:'bad json' }; })
+              .then(function(j){ return { status:r.status, body:j }; });
+    });
+  }
+
+  function renderCodes(items){
+    document.getElementById('countLabel').textContent =
+      items.length ? '(' + items.length + ')' : '';
+    const wrap = document.getElementById('codesTable');
+    if (!items.length) {
+      wrap.innerHTML = '<div class="empty">No codes yet. Generate one above.</div>';
+      return;
+    }
+    const rows = items.map(function(it){
+      const created = it.created_at ? new Date(it.created_at).toLocaleDateString() : '—';
+      const lastUsed = it.last_used ? new Date(it.last_used).toLocaleDateString() : '—';
+      const status = it.revoked
+        ? '<span class="status-pill status-revoked">Revoked</span>'
+        : '<span class="status-pill status-active">Active</span>';
+      const codeCell = it.revoked
+        ? '<span class="code-mono revoked">' + escapeHtml(it.code) + '</span>'
+        : '<span class="code-mono">' + escapeHtml(it.code) + '</span>';
+      const actions = [];
+      if (it.revoked) {
+        actions.push('<button class="btn btn-sm" data-action="unrevoke" data-hash="' + it.code_hash + '">Restore</button>');
+      } else {
+        actions.push('<button class="btn btn-sm btn-danger" data-action="revoke" data-hash="' + it.code_hash + '">Revoke</button>');
+      }
+      actions.push('<button class="btn btn-sm btn-danger" data-action="delete" data-hash="' + it.code_hash + '">Delete</button>');
+      return '<tr>'
+        + '<td>' + codeCell + '</td>'
+        + '<td class="label-cell">' + escapeHtml(it.label || '') + '</td>'
+        + '<td>' + status + '</td>'
+        + '<td class="small">' + (it.used_count || 0) + '&times;</td>'
+        + '<td class="small">' + lastUsed + '</td>'
+        + '<td class="small">' + created + '</td>'
+        + '<td style="text-align:right">' + actions.join(' ') + '</td>'
+        + '</tr>';
+    }).join('');
+    wrap.innerHTML =
+      '<table><thead><tr>'
+      + '<th>Code</th><th>Label</th><th>Status</th><th>Used</th><th>Last used</th><th>Created</th><th></th>'
+      + '</tr></thead><tbody>' + rows + '</tbody></table>';
+
+    wrap.querySelectorAll('button[data-action]').forEach(function(b){
+      b.addEventListener('click', function(){
+        const action = b.getAttribute('data-action');
+        const hash   = b.getAttribute('data-hash');
+        if (action === 'revoke')   return doRevoke(hash, true);
+        if (action === 'unrevoke') return doRevoke(hash, false);
+        if (action === 'delete')   return doDelete(hash);
+      });
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s || '').replace(/[&<>"']/g, function(c){
+      return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
+    });
+  }
+
+  async function refresh(){
+    const r = await api('GET');
+    if (r.status === 401) { gateLock('PIN rejected.'); return; }
+    if (!r.body || !r.body.ok) { toast(r.body && r.body.error || 'Load failed'); return; }
+    renderCodes(r.body.items || []);
+  }
+
+  async function doCreate(){
+    const label = document.getElementById('newLabel').value.trim();
+    const code  = document.getElementById('newCode').value.trim().toUpperCase();
+    const err   = document.getElementById('createErr');
+    err.textContent = '';
+    if (!label) { err.textContent = 'Label is required.'; return; }
+    const r = await api('POST', null, { label, code: code || undefined });
+    if (!r.body || !r.body.ok) { err.textContent = (r.body && r.body.error) || 'Create failed.'; return; }
+    document.getElementById('newLabel').value = '';
+    document.getElementById('newCode').value  = '';
+    toast('Code created: ' + (r.body.record && r.body.record.code));
+    refresh();
+  }
+
+  async function doRevoke(codeHash, revoked){
+    const r = await api('POST', { action: 'revoke' }, { code_hash: codeHash, revoked });
+    if (!r.body || !r.body.ok) { toast(r.body && r.body.error || 'Revoke failed'); return; }
+    toast(revoked ? 'Revoked.' : 'Restored.');
+    refresh();
+  }
+
+  async function doDelete(codeHash){
+    if (!confirm('Permanently delete this code? Holders will lose access immediately.')) return;
+    const r = await api('DELETE', { code_hash: codeHash });
+    if (!r.body || !r.body.ok) { toast(r.body && r.body.error || 'Delete failed'); return; }
+    toast('Deleted.');
+    refresh();
+  }
+
+  function gateLock(msg){
+    currentPin = '';
+    GATE.style.display = '';
+    APP.style.display  = 'none';
+    PINERR.textContent = msg || '';
+    PIN.value = '';
+    setTimeout(function(){ try { PIN.focus(); } catch(e){} }, 40);
+  }
+
+  async function submitPin(){
+    const pin = (PIN.value || '').trim();
+    if (!pin) { PINERR.textContent = 'Enter PIN.'; return; }
+    currentPin = pin;
+    PINERR.textContent = 'Checking…';
+    const r = await api('GET');
+    if (r.status === 401) { gateLock('PIN rejected.'); return; }
+    if (!r.body || !r.body.ok) { gateLock(r.body && r.body.error || 'Failed.'); return; }
+    GATE.style.display = 'none';
+    APP.style.display  = '';
+    PINERR.textContent = '';
+    renderCodes(r.body.items || []);
+  }
+
+  document.getElementById('pinSubmit').addEventListener('click', submitPin);
+  PIN.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitPin(); });
+  document.getElementById('createBtn').addEventListener('click', doCreate);
+
+  setTimeout(function(){ try { PIN.focus(); } catch(e){} }, 60);
+})();
+</script>
+</body>
+</html>

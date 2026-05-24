@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#1a2942" />
+<meta name="description" content="Free preview lesson — Washington Crossing the Delaware. A taste of the Hall of War." />
+<title>Washington Crossing the Delaware — Griffin Hall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%231a2942'/><text x='50%25' y='62%25' text-anchor='middle' font-family='serif' font-size='34' font-weight='700' fill='%23c9a44c'>G</text></svg>" />
+<style>
+  :root{--navy:#0c1729;--navy2:#1a2942;--gold:#c9a44c;--gold-bright:#e6c068;--parchment:#f4ecd8;--muted:#9aa4b4}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--navy);color:var(--parchment);font-family:'Manrope',sans-serif;line-height:1.6;min-height:100%}
+  body{background:radial-gradient(1200px 800px at 50% -200px, rgba(201,164,76,.12), transparent 60%), linear-gradient(180deg,#0a1322,#0c1729 30%,#0a1322 100%)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px}
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0}
+  .brand{display:flex;align-items:center;gap:12px;cursor:pointer}
+  .crest{width:38px;height:38px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,#243757,#0c1729 80%);font-family:'Cinzel',serif;font-weight:900;color:var(--gold);font-size:18px}
+  .brand-text{font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:.16em;color:var(--gold)}
+  .nav-link{color:var(--muted);font-size:13px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:color .2s}
+  .nav-link:hover{color:var(--gold-bright)}
+
+  .pill-row{margin:30px 0 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .pill{display:inline-block;padding:5px 12px;border:1px solid var(--gold);border-radius:999px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+  .pill-muted{border-color:rgba(154,164,180,.4);color:var(--muted)}
+
+  h1{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(28px,4.5vw,44px);color:var(--gold);letter-spacing:.03em;line-height:1.15;margin-bottom:14px}
+  .subtitle{font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;color:var(--parchment);opacity:.8;margin-bottom:40px}
+
+  article p{font-family:'Instrument Serif',serif;font-size:19px;line-height:1.75;margin-bottom:22px}
+  article p.lead::first-letter{font-family:'Cinzel',serif;font-size:56px;font-weight:900;color:var(--gold);float:left;line-height:1;padding:6px 12px 0 0;margin-top:4px}
+  article h2{font-family:'Cinzel',serif;color:var(--gold);font-size:22px;letter-spacing:.08em;margin:42px 0 18px;text-transform:uppercase}
+  article blockquote{margin:28px 0;padding:18px 24px;border-left:3px solid var(--gold);background:rgba(201,164,76,.06);font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;color:var(--gold-bright)}
+  article .reflect{padding:24px;border:1px dashed rgba(201,164,76,.5);border-radius:6px;background:rgba(244,236,216,.03);margin:36px 0}
+  article .reflect h3{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+
+  .gate{margin:60px 0 30px;padding:40px 32px;border:2px solid var(--gold);border-radius:6px;background:linear-gradient(180deg,rgba(201,164,76,.08),rgba(201,164,76,.02));text-align:center}
+  .gate h3{font-family:'Cinzel',serif;color:var(--gold);font-size:20px;letter-spacing:.08em;margin-bottom:10px}
+  .gate p{color:var(--parchment);opacity:.85;font-family:'Instrument Serif',serif;font-style:italic;font-size:17px;margin-bottom:22px}
+  .btn{padding:14px 28px;border:2px solid var(--gold);border-radius:4px;font-family:'Cinzel',serif;font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:12px;cursor:pointer;transition:all .25s;background:transparent;color:var(--gold);text-decoration:none;display:inline-block}
+  .btn:hover{background:var(--gold);color:var(--navy);box-shadow:0 0 24px rgba(201,164,76,.4)}
+  .btn-primary{background:var(--gold);color:var(--navy)}
+  .btn-primary:hover{background:var(--gold-bright)}
+
+  footer{padding:32px 0;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid rgba(201,164,76,.15);letter-spacing:.08em;margin-top:30px}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <nav class="nav">
+    <a class="brand" href="/">
+      <div class="crest">G</div>
+      <div class="brand-text">Griffin Hall</div>
+    </a>
+    <a class="nav-link" href="/">&larr; Back</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="pill-row">
+    <span class="pill">Hall of War</span>
+    <span class="pill pill-muted">Free Preview</span>
+  </div>
+  <h1>Washington Crossing the Delaware</h1>
+  <div class="subtitle">Christmas night, 1776. A river of ice. A republic in the balance.</div>
+
+  <article>
+    <p class="lead">
+      It was Christmas night, and the river was full of ice. The thermometer read
+      twenty-nine degrees and falling. On the New Jersey side of the Delaware,
+      fifteen hundred Hessian soldiers slept in the village of Trenton &mdash;
+      professionals, paid mercenaries, the best infantry in Europe. They had every
+      reason to believe the war was already over.
+    </p>
+
+    <p>
+      And it nearly was. General George Washington's army had lost New York. It
+      had been chased across New Jersey by the British. It had shrunk from twenty
+      thousand men to barely twenty-four hundred. The enlistments of most of those
+      men would expire on the last day of December &mdash; six days from now.
+      After that, Washington would have almost no army at all.
+    </p>
+
+    <p>
+      So Washington did something that no professional general would have done.
+      He decided to attack &mdash; in a snowstorm, across an ice-clogged river,
+      at three in the morning, on the night the Hessians would be most certain
+      that no attack was coming.
+    </p>
+
+    <h2>The Crossing</h2>
+
+    <p>
+      The boats were Durham boats &mdash; flat-bottomed ore boats, forty feet long,
+      built to carry iron down the Delaware. Colonel John Glover's Marblehead
+      fishermen worked the oars in the dark, pushing chunks of ice aside with
+      poles. The wind drove sleet horizontally into the men's faces. Two soldiers
+      froze to death on the march from the landing.
+    </p>
+
+    <p>
+      Washington stood in the lead boat. He had told his men one thing before they
+      pushed off: <em>Victory or death.</em> Those were the actual words on the
+      password his officers used that night. Not a slogan. A statement of fact.
+      If the attack failed, the army was finished. The Revolution was finished.
+    </p>
+
+    <blockquote>
+      "I am determined, as the weather is so severe, to push on,"
+      Washington wrote that evening. "But the necessity, dire necessity, will
+      &mdash; nay must &mdash; justify any attempt."
+    </blockquote>
+
+    <h2>What the Hessians Did Not Know</h2>
+
+    <p>
+      The Hessian commander, Colonel Johann Rall, was a brave man and an
+      experienced soldier. He had been warned that an attack might come. He had
+      received the warnings, read them, and dismissed them. Washington's army was
+      broken. Washington's army was finished. Washington's army would not be so
+      foolish as to attack in this weather. He was wrong about all three.
+    </p>
+
+    <p>
+      At eight in the morning on December 26th, the Americans appeared out of the
+      snow at the edge of Trenton. The fight lasted less than an hour. Colonel
+      Rall was shot and killed. Almost a thousand Hessians surrendered. The
+      Americans lost two men &mdash; both of them frozen on the march.
+    </p>
+
+    <div class="reflect">
+      <h3>Reflect</h3>
+      <p style="margin:0;font-family:'Instrument Serif',serif;font-style:italic;font-size:18px">
+        Washington had every reason to wait. A professional general would have
+        waited. What did he see that the professionals did not? And what does
+        it mean that the future of a country sometimes turns on a single man
+        refusing to do the sensible thing?
+      </p>
+    </div>
+
+    <h2>Why It Matters</h2>
+
+    <p>
+      Trenton did not win the war. The war went on for seven more years. But
+      Trenton stopped the war from being lost. The American army stayed together.
+      Men re-enlisted. Money came in. Foreign generals began to take Washington
+      seriously. France would eventually take him seriously enough to send a navy.
+    </p>
+
+    <p>
+      A boy growing up in America inherits the republic Washington bought that
+      night with twenty-four hundred half-frozen men in Durham boats. Every
+      freedom you have &mdash; to speak, to worship, to leave, to disagree with
+      your own government in public &mdash; was, on Christmas night in 1776,
+      one foolish-looking decision away from never existing.
+    </p>
+
+    <p>
+      That is the kind of thing a boy ought to know.
+    </p>
+  </article>
+
+  <div class="gate">
+    <h3>This is one lesson of one Hall.</h3>
+    <p>
+      Griffin Hall has five Halls and dozens of lessons like this one &mdash;
+      and a tutor named Sokrates who walks with the boy through every one.
+      Beta access is invitation only for now.
+    </p>
+    <a class="btn btn-primary" href="/">Return to the Hall</a>
+  </div>
+</main>
+
+<footer class="wrap">
+  &copy; Griffin Hall &middot; A classical hall for boys becoming men
+</footer>
+</body>
+</html>
