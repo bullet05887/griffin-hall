@@ -332,6 +332,8 @@
     width: 28px; height: 38px; pointer-events: none;
   }
   @media (max-width: 640px) { .flame-wrap { width: 20px; height: 28px; right: -4px; } }
+  /* iPad portrait + landscape phones: pull flame inside viewport edge to prevent 6px horizontal scroll. */
+  @media (min-width: 641px) and (max-width: 1024px) { .flame-wrap { right: 0; } }
   .flame {
     width: 100%; height: 100%;
     transform-origin: 50% 100%;
@@ -2559,7 +2561,7 @@ const CARTOGRAPHY_LESSONS = [
     audioUrl: 'audio/lessons/cartographer/economies.mp3',
     title: 'Money Flows — Major Economies',
     subtitle: 'Who makes what, who depends on whom',
-    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Eckert_IV_projection_SW.jpg?width=1280',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Ecker_IV_projection_SW.jpg?width=1280',
     imageCredit: 'Eckert IV projection world map — public domain, via Wikimedia Commons',
     cassianIntro: "Money flows where value is made. Today we trace those flows. Knowing what each country actually makes is how you understand who is rising, who is falling, and why. Headlines lie. Trade balances don't.",
     story: [
@@ -3271,7 +3273,7 @@ const RECKONING_LESSONS = [
     audioUrl: 'audio/lessons/reckoner/probability.mp3',
     title: 'Probability — Real-World Risk',
     subtitle: 'Why your gut is wrong about chance',
-    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Caravaggio_-_I_Bari.jpg?width=1280',
+    image: 'https://en.wikipedia.org/wiki/Special:FilePath/Caravaggio_-_I_bari.jpg?width=1280',
     imageCredit: 'The Cardsharps by Caravaggio, c. 1594 — public domain, via Wikimedia Commons',
     cassianIntro: "Humans are TERRIBLE at probability. We feel scared of the wrong things, hopeful about the wrong things, and bet on the wrong things. Two ideas — base rates and the lottery math — fix most of it.",
     story: [
