@@ -17,7 +17,7 @@ let _cached = null;
 function loadAppHtml() {
   if (_cached) return _cached;
   // app.html lives at the repo root, two levels above api/_lib/.
-  const p = path.join(__dirname, "..", "app.html");
+  const p = path.join(__dirname, "..", "app-content.html");
   _cached = fs.readFileSync(p);
   return _cached;
 }

@@ -4,17 +4,20 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/app",        "destination": "/api/serve-app" },
-    { "source": "/app.html",   "destination": "/api/serve-app" },
     { "source": "/app/(.*)",   "destination": "/api/serve-app" }
+  ],
+  "redirects": [
+    { "source": "/app-content",      "destination": "/", "permanent": false },
+    { "source": "/app-content.html", "destination": "/", "permanent": false }
   ],
   "functions": {
     "api/serve-app.js": {
-      "includeFiles": "app.html"
+      "includeFiles": "app-content.html"
     }
   },
   "headers": [
     {
-      "source": "/app.html",
+      "source": "/app-content.html",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
