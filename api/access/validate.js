@@ -53,13 +53,17 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // Fire-and-forget usage update (don't block the response).
-  const updated = {
-    ...rec,
-    last_used:  new Date().toISOString(),
-    used_count: (rec.used_count || 0) + 1,
-  };
-  putBetaRecord(updated).catch(() => { /* swallow */ });
+  // Fire-and-forget usage update. Re-read the record inside the async path
+  // so a concurrent admin revoke isn't clobbered by a stale write.
+  (async function bumpUsage() {
+    try {
+      const fresh = await getBetaRecordByHash(codeHash);
+      if (!fresh || fresh.revoked) return;
+      fresh.last_used  = new Date().toISOString();
+      fresh.used_count = (fresh.used_count || 0) + 1;
+      await putBetaRecord(fresh);
+    } catch (e) { /* swallow */ }
+  })();
 
   res.setHeader("Set-Cookie", cookie);
   res.status(200).json({ ok: true, label: rec.label || null });
