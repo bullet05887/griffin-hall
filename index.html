@@ -253,8 +253,9 @@
   }
   .map-btn-mini:hover { background: var(--gold-light); }
   .map-btn-mini:active { transform: translateY(1px); }
-  /* On phone/tablet bump tap targets to 44px (Apple HIG / WCAG 2.5.5) */
-  @media (max-width: 767px) {
+  /* On phone/tablet bump tap targets to 44px (Apple HIG / WCAG 2.5.5).
+     Use 1024px to catch iPad portrait (768) and landscape phones too. */
+  @media (max-width: 1024px) {
     .map-btn-mini { min-height: 44px; min-width: 44px; padding: 8px 14px; font-size: 12px; }
   }
   .map-btn-quest {
@@ -273,6 +274,9 @@
   }
   .map-btn-quest:hover { background: var(--crimson-deep); }
   .map-btn-quest:active { transform: translateY(1px); }
+  @media (max-width: 1024px) {
+    .map-btn-quest { min-height: 44px; padding-top: 10px; padding-bottom: 10px; }
+  }
   .touch-none { touch-action: none; }
   @keyframes pop { 0% { transform:scale(0.5); opacity:0;} 60%{transform:scale(1.15);opacity:1;} 100%{transform:scale(1);} }
   .pop { animation:pop .4s ease-out; }
