@@ -246,9 +246,9 @@
     background: #0a1322;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
-    animation: ve-outro .8s ease-in-out 7.0s forwards;
+    transition: opacity .7s ease-in-out;
   }
-  @keyframes ve-outro { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+  .ve-overlay.ve-leaving { opacity: 0; pointer-events: none; }
   .ve-overlay::before {
     /* slow drift over the painting for a 'camera moves' feel */
     content: ''; position: absolute; inset: -4%;
@@ -256,7 +256,7 @@
     background-size: cover; background-position: center;
     filter: brightness(.7) saturate(1.05);
     opacity: 0;
-    animation: ve-bg-in 1.5s ease-out .1s forwards, ve-bg-drift 7s ease-in-out .1s forwards;
+    animation: ve-bg-in 1.5s ease-out .1s forwards, ve-bg-drift 18s ease-out .1s forwards;
   }
   .ve-overlay::after {
     /* darken vignette so title is readable */
@@ -267,7 +267,7 @@
   @keyframes ve-bg-in { to { opacity: 1; } }
   @keyframes ve-bg-drift {
     0%   { transform: scale(1.06) translate(0, 0); }
-    100% { transform: scale(1.12) translate(-1.5%, -1%); }
+    100% { transform: scale(1.14) translate(-2%, -1.5%); }
   }
   .ve-title-wrap {
     position: relative; z-index: 2;
@@ -1815,21 +1815,42 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
     function finish() {
       if (doneRef.current) return;
       doneRef.current = true;
-      try { if (ambient) { ambient.pause(); ambient.currentTime = 0; } } catch (e) {}
-      try { if (voice)   { voice.pause();   voice.currentTime   = 0; } } catch (e) {}
-      if (onComplete) onComplete();
+      // Fade ambient down over 600ms while the overlay fades out, so it doesn't
+      // hard-cut and leak into the silent moment before the lesson audio starts.
+      if (ambient) {
+        const startVol = ambient.volume;
+        const steps = 12;
+        let i = 0;
+        const fade = setInterval(() => {
+          i += 1;
+          try { ambient.volume = Math.max(0, startVol * (1 - i / steps)); } catch (e) {}
+          if (i >= steps) {
+            clearInterval(fade);
+            try { ambient.pause(); ambient.currentTime = 0; } catch (e) {}
+          }
+        }, 50);
+      }
+      try { if (voice) { voice.pause(); voice.currentTime = 0; } } catch (e) {}
+      if (overlayRef.current) overlayRef.current.classList.add('ve-leaving');
+      // Unmount + start lesson audio after the CSS fade finishes (~700ms).
+      setTimeout(() => { if (onComplete) onComplete(); }, 700);
     }
+    let voiceStarted = false;
     if (voice) {
+      voice.addEventListener('play',  () => { voiceStarted = true; }, { once: true });
       voice.addEventListener('ended', finish, { once: true });
       voice.addEventListener('error', finish, { once: true });
     }
-    // Safety net: if voice never fires (audio file missing or blocked),
-    // fall through after ~9s so the kid isn't stuck behind the overlay.
-    const failsafe = setTimeout(finish, 9500);
+    // Two-tier failsafe so the kid is never stuck behind the overlay:
+    //   - If voice never started by ~1.5s after its expected start → short cut (8s total)
+    //   - If voice did start but never fires 'ended' (rare) → long cut (~22s)
+    const shortFailsafe = setTimeout(() => { if (!voiceStarted) finish(); }, voiceStartMs + 4500);
+    const longFailsafe  = setTimeout(finish, 22000);
 
     return () => {
       clearTimeout(voiceTimer);
-      clearTimeout(failsafe);
+      clearTimeout(shortFailsafe);
+      clearTimeout(longFailsafe);
       try { if (ambient) ambient.pause(); } catch (e) {}
       try { if (voice)   voice.pause();   } catch (e) {}
     };
@@ -1837,12 +1858,26 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
   }, []);
 
   function handleSkip() {
-    try { if (ambientRef.current) ambientRef.current.pause(); } catch (e) {}
-    try { if (voiceRef.current)   voiceRef.current.pause();   } catch (e) {}
-    if (!doneRef.current) {
-      doneRef.current = true;
-      if (onComplete) onComplete();
+    if (doneRef.current) return;
+    doneRef.current = true;
+    const ambient = ambientRef.current;
+    const voice   = voiceRef.current;
+    try { if (voice) { voice.pause(); voice.currentTime = 0; } } catch (e) {}
+    if (ambient) {
+      const startVol = ambient.volume;
+      const steps = 8;
+      let i = 0;
+      const fade = setInterval(() => {
+        i += 1;
+        try { ambient.volume = Math.max(0, startVol * (1 - i / steps)); } catch (e) {}
+        if (i >= steps) {
+          clearInterval(fade);
+          try { ambient.pause(); ambient.currentTime = 0; } catch (e) {}
+        }
+      }, 40);
     }
+    if (overlayRef.current) overlayRef.current.classList.add('ve-leaving');
+    setTimeout(() => { if (onComplete) onComplete(); }, 500);
   }
 
   return (
