@@ -237,6 +237,95 @@
   @keyframes fadeup { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;}}
   .fadeup { animation: fadeup .35s ease-out both; }
 
+  /* ===== Voice-Entrance pilot (Washington/Delaware) =====
+     Cinematic 3.5s curtain that plays before the lesson UI is interactive.
+     Visual beats are CSS-driven; audio is two synced <audio> elements
+     muxed in JS (ambient at 0s low-volume, voice at 3.5s full-volume). */
+  .ve-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: #0a1322;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    animation: ve-outro .8s ease-in-out 7.0s forwards;
+  }
+  @keyframes ve-outro { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+  .ve-overlay::before {
+    /* slow drift over the painting for a 'camera moves' feel */
+    content: ''; position: absolute; inset: -4%;
+    background-image: var(--ve-bg);
+    background-size: cover; background-position: center;
+    filter: brightness(.7) saturate(1.05);
+    opacity: 0;
+    animation: ve-bg-in 1.5s ease-out .1s forwards, ve-bg-drift 7s ease-in-out .1s forwards;
+  }
+  .ve-overlay::after {
+    /* darken vignette so title is readable */
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(10,19,34,0) 35%, rgba(10,19,34,0.85) 100%),
+                linear-gradient(180deg, rgba(10,19,34,0.55) 0%, rgba(10,19,34,0.15) 30%, rgba(10,19,34,0.55) 100%);
+  }
+  @keyframes ve-bg-in { to { opacity: 1; } }
+  @keyframes ve-bg-drift {
+    0%   { transform: scale(1.06) translate(0, 0); }
+    100% { transform: scale(1.12) translate(-1.5%, -1%); }
+  }
+  .ve-title-wrap {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 0 24px;
+    color: #f4ecd8;
+    opacity: 0;
+    animation: ve-title-rise .9s cubic-bezier(.2,.7,.2,1) 1.5s forwards;
+  }
+  @keyframes ve-title-rise {
+    from { opacity: 0; transform: translateY(14px); letter-spacing: .18em; }
+    to   { opacity: 1; transform: translateY(0);    letter-spacing: .04em; }
+  }
+  .ve-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5.5vw, 56px);
+    color: #c9a44c;
+    letter-spacing: .04em;
+    line-height: 1.1;
+    margin: 0 0 14px;
+    text-shadow: 0 2px 18px rgba(0,0,0,.6);
+  }
+  .ve-figure {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.4vw, 24px);
+    color: #f4ecd8;
+    margin: 0 0 6px;
+    opacity: .92;
+  }
+  .ve-date {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: #c9a44c;
+    opacity: .8;
+  }
+  .ve-skip {
+    position: absolute; bottom: 22px; right: 22px; z-index: 3;
+    background: transparent;
+    border: 1px solid rgba(201,164,76,.55);
+    color: #c9a44c;
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .2em; text-transform: uppercase;
+    padding: 8px 14px; border-radius: 4px;
+    cursor: pointer; opacity: 0;
+    animation: ve-skip-in .5s ease-out 1.2s forwards;
+  }
+  @keyframes ve-skip-in { to { opacity: .7; } }
+  .ve-skip:hover { opacity: 1; background: rgba(201,164,76,.08); }
+  @media (prefers-reduced-motion: reduce) {
+    .ve-overlay::before { animation: ve-bg-in 0.4s ease-out forwards; }
+    .ve-title-wrap { animation-duration: .3s; animation-delay: .2s; }
+  }
+
   .map-btn-mini {
     font-family:'Cinzel', Georgia, serif;
     font-weight:700;
@@ -1588,8 +1677,17 @@ function buildLessonNarration(lesson, masterKey) {
   return out.join(' ');
 }
 
-function NarrationPanel({ text, masterKey, label, audioUrl }) {
+function NarrationPanel({ text, masterKey, label, audioUrl, autoStart }) {
   const n = useNarration(text, masterKey, audioUrl);
+  const triedAutoRef = useRef(false);
+  useEffect(() => {
+    if (!autoStart || !n.supported || triedAutoRef.current) return;
+    triedAutoRef.current = true;
+    // Small delay so the entrance overlay outro can complete cleanly.
+    const t = setTimeout(() => { try { n.play(); } catch (e) {} }, 250);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, n.supported]);
   if (!n.supported) return null;
   const voiceName = n.mode === 'mp3'
     ? 'studio narration'
@@ -1675,6 +1773,88 @@ function HallDoorAutoplay({ masterKey, text, audioUrl }) {
           ■ Silence the Master
         </button>
       )}
+    </div>
+  );
+}
+
+/* ============================================================
+   VOICE ENTRANCE — pilot for Washington Crossing the Delaware.
+   Cinematic 3.5s opener: ambient sound + visual entrance at 0s,
+   title rises at 1.5s, Washington speaks at 3.5s, overlay fades.
+   On completion, kicks the existing lesson narration so the
+   regular lesson audio flows naturally from the entrance.
+   ------------------------------------------------------------ */
+function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, voiceStartMs = 3500, onComplete }) {
+  const overlayRef = useRef(null);
+  const ambientRef = useRef(null);
+  const voiceRef   = useRef(null);
+  const doneRef    = useRef(false);
+  useEffect(() => {
+    if (overlayRef.current) {
+      overlayRef.current.style.setProperty('--ve-bg', `url("${background}")`);
+    }
+    const ambient = ambientRef.current;
+    const voice   = voiceRef.current;
+    if (ambient) {
+      ambient.volume = 0.25;  // -12dB-ish under voice
+      const p = ambient.play();
+      if (p && p.catch) p.catch(() => {
+        // Browser blocked autoplay — try muted-then-unmute trick.
+        try { ambient.muted = true; ambient.play().then(() => {
+          setTimeout(() => { try { ambient.muted = false; } catch (e) {} }, 200);
+        }).catch(() => {}); } catch (e) {}
+      });
+    }
+    const voiceTimer = setTimeout(() => {
+      if (!voice) return;
+      voice.volume = 1.0;
+      const p = voice.play();
+      if (p && p.catch) p.catch(() => {});
+    }, voiceStartMs);
+
+    function finish() {
+      if (doneRef.current) return;
+      doneRef.current = true;
+      try { if (ambient) { ambient.pause(); ambient.currentTime = 0; } } catch (e) {}
+      try { if (voice)   { voice.pause();   voice.currentTime   = 0; } } catch (e) {}
+      if (onComplete) onComplete();
+    }
+    if (voice) {
+      voice.addEventListener('ended', finish, { once: true });
+      voice.addEventListener('error', finish, { once: true });
+    }
+    // Safety net: if voice never fires (audio file missing or blocked),
+    // fall through after ~9s so the kid isn't stuck behind the overlay.
+    const failsafe = setTimeout(finish, 9500);
+
+    return () => {
+      clearTimeout(voiceTimer);
+      clearTimeout(failsafe);
+      try { if (ambient) ambient.pause(); } catch (e) {}
+      try { if (voice)   voice.pause();   } catch (e) {}
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleSkip() {
+    try { if (ambientRef.current) ambientRef.current.pause(); } catch (e) {}
+    try { if (voiceRef.current)   voiceRef.current.pause();   } catch (e) {}
+    if (!doneRef.current) {
+      doneRef.current = true;
+      if (onComplete) onComplete();
+    }
+  }
+
+  return (
+    <div ref={overlayRef} className="ve-overlay" role="dialog" aria-label={`${title} — entrance`}>
+      <div className="ve-title-wrap">
+        <h1 className="ve-title">{title}</h1>
+        <div className="ve-figure">{figure}</div>
+        <div className="ve-date">{date}</div>
+      </div>
+      <button className="ve-skip" onClick={handleSkip} aria-label="Skip entrance">Skip ›</button>
+      <audio ref={ambientRef} src={ambientUrl} preload="auto" loop />
+      <audio ref={voiceRef}   src={voiceUrl}   preload="auto" />
     </div>
   );
 }
@@ -5455,8 +5635,37 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
   const next = quest.lessons[idx + 1];
   const replayBonusBadge = canReplayForBonus(state, questId, lessonId);
 
+  // === Voice-Entrance pilot (Washington/Delaware only, 2026-05-26) ===
+  // Show the cinematic 3.5s opener the first time the lesson is opened in this
+  // session. After it completes, auto-trigger the existing lesson narration.
+  const isVoiceEntrancePilot = lesson.id === 'delaware';
+  const [entranceDone, setEntranceDone] = useState(() => {
+    if (!isVoiceEntrancePilot) return true;
+    try { return sessionStorage.getItem('ve_delaware_done') === '1'; } catch (e) { return false; }
+  });
+  // Only auto-trigger lesson audio when we just finished the entrance — not on
+  // subsequent visits in the same session where the entrance is already skipped.
+  const [autoStartLesson, setAutoStartLesson] = useState(false);
+  function finishEntrance() {
+    setEntranceDone(true);
+    setAutoStartLesson(true);
+    try { sessionStorage.setItem('ve_delaware_done', '1'); } catch (e) {}
+  }
+
   return (
     <article className="pb-safe">
+      {isVoiceEntrancePilot && !entranceDone && (
+        <VoiceEntrance
+          background={lesson.image}
+          title="Crossing the Delaware"
+          figure="George Washington"
+          date="December 25, 1776"
+          ambientUrl="audio/intros/washington_delaware_ambient.mp3"
+          voiceUrl="audio/intros/washington_delaware_entrance.mp3"
+          voiceStartMs={3500}
+          onComplete={finishEntrance}
+        />
+      )}
       <div className="wrap-narrow pt-6">
         <button onClick={goQuest} className="heraldic text-[10px] uppercase tracking-widest ink-soft hover:text-crimson flex items-center gap-1 font-bold min-h-[44px] py-2 -my-1">
           <Icon.Back className="w-4 h-4"/> {quest.formalTitle.toUpperCase()}
@@ -5488,6 +5697,7 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
             text={buildLessonNarration(lesson, quest.master)}
             masterKey={quest.master}
             audioUrl={lesson.audioUrl}
+            autoStart={autoStartLesson}
             label={MASTERS[quest.master]?.name}/>
         </div>
       )}
