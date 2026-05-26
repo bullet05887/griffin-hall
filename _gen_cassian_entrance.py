@@ -52,14 +52,13 @@ def gen_ambient():
     print(f"[ambient] wrote {len(audio)} bytes in {time.time()-t0:.1f}s -> {AMBIENT_OUT}")
 
 ENTRANCE_TEXT = (
-    "Imagine, for a moment, you stand on a Roman dawn. "
-    "The eagles snap in the wind. The men are silent. Sandals frozen to the ground. "
-    "Forty winters I marched under that eagle. "
-    "And the question that kept me alive — would you have asked it? "
-    "When the line wavers, and the men look to you, what holds you in place? "
-    "When the smart play is to run, what makes a man stay? "
-    "What does courage cost? "
-    "Sit close. Some questions, we will answer together."
+    "I am Marcus Cassianus. "
+    "Thirty winters under arms. "
+    "I have led Romans across rivers thicker with blood than this one. "
+    "Survived ambushes that took every man around me. "
+    "Sat at councils where one wrong word ended a thousand lives. "
+    "The lessons in this hall are the ones that kept me alive. "
+    "What will you do with them?"
 )
 
 VOICE_SETTINGS = {
