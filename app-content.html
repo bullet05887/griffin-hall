@@ -1790,6 +1790,9 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
   const voiceRef   = useRef(null);
   const doneRef    = useRef(false);
   useEffect(() => {
+    // Land at the top of the lesson behind the overlay so the reveal is clean
+    // regardless of where the user was scrolled when they entered the lesson.
+    try { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); } catch (e) {}
     if (overlayRef.current) {
       overlayRef.current.style.setProperty('--ve-bg', `url("${background}")`);
     }
@@ -5682,6 +5685,9 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
   // subsequent visits in the same session where the entrance is already skipped.
   const [autoStartLesson, setAutoStartLesson] = useState(false);
   function finishEntrance() {
+    // Snap to the top of the lesson as the overlay finishes fading out, so the
+    // kid lands at the lesson header — not wherever they were scrolled before.
+    try { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); } catch (e) {}
     setEntranceDone(true);
     setAutoStartLesson(true);
     try { sessionStorage.setItem('ve_delaware_done', '1'); } catch (e) {}
