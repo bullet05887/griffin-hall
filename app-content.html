@@ -4398,10 +4398,11 @@ function MasterIntroCard({ masterKey, openingLine }) {
 function QuestView({ questId, state }) {
   const quest = QUESTS[questId];
   // === Cassian self-introduction on first Marshal's Hall entry (2026-05-26) ===
-  // Plays Cassian's self-intro ("I am Marcus Cassianus. Thirty winters under arms...")
-  // in the existing Vishchun (Carpathian Elder) voice, exactly once per device.
+  // Plays Cassian's self-intro ("I am Marshal Cassian. Forty winters under arms...")
+  // in the canonical Harry "Fierce Warrior" voice (SOYHLrjzK2X1ezoPC6cr — same
+  // voice used in cassian_intro.mp3 and all marshal lesson narrations).
   // Gate uses localStorage so it persists across sessions — kid hears it on FIRST
-  // entry, never again (unless they clear storage).
+  // entry, never again (unless they clear storage). See griffin_cassian_canon memory.
   const isMarshalEntrance = questId === 'strategy';
   const [marshalEntranceDone, setMarshalEntranceDone] = useState(() => {
     if (!isMarshalEntrance) return true;
@@ -4429,13 +4430,13 @@ function QuestView({ questId, state }) {
   return (
     <div className="pb-safe">
       {isMarshalEntrance && !marshalEntranceDone && (
-        /* First-entry only Cassian self-intro: "I am Marcus Cassianus. Thirty
-           winters under arms…" in Vishchun voice. Gated by localStorage flag
-           `cassian_intro_seen` (set by finishMarshalEntrance). */
+        /* First-entry only Cassian self-intro: "I am Marshal Cassian. Forty
+           winters under arms…" in canonical Harry voice. Gated by localStorage
+           flag `cassian_intro_seen` (set by finishMarshalEntrance). */
         <VoiceEntrance
           background="https://en.wikipedia.org/wiki/Special:FilePath/The_Death_of_Paulus_Aemilius_at_the_Battle_of_Cannae_(Yale_University_Art_Gallery_scan).jpg?width=1280"
           title="Marshal's Hall"
-          figure="Master Cassian"
+          figure="Marshal Cassian"
           date=""
           ambientUrl="audio/intros/marshal_hall_ambient.mp3"
           voiceUrl="audio/intros/cassian_entrance.mp3"
@@ -4458,10 +4459,12 @@ function QuestView({ questId, state }) {
         {quest.master && (
           <>
             <MasterIntroCard masterKey={quest.master} openingLine={masterOpening}/>
-            {/* Strategy quest is handled by the VoiceEntrance overlay above (Cassian's
-                Sokrates-style story-hook in Vishchun voice). Suppress HallDoorAutoplay
-                here so we never play two Cassian audio tracks at once. */}
-            {!isMarshalEntrance && (
+            {/* On the FIRST Marshal's Hall entry, the VoiceEntrance overlay above
+                plays Cassian's self-introduction — suppress HallDoorAutoplay so we
+                never play two Cassian tracks at once. On LATER visits the overlay
+                doesn't render (marshalEntranceDone=true from localStorage), so we
+                fall back to the regular HallDoorAutoplay (cassian_intro.mp3). */}
+            {(!isMarshalEntrance || marshalEntranceDone) && (
               <HallDoorAutoplay masterKey={quest.master}
                 audioUrl={MASTER_INTRO_AUDIO[quest.master]}
                 text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}/>

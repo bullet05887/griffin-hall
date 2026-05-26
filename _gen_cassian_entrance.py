@@ -51,9 +51,13 @@ def gen_ambient():
     AMBIENT_OUT.write_bytes(audio)
     print(f"[ambient] wrote {len(audio)} bytes in {time.time()-t0:.1f}s -> {AMBIENT_OUT}")
 
+# Canon-locked self-introduction (see griffin_cassian_canon memory):
+#   - Name: "Marshal Cassian" (NEVER "Marcus Cassianus" / "Cassianus")
+#   - Years: "Forty winters" (matches cassian_intro.txt + marshal_intro.txt)
+#   - Rank: general of Rome (locked elsewhere; not re-asserted here for brevity)
 ENTRANCE_TEXT = (
-    "I am Marcus Cassianus. "
-    "Thirty winters under arms. "
+    "I am Marshal Cassian. "
+    "Forty winters under arms. "
     "I have led Romans across rivers thicker with blood than this one. "
     "Survived ambushes that took every man around me. "
     "Sat at councils where one wrong word ended a thousand lives. "
@@ -68,8 +72,16 @@ VOICE_SETTINGS = {
     "use_speaker_boost": True,
 }
 
+# CANONICAL Cassian voice: Harry "Fierce Warrior" (SOYHLrjzK2X1ezoPC6cr).
+# This is the same voice used in audio/masters/cassian_intro.mp3 + all six
+# marshal lesson narrations + lesson congrats audio. Unifying the entrance
+# under the same voice fixes the prior canon split where this file was
+# Vishchun while everything else was Harry.
+CANONICAL_VOICE_ID = "SOYHLrjzK2X1ezoPC6cr"
+CANONICAL_VOICE_NAME = "Harry - Fierce Warrior"
 CANDIDATES = [
-    ("vishchun",       "WtDqMP4cPOGB6kDiLZgi", "Did Vishchun - Carpathian Elder"),
+    ("harry",          "SOYHLrjzK2X1ezoPC6cr", "Harry - Fierce Warrior (CANON)"),
+    ("vishchun",       "WtDqMP4cPOGB6kDiLZgi", "Did Vishchun - Carpathian Elder (deprecated)"),
     ("alistair",       "UzI1NsMEV3ni5JRkRSls", "Alistair - Cultured British Older"),
     ("gravel_midnight","M5E055lOUxMi0kJpGyE9", "Gravel Midnight - Deep Grit"),
 ]
@@ -143,11 +155,12 @@ if __name__ == "__main__":
             gen_voice(slug, vid, name)
         except urllib.error.HTTPError as e:
             print(f"[voice/{slug}][HTTP {e.code}] {e.read().decode('utf-8', 'ignore')[:500]}")
-    final_voice = os.environ.get("FINAL_VOICE_ID")
-    if final_voice:
-        try:
-            gen_final(final_voice)
-        except urllib.error.HTTPError as e:
-            print(f"[FINAL][HTTP {e.code}] {e.read().decode('utf-8', 'ignore')[:500]}")
-            sys.exit(1)
+    # Default to canonical Harry voice if FINAL_VOICE_ID env var not set,
+    # so re-running this script always produces the canon-locked cassian_entrance.mp3.
+    final_voice = os.environ.get("FINAL_VOICE_ID", CANONICAL_VOICE_ID)
+    try:
+        gen_final(final_voice)
+    except urllib.error.HTTPError as e:
+        print(f"[FINAL][HTTP {e.code}] {e.read().decode('utf-8', 'ignore')[:500]}")
+        sys.exit(1)
     print("OK")
