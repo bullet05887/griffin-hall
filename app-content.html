@@ -1906,32 +1906,11 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
   );
 }
 
-function HubWelcomeOnce() {
-  const text = "Welcome to Griffin Hall. Many doors await. Some are open. Some are sealed. Choose wisely.";
-  const n = useNarration(text, 'cassian');
-  useEffect(() => {
-    if (!n.supported) return;
-    try {
-      if (localStorage.getItem(HUB_WELCOME_KEY)) return;
-    } catch (e) { return; }
-    function onFirstInteract() {
-      try { localStorage.setItem(HUB_WELCOME_KEY, '1'); } catch (e) {}
-      n.play();
-      cleanup();
-    }
-    function cleanup() {
-      window.removeEventListener('click',    onFirstInteract);
-      window.removeEventListener('touchend', onFirstInteract);
-      window.removeEventListener('keydown',  onFirstInteract);
-    }
-    window.addEventListener('click',    onFirstInteract, { once: true });
-    window.addEventListener('touchend', onFirstInteract, { once: true });
-    window.addEventListener('keydown',  onFirstInteract, { once: true });
-    return cleanup;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return null;
-}
+// HubWelcomeOnce was killed 2026-05-26 — it fell back to browser SpeechSynthesis
+// (no audioUrl supplied) and produced a robotic-TTS voice on home-screen first
+// interaction. The right moment for Cassian to greet the kid is the Marshal's
+// Hall self-intro (see griffin_cassian_canon memory), not a robotic hub welcome.
+function HubWelcomeOnce() { return null; }
 
 /* ============================================================
    INTERACTIVE WORDS — Marshal's Hall tappable inline triggers.
