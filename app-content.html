@@ -4388,6 +4388,19 @@ function MasterIntroCard({ masterKey, openingLine }) {
 
 function QuestView({ questId, state }) {
   const quest = QUESTS[questId];
+  // === Voice-Entrance pilot for Marshal's Hall (strategy quest, 2026-05-26) ===
+  // Mirrors Washington/Delaware pattern: cinematic 3.5s opener with ambient + voice.
+  // Uses Did Vishchun (Carpathian Elder) — older, weathered, rough-at-edges voice
+  // selected to match John's "older battle-weathered" brief for Cassian.
+  const isMarshalEntrance = questId === 'strategy';
+  const [marshalEntranceDone, setMarshalEntranceDone] = useState(() => {
+    if (!isMarshalEntrance) return true;
+    try { return sessionStorage.getItem('ve_marshal_done') === '1'; } catch (e) { return false; }
+  });
+  function finishMarshalEntrance() {
+    setMarshalEntranceDone(true);
+    try { sessionStorage.setItem('ve_marshal_done', '1'); } catch (e) {}
+  }
   if (!quest) {
     return (
       <div className="wrap pt-12">
@@ -4405,6 +4418,18 @@ function QuestView({ questId, state }) {
   const masterOpening = quest.masterOpening || "Welcome to my Hall. The lessons below open in order — master the first to unlock the next.";
   return (
     <div className="pb-safe">
+      {isMarshalEntrance && !marshalEntranceDone && (
+        <VoiceEntrance
+          background="https://en.wikipedia.org/wiki/Special:FilePath/The_Death_of_Paulus_Aemilius_at_the_Battle_of_Cannae_(Yale_University_Art_Gallery_scan).jpg?width=1280"
+          title="Marshal's Hall"
+          figure="Master Cassian"
+          date="Rome, the late campaigns"
+          ambientUrl="audio/intros/marshal_hall_ambient.mp3"
+          voiceUrl="audio/intros/cassian_entrance.mp3"
+          voiceStartMs={3500}
+          onComplete={finishMarshalEntrance}
+        />
+      )}
       <div className="wrap pt-8 sm:pt-10">
         <div className="text-center max-w-2xl mx-auto">
           <div className="heraldic text-xs font-bold text-gold-deep uppercase tracking-[0.3em]">Griffin's Quest</div>
