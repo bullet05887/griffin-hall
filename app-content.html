@@ -1848,7 +1848,9 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
     //   - If voice never started by ~1.5s after its expected start → short cut (8s total)
     //   - If voice did start but never fires 'ended' (rare) → long cut (~22s)
     const shortFailsafe = setTimeout(() => { if (!voiceStarted) finish(); }, voiceStartMs + 4500);
-    const longFailsafe  = setTimeout(finish, 22000);
+    // Long failsafe: Cassian's Sokrates entrance runs ~33s after the 3.5s overlay,
+    // so we give the voice ~42s total before the hard cut would interrupt it.
+    const longFailsafe  = setTimeout(finish, 45000);
 
     return () => {
       clearTimeout(voiceTimer);
@@ -4445,9 +4447,14 @@ function QuestView({ questId, state }) {
         {quest.master && (
           <>
             <MasterIntroCard masterKey={quest.master} openingLine={masterOpening}/>
-            <HallDoorAutoplay masterKey={quest.master}
-              audioUrl={MASTER_INTRO_AUDIO[quest.master]}
-              text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}/>
+            {/* Strategy quest is handled by the VoiceEntrance overlay above (Cassian's
+                Sokrates-style story-hook in Vishchun voice). Suppress HallDoorAutoplay
+                here so we never play two Cassian audio tracks at once. */}
+            {!isMarshalEntrance && (
+              <HallDoorAutoplay masterKey={quest.master}
+                audioUrl={MASTER_INTRO_AUDIO[quest.master]}
+                text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}/>
+            )}
           </>
         )}
 

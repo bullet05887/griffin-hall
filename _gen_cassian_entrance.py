@@ -52,10 +52,14 @@ def gen_ambient():
     print(f"[ambient] wrote {len(audio)} bytes in {time.time()-t0:.1f}s -> {AMBIENT_OUT}")
 
 ENTRANCE_TEXT = (
-    "I am Cassian, of Rome. "
-    "For forty winters I marched under the eagle. "
-    "What I learned, I paid for in blood. "
-    "Sit close, and let me teach you."
+    "Imagine, for a moment, you stand on a Roman dawn. "
+    "The eagles snap in the wind. The men are silent. Sandals frozen to the ground. "
+    "Forty winters I marched under that eagle. "
+    "And the question that kept me alive — would you have asked it? "
+    "When the line wavers, and the men look to you, what holds you in place? "
+    "When the smart play is to run, what makes a man stay? "
+    "What does courage cost? "
+    "Sit close. Some questions, we will answer together."
 )
 
 VOICE_SETTINGS = {
@@ -100,6 +104,13 @@ def gen_voice(slug, voice_id, name):
 
 def gen_final(voice_id):
     final = OUT / "cassian_entrance.mp3"
+    # Force regen for script-rewrite: delete prior file so we always
+    # write the latest ENTRANCE_TEXT.
+    try:
+        if final.exists():
+            final.unlink()
+    except Exception:
+        pass
     payload = {
         "text": ENTRANCE_TEXT,
         "model_id": "eleven_multilingual_v2",
