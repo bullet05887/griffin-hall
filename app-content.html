@@ -1517,29 +1517,8 @@ const MASTER_INTRO_AUDIO = {
   atlas:    'audio/masters/atlas_intro.mp3',
 };
 
-/* === Cassian audio singleton lock (2026-05-27 regression fix) =================
-   The bug: on first Marshal's Hall visit, cassian_entrance.mp3 plays during the
-   splash → continues into Hall → ends. Then cassian_intro.mp3 plays AGAIN,
-   re-introducing Cassian. Both files begin "I am Marshal Cassian..." so the
-   second sounds like he's restarting his intro.
-   Root cause: when VoiceEntrance unmounts (after entrance done), React re-renders
-   and mounts HallDoorAutoplay. HallDoorAutoplay calls useNarration, whose prime
-   useEffect calls new Audio(cassian_intro.mp3).play() (with muted=true). On
-   desktop Chrome the muted-then-pause race can briefly leak audio.
-   Defense: a window-level lock that any Cassian audio path checks before .play().
-   Once ANY Cassian file plays, NO other Cassian path is allowed to play in this
-   page session until explicit user click on "Hear the Master." (Set via React
-   state — opt-in resets the lock for that one playback.)
-   ============================================================================ */
-if (typeof window !== 'undefined') {
-  window.__cassianAudioLock = window.__cassianAudioLock || { locked: false };
-}
-function cassianLock() {
-  return (typeof window !== 'undefined') ? window.__cassianAudioLock : { locked: false };
-}
-function isCassianAudioUrl(url) {
-  return typeof url === 'string' && /cassian_(intro|entrance)\.mp3/i.test(url);
-}
+/* Lightweight audio trace — keep this; it's harmless and pinpoints any future
+   regression in seconds. Look for [GH-AUDIO] in DevTools console. */
 function logAudio(label, detail) {
   try { console.log('[GH-AUDIO]', label, detail || ''); } catch (e) {}
 }
@@ -1632,15 +1611,6 @@ function useNarration(text, masterKey, audioUrl) {
   function play() {
     if (!supported) return;
     if (hasMp3) {
-      // Cassian audio is gated globally — only the VoiceEntrance overlay or the
-      // explicit "Hear the Master" button (CassianReplayButton) may play it.
-      // Any other call (e.g. an auto-fire from HallDoorAutoplay re-mount) is
-      // blocked here to prevent the regression where Cassian re-introduces
-      // himself after the entrance ends. See cassianLock() above.
-      if (isCassianAudioUrl(audioUrl) && cassianLock().locked) {
-        logAudio('useNarration.play BLOCKED by cassian lock', audioUrl);
-        return;
-      }
       // Stop any TTS that may be running
       if (hasSS) window.speechSynthesis.cancel();
       let a = audioRef.current;
@@ -1701,16 +1671,9 @@ function useNarration(text, masterKey, audioUrl) {
   // Without priming, the lazy `new Audio()` inside a later setTimeout-triggered
   // .play() falls outside the user-activation window and is silently blocked —
   // user then has to tap the Listen button. (John 2026-05-26 regression.)
-  // 2026-05-27: SKIP the prime entirely for Cassian audio. The muted-then-pause
-  // race was leaking a second cassian_intro.mp3 playback after the entrance
-  // overlay ended. Cassian playback is now opt-in only via CassianReplayButton.
   useEffect(() => {
     if (!hasMp3) return;
     if (audioRef.current) return;
-    if (isCassianAudioUrl(audioUrl)) {
-      logAudio('useNarration prime SKIPPED (cassian gate)', audioUrl);
-      return;
-    }
     const a = new Audio(audioUrl);
     audioRef.current = a;
     a.addEventListener('play',  () => { setPlaying(true);  setPaused(false); });
@@ -1831,59 +1794,6 @@ function NarrationPanel({ text, masterKey, label, audioUrl, autoStart }) {
   );
 }
 
-/* Marshal's Hall replay button. Replaces HallDoorAutoplay on Marshal's Hall
-   to prevent the useNarration prime from leaking a second cassian_intro.mp3
-   after the VoiceEntrance overlay ends. This component creates `new Audio()`
-   ONLY when the user clicks — no mount-time prime, no auto-fire. While playing,
-   it temporarily releases the cassianLock so its own audio is allowed; on end
-   or stop the lock re-engages. (2026-05-27 regression fix.) */
-function CassianReplayButton({ audioUrl }) {
-  const [playing, setPlaying] = useState(false);
-  const audioRef = useRef(null);
-  function stop() {
-    const a = audioRef.current;
-    if (a) { try { a.pause(); a.currentTime = 0; } catch (e) {} }
-    audioRef.current = null;
-    setPlaying(false);
-    cassianLock().locked = true;
-    logAudio('CassianReplayButton stop — lock re-engaged');
-  }
-  function play() {
-    if (audioRef.current) { try { audioRef.current.pause(); } catch (e) {} }
-    const a = new Audio(audioUrl);
-    audioRef.current = a;
-    a.addEventListener('ended', () => {
-      setPlaying(false);
-      cassianLock().locked = true;
-      logAudio('CassianReplayButton ended — lock re-engaged');
-    }, { once: true });
-    a.addEventListener('error', () => { setPlaying(false); cassianLock().locked = true; }, { once: true });
-    cassianLock().locked = false;
-    logAudio('CassianReplayButton play (lock released)', audioUrl);
-    const p = a.play();
-    if (p && p.catch) p.catch(() => { setPlaying(false); cassianLock().locked = true; });
-    setPlaying(true);
-  }
-  useEffect(() => () => {
-    if (audioRef.current) { try { audioRef.current.pause(); } catch (e) {} }
-  }, []);
-  return (
-    <div className="flex justify-center mt-4">
-      {!playing ? (
-        <button onClick={play}
-          className="bg-crimson text-parchment heraldic font-bold uppercase tracking-widest text-xs px-4 py-2 rounded-lg hover:brightness-110">
-          🔊 Hear the Master
-        </button>
-      ) : (
-        <button onClick={stop}
-          className="bg-navy text-parchment heraldic font-bold uppercase tracking-widest text-xs px-4 py-2 rounded-lg hover:brightness-110">
-          ■ Silence the Master
-        </button>
-      )}
-    </div>
-  );
-}
-
 function HallDoorAutoplay({ masterKey, text, audioUrl, autoplay = true }) {
   const n = useNarration(text, masterKey, audioUrl);
   const triedRef = useRef(false);
@@ -1974,14 +1884,6 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
       if (!voice) return;
       voice.volume = 1.0;
       try { voice.muted = false; voice.currentTime = 0; } catch (e) {}
-      // Engage the global Cassian lock the moment the entrance voice begins,
-      // so any later component (HallDoorAutoplay, etc.) cannot fire a second
-      // cassian_intro.mp3 after the entrance ends. Lock stays on for the page
-      // session; opt-in replay via CassianReplayButton temporarily releases it.
-      if (isCassianAudioUrl(voiceUrl)) {
-        cassianLock().locked = true;
-        logAudio('cassianLock ENGAGED by VoiceEntrance', voiceUrl);
-      }
       logAudio('VoiceEntrance voice.play', voiceUrl);
       const p = voice.play();
       if (p && p.catch) p.catch(() => {
@@ -4582,20 +4484,8 @@ function QuestView({ questId, state }) {
     if (!isMarshalEntrance) return true;
     try { return localStorage.getItem('cassian_intro_seen') === '1'; } catch (e) { return false; }
   });
-  // Engage the Cassian lock immediately when the Marshal's Hall mounts, so any
-  // remount-driven prime call is blocked even before the entrance voice fires.
-  // The lock is later released only by CassianReplayButton on explicit click.
-  useEffect(() => {
-    if (isMarshalEntrance) {
-      cassianLock().locked = true;
-      logAudio('cassianLock pre-engaged on Marshal\'s Hall mount');
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMarshalEntrance]);
   function finishMarshalEntrance() {
     setMarshalEntranceDone(true);
-    cassianLock().locked = true;
-    logAudio('finishMarshalEntrance — lock kept engaged');
     try { localStorage.setItem('cassian_intro_seen', '1'); } catch (e) {}
   }
   if (!quest) {
@@ -4646,26 +4536,21 @@ function QuestView({ questId, state }) {
         {quest.master && (
           <>
             <MasterIntroCard masterKey={quest.master} openingLine={masterOpening}/>
-            {/* On Marshal's Hall, Cassian's self-introduction is owned by the
-                VoiceEntrance overlay above (single continuous play that survives
-                the splash→Hall transition via splashHoldMs). Instead of
-                HallDoorAutoplay (which calls useNarration and primes a second
-                Cassian Audio element on mount — that's how the 2026-05-27
-                regression leaked a second intro after the entrance ended) we
-                render CassianReplayButton, which only creates new Audio() on
-                explicit click. On all OTHER halls, HallDoorAutoplay auto-plays
-                as usual. (John 2026-05-26: entrance + master intro back-to-back.
-                John 2026-05-27: even with autoplay=false the prime was still
-                firing — defense-in-depth fix.) */}
+            {/* On Marshal's Hall: the entrance overlay above plays the
+                self-introduction (cassian_entrance.mp3). After it finishes and
+                marshalEntranceDone flips true, HallDoorAutoplay mounts and
+                auto-plays cassian_intro.mp3 — which has been rewritten to skip
+                the "I am Marshal Cassian" opener and dive straight into the
+                Hall content (the six lessons + a Sokrates-style question). The
+                kid hears ONE continuous Cassian arc: self-intro on splash,
+                then Hall-content second, no name-repetition.
+                See [[griffin_hall_master_intro_pattern]] in memory — same rule
+                applies to every Master's Hall: introduce ONCE, then content. */}
             {(!isMarshalEntrance || marshalEntranceDone) && (
-              isMarshalEntrance ? (
-                <CassianReplayButton audioUrl={MASTER_INTRO_AUDIO[quest.master]}/>
-              ) : (
-                <HallDoorAutoplay masterKey={quest.master}
-                  audioUrl={MASTER_INTRO_AUDIO[quest.master]}
-                  text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}
-                  autoplay={true}/>
-              )
+              <HallDoorAutoplay masterKey={quest.master}
+                audioUrl={MASTER_INTRO_AUDIO[quest.master]}
+                text={`I am ${MASTERS[quest.master]?.name || 'the Master'}. ${masterOpening}`}
+                autoplay={true}/>
             )}
           </>
         )}
