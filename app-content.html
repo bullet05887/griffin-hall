@@ -2009,7 +2009,13 @@ function Interactive({ word, data, children }) {
         onTouchCancel={onTouchCancel}
         onKeyDown={onKeyDown}
       >{children || word}</span>
-      {open && hasData && (
+      {open && hasData && ReactDOM.createPortal(
+        /* PORTAL to document.body — critical: the lesson story <p> has
+           `transform` applied by the `.fadeup` animation, which would
+           otherwise make the <p> the containing block for our
+           position:fixed backdrop and trap it inside the paragraph
+           (causing the narrative text to bleed through the popup).
+           Rendering at body root escapes every ancestor stacking context. */
         <div
           className="interactive-modal-backdrop"
           onClick={() => setOpen(false)}
@@ -2042,7 +2048,8 @@ function Interactive({ word, data, children }) {
               <div className="interactive-modal-credit">{data.credit}</div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </React.Fragment>
   );
