@@ -1619,8 +1619,18 @@ function useNarration(text, masterKey, audioUrl) {
       try { a.currentTime = 0; } catch (e) {}
       try { a.playbackRate = Math.max(0.5, Math.min(2.0, (userPrefs.rate ?? 0.9) / 0.9)); } catch (e) {}
       try { a.volume = Math.max(0, Math.min(1.0, userPrefs.volume ?? 1)); } catch (e) {}
+      try { a.muted = false; } catch (e) {}
       const p = a.play();
-      if (p && p.catch) p.catch(() => { setPlaying(false); setPaused(false); });
+      if (p && p.catch) p.catch(() => {
+        // iOS autoplay fallback: muted play (always allowed) then unmute.
+        // Loses ~150ms of head audio but is far better than silently failing.
+        try {
+          a.muted = true;
+          a.play().then(() => {
+            setTimeout(() => { try { a.muted = false; } catch (e) {} }, 150);
+          }).catch(() => { setPlaying(false); setPaused(false); });
+        } catch (e) { setPlaying(false); setPaused(false); }
+      });
       return;
     }
     // Browser TTS fallback
@@ -1648,6 +1658,34 @@ function useNarration(text, masterKey, audioUrl) {
     if (paused) { window.speechSynthesis.resume(); setPaused(false); }
     else        { window.speechSynthesis.pause();  setPaused(true); }
   }
+
+  // Pre-create + prime the narration audio on mount so iOS Safari allows the
+  // deferred auto-start .play() that fires after the entrance overlay ends.
+  // Without priming, the lazy `new Audio()` inside a later setTimeout-triggered
+  // .play() falls outside the user-activation window and is silently blocked —
+  // user then has to tap the Listen button. (John 2026-05-26 regression.)
+  useEffect(() => {
+    if (!hasMp3) return;
+    if (audioRef.current) return;
+    const a = new Audio(audioUrl);
+    audioRef.current = a;
+    a.addEventListener('play',  () => { setPlaying(true);  setPaused(false); });
+    a.addEventListener('pause', () => { setPaused(true); });
+    a.addEventListener('ended', () => { setPlaying(false); setPaused(false); try { a.currentTime = 0; } catch (e) {} });
+    a.addEventListener('error', () => { setPlaying(false); setPaused(false); });
+    try {
+      a.muted = true;
+      const primeP = a.play();
+      if (primeP && primeP.then) {
+        primeP.then(() => {
+          try { a.pause(); a.currentTime = 0; a.muted = false; } catch (e) {}
+        }).catch(() => {
+          try { a.muted = false; } catch (e) {}
+        });
+      }
+    } catch (e) {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioUrl, hasMp3]);
 
   // Auto-stop when this component unmounts (e.g. navigating away from lesson)
   useEffect(() => () => {
@@ -1813,11 +1851,39 @@ function VoiceEntrance({ background, title, figure, date, ambientUrl, voiceUrl, 
     // (Fixes the prior "robotic voice reading the date" complaint — date is on
     // screen, no voice tries to narrate it.)
     const silentMode = !voiceUrl;
+    // Prime the voice element during mount (still inside the user-activation
+    // window from the tap that navigated into the lesson). iOS Safari blocks
+    // .play() called from a setTimeout that's seconds away from the gesture;
+    // priming it here marks the element as user-permitted so the deferred
+    // .play() at voiceStartMs succeeds. (John 2026-05-26: iPhone reported
+    // "Washington does not start speaking at all" — this is the fix.)
+    if (voice && !silentMode) {
+      try {
+        voice.muted = true;
+        const primeP = voice.play();
+        if (primeP && primeP.then) {
+          primeP.then(() => {
+            try { voice.pause(); voice.currentTime = 0; voice.muted = false; } catch (e) {}
+          }).catch(() => {
+            try { voice.muted = false; } catch (e) {}
+          });
+        }
+      } catch (e) {}
+    }
     const voiceTimer = silentMode ? null : setTimeout(() => {
       if (!voice) return;
       voice.volume = 1.0;
+      try { voice.muted = false; voice.currentTime = 0; } catch (e) {}
       const p = voice.play();
-      if (p && p.catch) p.catch(() => {});
+      if (p && p.catch) p.catch(() => {
+        // Last-resort: muted-then-unmute trick (loses ~150ms of head audio).
+        try {
+          voice.muted = true;
+          voice.play().then(() => {
+            setTimeout(() => { try { voice.muted = false; } catch (e) {} }, 150);
+          }).catch(() => {});
+        } catch (e) {}
+      });
     }, voiceStartMs);
     const silentTimer = silentMode ? setTimeout(() => finish(), silentHoldMs) : null;
 
@@ -5721,62 +5787,28 @@ function LessonView({ questId, lessonId, state, setState, goQuest, onRelicEarned
     // kid lands at the lesson header — not wherever they were scrolled before.
     try { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); } catch (e) {}
     setEntranceDone(true);
+    setAutoStartLesson(true);
     try { sessionStorage.setItem('ve_delaware_done', '1'); } catch (e) {}
-    // autoStartLesson is now triggered by the self-intro layer below (after the
-    // figure's "I am ..." line finishes), so the narration doesn't start until
-    // the figure has introduced themselves.
   }
-
-  // === Figure self-intro layer (John 2026-05-26) ===
-  // Per-figure self-intro MP3 plays after the entrance/settle, then triggers
-  // the existing lesson narration. ONE play per visit — no localStorage gate.
-  // Currently wired ONLY for Washington/Delaware; same pattern will propagate
-  // to the other 13 historical figures once verified live.
-  const figureSelfIntroUrl = lesson.id === 'delaware'
-    ? 'audio/historical/intros/washington_self_intro.mp3'
-    : null;
-  useEffect(() => {
-    if (!figureSelfIntroUrl) return;
-    if (!entranceDone) return; // wait for the cinematic overlay to clear
-    let cancelled = false;
-    let audio = null;
-    const finish = () => {
-      if (cancelled) return;
-      setAutoStartLesson(true);
-    };
-    const timer = setTimeout(() => {
-      if (cancelled) return;
-      try {
-        audio = new Audio(figureSelfIntroUrl);
-        audio.addEventListener('ended', finish);
-        audio.addEventListener('error', finish);
-        const p = audio.play();
-        if (p && typeof p.catch === 'function') p.catch(finish);
-      } catch (e) { finish(); }
-    }, 2500);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-      if (audio) { try { audio.pause(); audio.src = ''; } catch (e) {} }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entranceDone, figureSelfIntroUrl]);
 
   return (
     <article className="pb-safe">
       {isVoiceEntrancePilot && !entranceDone && (
-        /* Silent cinematic overlay — date displays visually, ambient bed plays,
-           NO voice reads the date (John, 2026-05-26: "robotic voice reading the
-           date is stupid, kill it"). The lesson narration mp3 starts after the
-           overlay fades, so Washington still speaks the story — just not the date. */
+        /* Cinematic entrance overlay. Date still displays visually (NO robotic
+           date-reader voice — John 2026-05-26). The figure's self-intro plays as
+           the entrance voice at voiceStartMs, then the overlay fades and the
+           lesson narration auto-starts. Routing the self-intro through the
+           VoiceEntrance audio mechanism (rather than a post-entrance setTimeout)
+           keeps it inside the mount-useEffect chain — fixes the iOS Safari
+           autoplay block reported by John 2026-05-26 (had to push Listen). */
         <VoiceEntrance
           background={lesson.image}
           title="Crossing the Delaware"
           figure="George Washington"
           date="December 25, 1776"
           ambientUrl="audio/intros/washington_delaware_ambient.mp3"
-          voiceUrl=""
-          silentHoldMs={5500}
+          voiceUrl="audio/historical/intros/washington_self_intro.mp3"
+          voiceStartMs={2500}
           onComplete={finishEntrance}
         />
       )}
