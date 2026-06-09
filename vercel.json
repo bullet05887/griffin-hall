@@ -3,12 +3,26 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/app",        "destination": "/api/serve-app" },
-    { "source": "/app/(.*)",   "destination": "/api/serve-app" }
+    {
+      "source": "/app",
+      "destination": "/api/serve-app"
+    },
+    {
+      "source": "/app/(.*)",
+      "destination": "/api/serve-app"
+    }
   ],
   "redirects": [
-    { "source": "/app-content",      "destination": "/", "permanent": false },
-    { "source": "/app-content.html", "destination": "/", "permanent": false }
+    {
+      "source": "/app-content",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/app-content.html",
+      "destination": "/",
+      "permanent": false
+    }
   ],
   "functions": {
     "api/serve-app.js": {
@@ -19,20 +33,55 @@
     {
       "source": "/app-content.html",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/admin.html",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-        { "key": "Cache-Control", "value": "no-store" }
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.html)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
       ]
     }
   ]
